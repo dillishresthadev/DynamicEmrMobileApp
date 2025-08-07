@@ -11,6 +11,12 @@ class UserRepositoriesImpl extends UserRepository {
 
   UserRepositoriesImpl({required this.remoteDataSource});
   @override
+  Future<String> getHospitalBaseUrl({required String hospitalCode}) async {
+    final url = await remoteDataSource.getHospitalBaseURL(hospitalCode);
+    return url;
+  }
+
+  @override
   Future<LoginResponseEntity> login({
     required String username,
     required String password,

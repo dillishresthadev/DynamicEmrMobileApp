@@ -9,6 +9,7 @@ import 'package:dynamic_emr/features/auth/data/models/user_financial_year_model.
 import 'package:dynamic_emr/features/auth/data/models/user_model.dart';
 
 abstract class UserRemoteDataSource {
+  Future<String> getHospitalBaseURL(String hospitalCode);
   Future<LoginResponseModel> login({
     required String username,
     required String password,
@@ -25,6 +26,19 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   final DioHttpClient client;
 
   UserRemoteDataSourceImpl({required this.client});
+
+  @override
+  Future<String> getHospitalBaseURL(String hospitalCode) async {
+    try {
+      final response = await client.get(
+        "${ApiConstants.hospitalCodeURL}/$hospitalCode",
+      );
+      return response['url'];
+    } catch (e) {
+      return "Error Getting Hospital Base URL : $e";
+    }
+  }
+
   @override
   Future<LoginResponseModel> login({
     required String username,
