@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:dynamic_emr/core/local_storage/hospital_code_storage.dart';
 import 'package:dynamic_emr/features/auth/domain/entities/login_response_entity.dart';
 import 'package:dynamic_emr/features/auth/domain/entities/user_entity.dart';
 import 'package:dynamic_emr/features/auth/domain/usecases/fetch_hospital_base_url_usecase.dart';
 import 'package:dynamic_emr/features/auth/domain/usecases/login_usecase.dart';
+import 'package:dynamic_emr/injection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -45,7 +47,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         event.hospitalCode,
       );
       log("Hospital Base URL $hospitalBaseUrl");
-      // save hospital base URL for future API calls
+      // save hospital base URL for further API calls
+      injection<ISecureStorage>().saveBaseUrl(hospitalBaseUrl);
+
       emit(HospitalBaseUrlSuccessState());
     } catch (e) {
       log('Login error: $e');
