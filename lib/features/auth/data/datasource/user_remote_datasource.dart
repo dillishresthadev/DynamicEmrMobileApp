@@ -1,0 +1,77 @@
+import 'dart:convert';
+import 'dart:developer';
+
+import 'package:dynamic_emr/core/constants/api_constants.dart';
+import 'package:dynamic_emr/core/network/dio_http_client.dart';
+import 'package:dynamic_emr/features/auth/data/models/login_response_model.dart';
+import 'package:dynamic_emr/features/auth/data/models/user_branch_model.dart';
+import 'package:dynamic_emr/features/auth/data/models/user_financial_year_model.dart';
+import 'package:dynamic_emr/features/auth/data/models/user_model.dart';
+
+abstract class UserRemoteDataSource {
+  Future<LoginResponseModel> login({
+    required String username,
+    required String password,
+  });
+
+  Future<String?> refreshToken({required String refreshToken});
+
+  Future<List<UserBranchModel>> getUserBranches();
+
+  Future<List<UserFinancialYearModel>> getUserFinancialYears();
+}
+
+class UserRemoteDataSourceImpl implements UserRemoteDataSource {
+  final DioHttpClient client;
+
+  UserRemoteDataSourceImpl({required this.client});
+  @override
+  Future<LoginResponseModel> login({
+    required String username,
+    required String password,
+  }) async {
+    final user = UserModel(username: username, password: password);
+
+    final response = await client.post(
+      ApiConstants.userLogin,
+      body: user.toJson(),
+    );
+    return LoginResponseModel.fromJson(response);
+  }
+
+  @override
+  Future<List<UserBranchModel>> getUserBranches() async {
+    final response = await client.get(ApiConstants.getUserBranches, token: '');
+    final List<dynamic> jsonList = jsonDecode(response['']);
+
+    return jsonList.map((json) => UserBranchModel.fromJson(json)).toList();
+  }
+
+  @override
+  Future<List<UserFinancialYearModel>> getUserFinancialYears() async {
+    final response = await client.get(
+      ApiConstants.getUserFinancialYear,
+      token: '',
+    );
+    final List<dynamic> jsonList = jsonDecode(response['']);
+    return jsonList
+        .map((json) => UserFinancialYearModel.fromJson(json))
+        .toList();
+  }
+
+  @override
+  Future<String?> refreshToken({required String refreshToken}) async {
+    try {
+      final response = await client.post(
+        ApiConstants.userRefreshToken,
+        body: {"RefreshToken": refreshToken},
+      );
+
+      log('Refresh Token Response: $response');
+      return response['token'];
+    } catch (e) {
+      log('Error refreshing token: $e');
+      rethrow;
+    }
+  }
+}
