@@ -1,4 +1,7 @@
 import 'package:dynamic_emr/core/routes/route_names.dart';
+import 'package:dynamic_emr/features/auth/presentation/screens/hospital_code_screen.dart';
+import 'package:dynamic_emr/features/auth/presentation/screens/login_screen.dart';
+import 'package:dynamic_emr/splash_screen.dart';
 import 'package:flutter/material.dart';
 
 class AppRoutes {
@@ -25,7 +28,11 @@ class AppRoutes {
 
     switch (settings.name) {
       case RouteNames.splash:
-      // return customPageRoute(SplashScreen(), settings);
+        return customPageRoute(SplashScreen(), settings);
+      case RouteNames.hospitalCode:
+        return customPageRoute(HospitalCodeScreen(), settings);
+      case RouteNames.login:
+        return customPageRoute(LoginScreen(), settings);
       default:
         return _errorRoute(settings);
     }

@@ -1,0 +1,85 @@
+import 'package:dynamic_emr/features/profile/domain/entities/employee_work_experience_entity.dart';
+
+class EmployeeWorkExperienceModel extends EmployeeWorkExperienceEntity {
+  EmployeeWorkExperienceModel({
+    required super.id,
+    required super.employeeId,
+    required super.company,
+    required super.designation,
+    required super.salary,
+    required super.address,
+    required super.department,
+    required super.contact,
+    required super.joiningDate,
+    required super.leavingDate,
+    required super.joiningDateNp,
+    required super.leavingDateNp,
+    required super.totalExperience,
+    required super.referencePerson,
+    required super.referenceContact,
+    required super.referencePersonEmail,
+    required super.reasonToLeave,
+    required super.employeeName,
+    required super.level,
+    required super.hrmLevelId,
+    required super.jobSummary,
+    required super.employeeCode,
+    required super.attachments,
+  });
+
+  factory EmployeeWorkExperienceModel.fromJson(Map<String, dynamic> json) {
+    return EmployeeWorkExperienceModel(
+      id: json['id'],
+      employeeId: json['employeeId'],
+      company: json['company'],
+      designation: json['designation'],
+      salary: json['salary'],
+      address: json['address'],
+      department: json['department'],
+      contact: json['contact'],
+      joiningDate: DateTime.parse(json['joiningDate']),
+      leavingDate: DateTime.parse(json['leavingDate']),
+      joiningDateNp: json['joiningDateNp'],
+      leavingDateNp: json['leavingDateNp'],
+      totalExperience: json['totalExperience'],
+      referencePerson: json['referencePerson'],
+      referenceContact: json['referenceContact'],
+      referencePersonEmail: json['referencePersonEmail'],
+      reasonToLeave: json['reasonToLeave'],
+      employeeName: json['employeeName'],
+      level: json['level'],
+      hrmLevelId: json['hrmLevelId'],
+      jobSummary: json['jobSummary'],
+      employeeCode: json['employeeCode'],
+      attachments: json['attachments'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'employeeId': employeeId,
+      'company': company,
+      'designation': designation,
+      'salary': salary,
+      'address': address,
+      'department': department,
+      'contact': contact,
+      'joiningDate': joiningDate.toIso8601String(),
+      'leavingDate': leavingDate.toIso8601String(),
+      'joiningDateNp': joiningDateNp,
+      'leavingDateNp': leavingDateNp,
+      'totalExperience': totalExperience,
+      'referencePerson': referencePerson,
+      'referenceContact': referenceContact,
+      'referencePersonEmail': referencePersonEmail,
+      'reasonToLeave': reasonToLeave,
+      'employeeName': employeeName,
+      'level': level,
+      'hrmLevelId': hrmLevelId,
+      'jobSummary': jobSummary,
+      'employeeCode': employeeCode,
+      'attachments': attachments,
+    };
+  }
+}
