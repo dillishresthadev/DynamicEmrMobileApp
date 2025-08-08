@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         title: 'Dynamic EMR',
         debugShowCheckedModeBanner: false,
         navigatorKey: navigatorKey,
-        initialRoute: RouteNames.splash,
+        initialRoute: RouteNames.splashScreen,
         onGenerateRoute: AppRoutes.generateRoute,
       ),
     );

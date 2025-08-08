@@ -25,4 +25,6 @@ class GetHospitalBaseUrlEvent extends AuthEvent {
   List<Object> get props => [hospitalCode];
 }
 
+class GetHospitalBranchEvent extends AuthEvent {}
+
 class LogoutEvent extends AuthEvent {}

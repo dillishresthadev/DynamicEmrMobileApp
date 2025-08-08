@@ -9,6 +9,7 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 
 class HospitalCodeScreen extends StatefulWidget {
   const HospitalCodeScreen({super.key});
+
   @override
   State<HospitalCodeScreen> createState() => _HospitalCodeScreenState();
 }
@@ -16,13 +17,14 @@ class HospitalCodeScreen extends StatefulWidget {
 class _HospitalCodeScreenState extends State<HospitalCodeScreen> {
   final TextEditingController _pinController = TextEditingController();
   String enteredCode = '';
+  bool isLoading = false;
 
-  void _validateAndSubmit() async {
-    if (enteredCode.length == 6) {
+  void _validateAndSubmit() {
+    if (enteredCode.length == 6 && !isLoading) {
+      setState(() => isLoading = true); 
       context.read<AuthBloc>().add(
         GetHospitalBaseUrlEvent(hospitalCode: enteredCode),
       );
-      // Navigator.pushReplacementNamed(context, RouteNames.login);
     }
   }
 
@@ -34,116 +36,135 @@ class _HospitalCodeScreenState extends State<HospitalCodeScreen> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
+        if (state is AuthLoadingState) {
+          setState(() => isLoading = true);
+        } else {
+          setState(() => isLoading = false);
+        }
+
         if (state is HospitalBaseUrlSuccessState) {
-          Navigator.pushReplacementNamed(context, RouteNames.login);
+          Navigator.pushReplacementNamed(context, RouteNames.loginScreen);
         } else if (state is AuthErrorState) {
           AppSnackBar.show(context, state.errorMessage, SnackbarType.error);
         }
       },
       child: Scaffold(
         body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  "Enter Hospital Code",
-                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 10),
-                const Text(
-                  "This is a unique 6-digit code for your hospital. Contact your IT department if you don't have the code.",
-                  style: TextStyle(fontSize: 16, color: Colors.black54),
-                  textAlign: TextAlign.justify,
-                ),
-                const SizedBox(height: 30),
-                PinCodeTextField(
-                  appContext: context,
-                  length: 6,
-                  controller: _pinController,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  autoFocus: true,
-                  textStyle: const TextStyle(fontWeight: FontWeight.bold),
-                  pinTheme: PinTheme(
-                    shape: PinCodeFieldShape.box,
-                    borderRadius: BorderRadius.circular(10),
-                    fieldHeight: 56,
-                    fieldWidth: 56,
-                    activeFillColor: Colors.white,
-                    inactiveFillColor: Colors.white,
-                    selectedFillColor: Colors.white,
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: IgnorePointer(
+                  ignoring: isLoading,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Enter Hospital Code",
+                        style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        "This is a unique 6-digit code for your hospital. Contact your IT department if you don't have the code.",
+                        style: TextStyle(fontSize: 16, color: Colors.black54),
+                        textAlign: TextAlign.justify,
+                      ),
+                      const SizedBox(height: 30),
+                      PinCodeTextField(
+                        appContext: context,
+                        length: 6,
+                        controller: _pinController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        autoFocus: true,
+                        textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                        pinTheme: PinTheme(
+                          shape: PinCodeFieldShape.box,
+                          borderRadius: BorderRadius.circular(10),
+                          fieldHeight: 56,
+                          fieldWidth: 56,
+                          activeFillColor: Colors.white,
+                          inactiveFillColor: Colors.white,
+                          selectedFillColor: Colors.white,
+                        ),
+                        enableActiveFill: true,
+                        onChanged: (value) {
+                          setState(() {
+                            enteredCode = value;
+                          });
+                        },
+                        onCompleted: (value) {
+                          _validateAndSubmit();
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: SizedBox(
+                              height: 50,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primary,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                onPressed: _clearOtpField,
+                                child: const Text(
+                                  "Cancel",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: SizedBox(
+                              height: 50,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primary,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                onPressed:
+                                    (enteredCode.length == 6 && !isLoading)
+                                    ? _validateAndSubmit
+                                    : null,
+                                child: const Text(
+                                  "Continue Login",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  enableActiveFill: true,
-                  onChanged: (value) {
-                    setState(() {
-                      enteredCode = value;
-                    });
-                  },
-                  onCompleted: (value) {
-                    _validateAndSubmit();
-                  },
                 ),
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: SizedBox(
-                        height: 50,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          onPressed: _clearOtpField,
-                          child: const Text(
-                            "Cancel",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: SizedBox(
-                        height: 50,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primary,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          onPressed: enteredCode.length == 6
-                              ? _validateAndSubmit
-                              : null,
-                          child: const Text(
-                            "Continue Login",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+              ),
+              if (isLoading) const Center(child: CircularProgressIndicator()),
+            ],
           ),
         ),
       ),

@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 abstract class ISecureStorage {
@@ -25,7 +24,7 @@ class HospitalCodeStorage implements ISecureStorage {
   @override
   Future<String?> getHospitalBaseUrl() async {
     try {
-      return await _secureStorage.read(key: 'base_url');
+      return await _secureStorage.read(key: 'hospital_base_url');
     } catch (e) {
       log("Error reading base URL: $e");
       return null;
@@ -34,7 +33,7 @@ class HospitalCodeStorage implements ISecureStorage {
 
   @override
   Future<void> removeHospitalBaseUrl() async {
-    await _secureStorage.delete(key: 'base_url');
+    await _secureStorage.delete(key: 'hospital_base_url');
   }
 
   @override

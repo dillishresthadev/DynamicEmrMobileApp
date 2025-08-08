@@ -1,8 +1,7 @@
 import 'dart:developer';
-
 import 'package:dynamic_emr/features/auth/data/datasource/auth_remote_datasource.dart';
+import 'package:dynamic_emr/features/auth/domain/entities/hospital_branch_entity.dart';
 import 'package:dynamic_emr/features/auth/domain/entities/login_response_entity.dart';
-import 'package:dynamic_emr/features/auth/domain/entities/user_branch_entity.dart';
 import 'package:dynamic_emr/features/auth/domain/entities/user_financial_year_entity.dart';
 import 'package:dynamic_emr/features/auth/domain/repositories/auth_repository.dart';
 
@@ -30,7 +29,7 @@ class AuthRepositoryImpl extends AuthRepository {
   }
 
   @override
-  Future<List<UserBranchEntity>> getUserBranches() async {
+  Future<List<HospitalBranchEntity>> getUserBranches() async {
     final branchData = await remoteDataSource.getUserBranches();
     return branchData;
   }

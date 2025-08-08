@@ -18,8 +18,15 @@ final class AuthLoginSuccessState extends AuthState {
   @override
   List<Object> get props => [loginResponse];
 }
-final class HospitalBaseUrlSuccessState extends AuthState{
-  
+
+final class HospitalBaseUrlSuccessState extends AuthState {}
+
+final class AuthHospitalBranchLoadedState extends AuthState {
+  final List<HospitalBranchEntity> hospitalBranch;
+
+  const AuthHospitalBranchLoadedState({required this.hospitalBranch});
+  @override
+  List<Object> get props => [hospitalBranch];
 }
 
 final class AuthErrorState extends AuthState {
