@@ -1,4 +1,5 @@
 import 'package:dynamic_emr/core/constants/app_colors.dart';
+import 'package:dynamic_emr/core/routes/route_names.dart';
 import 'package:dynamic_emr/core/widgets/dropdown/custom_dropdown.dart';
 import 'package:dynamic_emr/features/auth/domain/entities/user_financial_year_entity.dart';
 import 'package:dynamic_emr/features/auth/presentation/bloc/auth_bloc.dart';
@@ -90,7 +91,10 @@ class _SelectFinancialYearScreenState extends State<SelectFinancialYearScreen> {
                     GestureDetector(
                       onTap: selectedFiscalYear != null
                           ? () {
-                              // Handle navigation or event
+                              Navigator.pushReplacementNamed(
+                                context,
+                                RouteNames.appMainNav,
+                              );
                             }
                           : null,
                       child: Container(
