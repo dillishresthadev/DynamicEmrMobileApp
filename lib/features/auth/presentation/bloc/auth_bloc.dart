@@ -6,8 +6,10 @@ import 'package:dynamic_emr/core/local_storage/token_storage.dart';
 import 'package:dynamic_emr/features/auth/domain/entities/hospital_branch_entity.dart';
 import 'package:dynamic_emr/features/auth/domain/entities/login_response_entity.dart';
 import 'package:dynamic_emr/features/auth/domain/entities/user_entity.dart';
+import 'package:dynamic_emr/features/auth/domain/entities/user_financial_year_entity.dart';
 import 'package:dynamic_emr/features/auth/domain/usecases/fetch_hospital_base_url_usecase.dart';
 import 'package:dynamic_emr/features/auth/domain/usecases/fetch_hospital_branch_usecase.dart';
+import 'package:dynamic_emr/features/auth/domain/usecases/fetch_user_financial_year_usecase.dart';
 import 'package:dynamic_emr/features/auth/domain/usecases/login_usecase.dart';
 import 'package:dynamic_emr/injection.dart';
 import 'package:equatable/equatable.dart';
@@ -20,14 +22,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final LoginUsecase loginUsecase;
   final FetchHospitalBaseUrlUsecase hospitalBaseUrlUsecase;
   final FetchHospitalBranchUsecase hospitalBranchUsecase;
+  final FetchUserFinancialYearUsecase financialYearUsecase;
   AuthBloc({
     required this.loginUsecase,
     required this.hospitalBaseUrlUsecase,
     required this.hospitalBranchUsecase,
+    required this.financialYearUsecase,
   }) : super(AuthInitialState()) {
     on<LoginEvent>(_onLogin);
     on<GetHospitalBaseUrlEvent>(_onGetHospitalBaseUrl);
     on<GetHospitalBranchEvent>(_onGetHospitalBranchEvent);
+    on<GetHospitalFinancialYearEvent>(_onGetHospitalFinancialYear);
   }
 
   Future<void> _onLogin(LoginEvent event, Emitter<AuthState> emit) async {
@@ -80,12 +85,33 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final List<HospitalBranchEntity> hospitalBranch =
           await hospitalBranchUsecase.call();
-      log("Hospital First Branch Name :  ${hospitalBranch.length}");
+      log("Branch count :  ${hospitalBranch.length}");
 
       emit(AuthHospitalBranchLoadedState(hospitalBranch: hospitalBranch));
     } catch (e) {
-      log('Login error: $e');
-      emit(AuthErrorState(errorMessage: "Login Failed : $e"));
+      log('Failed getting branch: $e');
+      emit(AuthErrorState(errorMessage: "Failed getting branch : $e"));
+    }
+  }
+
+  Future<void> _onGetHospitalFinancialYear(
+    GetHospitalFinancialYearEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoadingState());
+    try {
+      final List<UserFinancialYearEntity> financialYear =
+          await financialYearUsecase.call();
+      log("Financial Year count :  ${financialYear.length}");
+
+      emit(AuthHospitalFinancialYearState(financialYear: financialYear));
+    } catch (e) {
+      log('Failed getting Financial Year data: $e');
+      emit(
+        AuthErrorState(
+          errorMessage: "Failed getting Financial Year data  : $e",
+        ),
+      );
     }
   }
 }

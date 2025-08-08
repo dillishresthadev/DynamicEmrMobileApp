@@ -1,64 +1,68 @@
 import 'package:dynamic_emr/core/constants/app_colors.dart';
-import 'package:dynamic_emr/core/local_storage/branch_storage.dart';
-import 'package:dynamic_emr/core/routes/route_names.dart';
 import 'package:dynamic_emr/core/widgets/dropdown/custom_dropdown.dart';
-import 'package:dynamic_emr/features/auth/domain/entities/hospital_branch_entity.dart';
+import 'package:dynamic_emr/features/auth/domain/entities/user_financial_year_entity.dart';
 import 'package:dynamic_emr/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:dynamic_emr/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class SelectBranchScreen extends StatefulWidget {
-  const SelectBranchScreen({super.key});
+class SelectFinancialYearScreen extends StatefulWidget {
+  const SelectFinancialYearScreen({super.key});
 
   @override
-  State<SelectBranchScreen> createState() => _SelectBranchScreenState();
+  State<SelectFinancialYearScreen> createState() =>
+      _SelectFinancialYearScreenState();
 }
 
-class _SelectBranchScreenState extends State<SelectBranchScreen> {
-  int? selectedBranch;
+class _SelectFinancialYearScreenState extends State<SelectFinancialYearScreen> {
+  int? selectedFiscalYear;
+  List<UserFinancialYearEntity> _fiscalYears = [];
 
   @override
   void initState() {
     super.initState();
-    context.read<AuthBloc>().add(GetHospitalBranchEvent());
+    context.read<AuthBloc>().add(GetHospitalFinancialYearEvent());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(leading: BackButton(color: Colors.blue)),
+      appBar: AppBar(leading: const BackButton(color: Colors.blue)),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
+        child: BlocListener<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state is AuthErrorState) {
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
+            }
+          },
           child: BlocBuilder<AuthBloc, AuthState>(
             builder: (context, state) {
               if (state is AuthLoadingState) {
                 return const Center(child: CircularProgressIndicator());
               }
 
-              if (state is AuthErrorState) {
-                return Center(child: Text(state.errorMessage));
+              if (state is AuthHospitalFinancialYearState) {
+                _fiscalYears = state.financialYear;
               }
 
-              if (state is AuthHospitalBranchLoadedState) {
-                List<HospitalBranchEntity> branches = state.hospitalBranch;
+              final List<Map<String, dynamic>> fiscalYearNames = _fiscalYears
+                  .map((fiscalYear) {
+                    return {
+                      'label': fiscalYear.financialYearCode,
+                      'value': fiscalYear.financialYearId,
+                    };
+                  })
+                  .toList();
 
-                List<Map<String, dynamic>> branchItems = branches
-                    .map(
-                      (branch) => {
-                        'label': branch.branchName,
-                        'value': branch.branchId,
-                      },
-                    )
-                    .toList();
-
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      "Select Branch ID",
+                      "Select Fiscal Year",
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -66,46 +70,39 @@ class _SelectBranchScreenState extends State<SelectBranchScreen> {
                     ),
                     const SizedBox(height: 8),
                     const Text(
-                      "Please select the branch ID to continue",
-                      style: TextStyle(fontSize: 16, color: AppColors.navyBlue),
+                      "Please select the fiscal year to continue",
+                      style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                     const SizedBox(height: 20),
                     CustomDropdown2(
-                      value: selectedBranch,
-                      items: branchItems,
-                      hintText: "Select Branch ID",
+                      value: selectedFiscalYear,
+                      items: fiscalYearNames,
+                      hintText: "Select Fiscal Year",
                       onChanged: (value) {
                         if (value != null) {
                           setState(() {
-                            selectedBranch = value;
+                            selectedFiscalYear = value;
                           });
-                          // Store branch ID to fetch its financial years
-                          injection<BranchSecureStorage>().saveWorkingBranchId(
-                            value.toString(),
-                          );
                         }
                       },
                     ),
                     const SizedBox(height: 20),
                     GestureDetector(
-                      onTap: selectedBranch != null
+                      onTap: selectedFiscalYear != null
                           ? () {
-                              Navigator.pushNamed(
-                                context,
-                                RouteNames.selectFiscalYearScreen,
-                              );
+                              // Handle navigation or event
                             }
                           : null,
                       child: Container(
                         width: double.infinity,
                         padding: const EdgeInsets.symmetric(vertical: 15),
                         decoration: BoxDecoration(
-                          color: selectedBranch != null
+                          color: selectedFiscalYear != null
                               ? AppColors.primary
                               : AppColors.primary.withValues(alpha: 0.4),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Center(
+                        child: const Center(
                           child: Text(
                             "Next",
                             style: TextStyle(
@@ -118,10 +115,8 @@ class _SelectBranchScreenState extends State<SelectBranchScreen> {
                       ),
                     ),
                   ],
-                );
-              }
-
-              return const Center(child: Text("No branch data available"));
+                ),
+              );
             },
           ),
         ),

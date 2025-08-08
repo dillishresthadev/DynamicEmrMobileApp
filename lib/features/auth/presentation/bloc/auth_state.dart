@@ -29,6 +29,14 @@ final class AuthHospitalBranchLoadedState extends AuthState {
   List<Object> get props => [hospitalBranch];
 }
 
+final class AuthHospitalFinancialYearState extends AuthState {
+  final List<UserFinancialYearEntity> financialYear;
+
+  const AuthHospitalFinancialYearState({required this.financialYear});
+  @override
+  List<Object> get props => [financialYear];
+}
+
 final class AuthErrorState extends AuthState {
   final String errorMessage;
 

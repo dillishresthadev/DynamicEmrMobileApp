@@ -27,4 +27,6 @@ class GetHospitalBaseUrlEvent extends AuthEvent {
 
 class GetHospitalBranchEvent extends AuthEvent {}
 
+class GetHospitalFinancialYearEvent extends AuthEvent {}
+
 class LogoutEvent extends AuthEvent {}

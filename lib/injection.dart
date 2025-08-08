@@ -1,5 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:dio/dio.dart';
+import 'package:dynamic_emr/core/local_storage/branch_storage.dart';
 import 'package:dynamic_emr/core/local_storage/hospital_code_storage.dart';
 import 'package:dynamic_emr/core/local_storage/token_storage.dart';
 import 'package:dynamic_emr/core/network/connectivity_check.dart';
@@ -9,6 +10,7 @@ import 'package:dynamic_emr/features/auth/data/repositories/auth_repository_impl
 import 'package:dynamic_emr/features/auth/domain/repositories/auth_repository.dart';
 import 'package:dynamic_emr/features/auth/domain/usecases/fetch_hospital_base_url_usecase.dart';
 import 'package:dynamic_emr/features/auth/domain/usecases/fetch_hospital_branch_usecase.dart';
+import 'package:dynamic_emr/features/auth/domain/usecases/fetch_user_financial_year_usecase.dart';
 import 'package:dynamic_emr/features/auth/domain/usecases/login_usecase.dart';
 import 'package:dynamic_emr/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -38,6 +40,11 @@ Future<void> initDependencies() async {
   injection.registerLazySingleton<TokenSecureStorage>(
     () => TokenStorage(injection<FlutterSecureStorage>()),
   );
+  // Branch storage (branch Id,financial year Id)
+  injection.registerLazySingleton<BranchSecureStorage>(
+    () => BranchStorage(injection<FlutterSecureStorage>()),
+  );
+
   // Auth (user login)
 
   injection.registerLazySingleton<AuthBloc>(
@@ -45,6 +52,7 @@ Future<void> initDependencies() async {
       loginUsecase: injection<LoginUsecase>(),
       hospitalBaseUrlUsecase: injection<FetchHospitalBaseUrlUsecase>(),
       hospitalBranchUsecase: injection<FetchHospitalBranchUsecase>(),
+      financialYearUsecase: injection<FetchUserFinancialYearUsecase>(),
     ),
   );
   injection.registerLazySingleton<LoginUsecase>(
@@ -56,11 +64,14 @@ Future<void> initDependencies() async {
   injection.registerLazySingleton<FetchHospitalBranchUsecase>(
     () => FetchHospitalBranchUsecase(repository: injection<AuthRepository>()),
   );
+  injection.registerLazySingleton<FetchUserFinancialYearUsecase>(
+    () =>
+        FetchUserFinancialYearUsecase(repository: injection<AuthRepository>()),
+  );
   injection.registerLazySingleton<AuthRepository>(
     () =>
         AuthRepositoryImpl(remoteDataSource: injection<AuthRemoteDatasource>()),
   );
-
   injection.registerLazySingleton<AuthRemoteDatasource>(
     () => AuthRemoteDataSourceImpl(client: injection<DioHttpClient>()),
   );

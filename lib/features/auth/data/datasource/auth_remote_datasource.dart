@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:dynamic_emr/core/constants/api_constants.dart';
+import 'package:dynamic_emr/core/local_storage/branch_storage.dart';
 import 'package:dynamic_emr/core/local_storage/hospital_code_storage.dart';
 import 'package:dynamic_emr/core/local_storage/token_storage.dart';
 import 'package:dynamic_emr/core/network/dio_http_client.dart';
@@ -104,9 +105,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDatasource {
     try {
       final accessToken = await injection<TokenSecureStorage>()
           .getAccessToken();
+      final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
+      final workingBranchId = await injection<BranchSecureStorage>()
+          .getWorkingBranchId();
+
       final dynamic response = await client.get(
-        ApiConstants.getUserFinancialYear,
+        "$baseUrl${ApiConstants.getUserFinancialYear}",
         token: accessToken,
+        headers: {'workingBranchId': workingBranchId.toString()},
       );
       List<dynamic> jsonList;
       if (response is List) {

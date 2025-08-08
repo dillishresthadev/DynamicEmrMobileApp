@@ -2,6 +2,7 @@ import 'package:dynamic_emr/core/routes/route_names.dart';
 import 'package:dynamic_emr/features/auth/presentation/screens/hospital_code_screen.dart';
 import 'package:dynamic_emr/features/auth/presentation/screens/login_screen.dart';
 import 'package:dynamic_emr/features/auth/presentation/screens/select_branch_screen.dart';
+import 'package:dynamic_emr/features/auth/presentation/screens/select_financial_year_screen.dart';
 import 'package:dynamic_emr/splash_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -36,6 +37,8 @@ class AppRoutes {
         return customPageRoute(LoginScreen(), settings);
       case RouteNames.selectBranchScreen:
         return customPageRoute(SelectBranchScreen(), settings);
+      case RouteNames.selectFiscalYearScreen:
+        return customPageRoute(SelectFinancialYearScreen(), settings);
       default:
         return _errorRoute(settings);
     }
