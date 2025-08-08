@@ -1,9 +1,9 @@
 import 'package:dynamic_emr/features/auth/domain/entities/login_response_entity.dart';
 import 'package:dynamic_emr/features/auth/domain/entities/user_entity.dart';
-import 'package:dynamic_emr/features/auth/domain/repositories/user_repository.dart';
+import 'package:dynamic_emr/features/auth/domain/repositories/auth_repository.dart';
 
 class LoginUsecase {
-  final UserRepository repository;
+  final AuthRepository repository;
 
   LoginUsecase({required this.repository});
   Future<LoginResponseEntity> call(UserEntity user) async {

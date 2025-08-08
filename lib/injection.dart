@@ -3,9 +3,9 @@ import 'package:dio/dio.dart';
 import 'package:dynamic_emr/core/local_storage/hospital_code_storage.dart';
 import 'package:dynamic_emr/core/network/connectivity_check.dart';
 import 'package:dynamic_emr/core/network/dio_http_client.dart';
-import 'package:dynamic_emr/features/auth/data/datasource/user_remote_datasource.dart';
-import 'package:dynamic_emr/features/auth/data/repositories/user_repositories_impl.dart';
-import 'package:dynamic_emr/features/auth/domain/repositories/user_repository.dart';
+import 'package:dynamic_emr/features/auth/data/datasource/auth_remote_datasource.dart';
+import 'package:dynamic_emr/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:dynamic_emr/features/auth/domain/repositories/auth_repository.dart';
 import 'package:dynamic_emr/features/auth/domain/usecases/fetch_hospital_base_url_usecase.dart';
 import 'package:dynamic_emr/features/auth/domain/usecases/login_usecase.dart';
 import 'package:dynamic_emr/features/auth/presentation/bloc/auth_bloc.dart';
@@ -41,18 +41,17 @@ Future<void> initDependencies() async {
     ),
   );
   injection.registerLazySingleton<LoginUsecase>(
-    () => LoginUsecase(repository: injection<UserRepository>()),
+    () => LoginUsecase(repository: injection<AuthRepository>()),
   );
   injection.registerLazySingleton<FetchHospitalBaseUrlUsecase>(
-    () => FetchHospitalBaseUrlUsecase(repository: injection<UserRepository>()),
+    () => FetchHospitalBaseUrlUsecase(repository: injection<AuthRepository>()),
   );
-  injection.registerLazySingleton<UserRepository>(
-    () => UserRepositoriesImpl(
-      remoteDataSource: injection<UserRemoteDataSource>(),
-    ),
+  injection.registerLazySingleton<AuthRepository>(
+    () =>
+        AuthRepositoryImpl(remoteDataSource: injection<AuthRemoteDatasource>()),
   );
 
-  injection.registerLazySingleton<UserRemoteDataSource>(
-    () => UserRemoteDataSourceImpl(client: injection<DioHttpClient>()),
+  injection.registerLazySingleton<AuthRemoteDatasource>(
+    () => AuthRemoteDataSourceImpl(client: injection<DioHttpClient>()),
   );
 }

@@ -28,6 +28,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final loginResponse = await loginUsecase.call(
         UserEntity(username: event.username, password: event.password),
       );
+
       log('Login successful');
       emit(AuthLoginSuccessState(loginResponse: loginResponse));
     } catch (e) {
@@ -48,7 +49,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       );
       log("Hospital Base URL $hospitalBaseUrl");
       // save hospital base URL for further API calls
-      injection<ISecureStorage>().saveBaseUrl(hospitalBaseUrl);
+      injection<ISecureStorage>().saveHospitalBaseUrl(hospitalBaseUrl);
 
       emit(HospitalBaseUrlSuccessState());
     } catch (e) {

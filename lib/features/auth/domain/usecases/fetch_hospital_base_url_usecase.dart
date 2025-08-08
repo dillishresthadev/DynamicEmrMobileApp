@@ -1,7 +1,7 @@
-import 'package:dynamic_emr/features/auth/domain/repositories/user_repository.dart';
+import 'package:dynamic_emr/features/auth/domain/repositories/auth_repository.dart';
 
 class FetchHospitalBaseUrlUsecase {
-  final UserRepository repository;
+  final AuthRepository repository;
 
   FetchHospitalBaseUrlUsecase({required this.repository});
 

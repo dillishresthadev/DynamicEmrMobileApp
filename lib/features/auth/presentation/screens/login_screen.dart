@@ -1,7 +1,8 @@
-import 'dart:developer';
 import 'package:dynamic_emr/core/constants/app_colors.dart';
 import 'package:dynamic_emr/core/widgets/form/custom_input_field.dart';
+import 'package:dynamic_emr/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,7 +12,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _emailController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
 
   bool _isObscure = true;
@@ -21,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -56,7 +57,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             prefixIcon: const Icon(
                               Icons.account_circle_outlined,
                             ),
-                            controller: _emailController,
+                            controller: _usernameController,
                             keyboardType: TextInputType.text,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -100,7 +101,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
                                 _formKey.currentState!.save();
-                                log("Login -- ");
+                                context.read<AuthBloc>().add(
+                                  LoginEvent(
+                                    _usernameController.text,
+                                    _passwordController.text,
+                                  ),
+                                );
                               }
                             },
                             style: ElevatedButton.styleFrom(

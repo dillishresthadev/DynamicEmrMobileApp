@@ -2,13 +2,15 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:dynamic_emr/core/constants/api_constants.dart';
+import 'package:dynamic_emr/core/local_storage/hospital_code_storage.dart';
 import 'package:dynamic_emr/core/network/dio_http_client.dart';
 import 'package:dynamic_emr/features/auth/data/models/login_response_model.dart';
 import 'package:dynamic_emr/features/auth/data/models/user_branch_model.dart';
 import 'package:dynamic_emr/features/auth/data/models/user_financial_year_model.dart';
 import 'package:dynamic_emr/features/auth/data/models/user_model.dart';
+import 'package:dynamic_emr/injection.dart';
 
-abstract class UserRemoteDataSource {
+abstract class AuthRemoteDatasource {
   Future<String> getHospitalBaseURL(String hospitalCode);
   Future<LoginResponseModel> login({
     required String username,
@@ -22,10 +24,10 @@ abstract class UserRemoteDataSource {
   Future<List<UserFinancialYearModel>> getUserFinancialYears();
 }
 
-class UserRemoteDataSourceImpl implements UserRemoteDataSource {
+class AuthRemoteDataSourceImpl implements AuthRemoteDatasource {
   final DioHttpClient client;
 
-  UserRemoteDataSourceImpl({required this.client});
+  AuthRemoteDataSourceImpl({required this.client});
 
   @override
   Future<String> getHospitalBaseURL(String hospitalCode) async {
@@ -45,9 +47,10 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     required String password,
   }) async {
     final user = UserModel(username: username, password: password);
+    final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
 
     final response = await client.post(
-      ApiConstants.userLogin,
+      "$baseUrl${ApiConstants.userLogin}",
       body: user.toJson(),
     );
     return LoginResponseModel.fromJson(response);

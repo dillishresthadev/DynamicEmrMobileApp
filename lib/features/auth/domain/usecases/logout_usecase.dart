@@ -1,7 +1,7 @@
-import 'package:dynamic_emr/features/auth/domain/repositories/user_repository.dart';
+import 'package:dynamic_emr/features/auth/domain/repositories/auth_repository.dart';
 
 class LogoutUsecase {
-  final UserRepository repository;
+  final AuthRepository repository;
 
   LogoutUsecase({required this.repository});
 

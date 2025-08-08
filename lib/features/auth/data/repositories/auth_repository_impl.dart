@@ -1,15 +1,15 @@
 import 'dart:developer';
 
-import 'package:dynamic_emr/features/auth/data/datasource/user_remote_datasource.dart';
+import 'package:dynamic_emr/features/auth/data/datasource/auth_remote_datasource.dart';
 import 'package:dynamic_emr/features/auth/domain/entities/login_response_entity.dart';
 import 'package:dynamic_emr/features/auth/domain/entities/user_branch_entity.dart';
 import 'package:dynamic_emr/features/auth/domain/entities/user_financial_year_entity.dart';
-import 'package:dynamic_emr/features/auth/domain/repositories/user_repository.dart';
+import 'package:dynamic_emr/features/auth/domain/repositories/auth_repository.dart';
 
-class UserRepositoriesImpl extends UserRepository {
-  final UserRemoteDataSource remoteDataSource;
+class AuthRepositoryImpl extends AuthRepository {
+  final AuthRemoteDatasource remoteDataSource;
 
-  UserRepositoriesImpl({required this.remoteDataSource});
+  AuthRepositoryImpl({required this.remoteDataSource});
   @override
   Future<String> getHospitalBaseUrl({required String hospitalCode}) async {
     final url = await remoteDataSource.getHospitalBaseURL(hospitalCode);

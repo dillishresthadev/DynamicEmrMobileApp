@@ -3,9 +3,9 @@ import 'dart:developer';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 abstract class ISecureStorage {
-  Future<void> saveBaseUrl(String baseUrl);
-  Future<String?> getBaseUrl();
-  Future<void> removeBaseUrl();
+  Future<void> saveHospitalBaseUrl(String baseUrl);
+  Future<String?> getHospitalBaseUrl();
+  Future<void> removeHospitalBaseUrl();
 
   Future<void> saveHospitalCode(String hospitalCode);
   Future<String?> getHospitalCode();
@@ -18,12 +18,12 @@ class HospitalCodeStorage implements ISecureStorage {
   HospitalCodeStorage(this._secureStorage);
 
   @override
-  Future<void> saveBaseUrl(String baseUrl) async {
-    await _secureStorage.write(key: 'base_url', value: baseUrl);
+  Future<void> saveHospitalBaseUrl(String baseUrl) async {
+    await _secureStorage.write(key: 'hospital_base_url', value: baseUrl);
   }
 
   @override
-  Future<String?> getBaseUrl() async {
+  Future<String?> getHospitalBaseUrl() async {
     try {
       return await _secureStorage.read(key: 'base_url');
     } catch (e) {
@@ -33,7 +33,7 @@ class HospitalCodeStorage implements ISecureStorage {
   }
 
   @override
-  Future<void> removeBaseUrl() async {
+  Future<void> removeHospitalBaseUrl() async {
     await _secureStorage.delete(key: 'base_url');
   }
 
