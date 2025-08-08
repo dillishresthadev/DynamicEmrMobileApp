@@ -19,6 +19,16 @@ final class AuthLoginSuccessState extends AuthState {
   List<Object> get props => [loginResponse];
 }
 
+final class AuthLogoutSuccessState extends AuthState {}
+
+final class AuthLogoutErrorState extends AuthState {
+  final String errorMessage;
+
+  const AuthLogoutErrorState({required this.errorMessage});
+  @override
+  List<Object> get props => [errorMessage];
+}
+
 final class HospitalBaseUrlSuccessState extends AuthState {}
 
 final class AuthHospitalBranchLoadedState extends AuthState {

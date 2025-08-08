@@ -13,6 +13,11 @@ import 'package:dynamic_emr/features/auth/domain/usecases/fetch_hospital_branch_
 import 'package:dynamic_emr/features/auth/domain/usecases/fetch_user_financial_year_usecase.dart';
 import 'package:dynamic_emr/features/auth/domain/usecases/login_usecase.dart';
 import 'package:dynamic_emr/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:dynamic_emr/features/profile/data/datasources/employee_remote_datasource.dart';
+import 'package:dynamic_emr/features/profile/data/repository/employee_repository_impl.dart';
+import 'package:dynamic_emr/features/profile/domain/repository/employee_repository.dart';
+import 'package:dynamic_emr/features/profile/domain/usecases/employee_details_usecase.dart';
+import 'package:dynamic_emr/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 
@@ -74,5 +79,23 @@ Future<void> initDependencies() async {
   );
   injection.registerLazySingleton<AuthRemoteDatasource>(
     () => AuthRemoteDataSourceImpl(client: injection<DioHttpClient>()),
+  );
+
+  // Employee Profile
+  injection.registerLazySingleton<ProfileBloc>(
+    () => ProfileBloc(
+      employeeDetailsUsecase: injection<EmployeeDetailsUsecase>(),
+    ),
+  );
+  injection.registerLazySingleton<EmployeeDetailsUsecase>(
+    () => EmployeeDetailsUsecase(repository: injection<EmployeeRepository>()),
+  );
+  injection.registerLazySingleton<EmployeeRepository>(
+    () => EmployeeRepositoryImpl(
+      remoteDatasource: injection<EmployeeRemoteDatasource>(),
+    ),
+  );
+  injection.registerLazySingleton<EmployeeRemoteDatasource>(
+    () => EmployeeRemoteDatasourceImpl(client: injection<DioHttpClient>()),
   );
 }

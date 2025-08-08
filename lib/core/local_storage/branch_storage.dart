@@ -4,10 +4,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 abstract class BranchSecureStorage {
   Future<void> saveWorkingBranchId(String branchId);
   Future<String?> getWorkingBranchId();
-  Future<void> saveSelectedFiscalFiscalYearId(String fiscalyear);
-  Future<String?> getSelectedFiscalFiscalYearId();
+  Future<void> saveSelectedFiscalYearId(String fiscalyear);
+  Future<String?> getSelectedFiscalYearId();
   Future<void> removeWorkingBranchId();
-  Future<void> removeSelectedFiscalFiscalYearId();
+  Future<void> removeSelectedFiscalYearId();
 }
 
 class BranchStorage implements BranchSecureStorage {
@@ -35,7 +35,7 @@ class BranchStorage implements BranchSecureStorage {
   }
 
   @override
-  Future<void> saveSelectedFiscalFiscalYearId(String fiscalyear) async {
+  Future<void> saveSelectedFiscalYearId(String fiscalyear) async {
     await _secureStorage.write(
       key: 'selected_fiscal_year_id',
       value: fiscalyear,
@@ -43,7 +43,7 @@ class BranchStorage implements BranchSecureStorage {
   }
 
   @override
-  Future<String?> getSelectedFiscalFiscalYearId() async {
+  Future<String?> getSelectedFiscalYearId() async {
     try {
       return await _secureStorage.read(key: 'selected_fiscal_year_id');
     } catch (e) {
@@ -53,7 +53,7 @@ class BranchStorage implements BranchSecureStorage {
   }
 
   @override
-  Future<void> removeSelectedFiscalFiscalYearId() async {
+  Future<void> removeSelectedFiscalYearId() async {
     await _secureStorage.delete(key: 'selected_fiscal_year_id');
   }
 

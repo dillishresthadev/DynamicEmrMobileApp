@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
-
+import 'package:dynamic_emr/core/local_storage/branch_storage.dart';
 import 'package:dynamic_emr/core/local_storage/hospital_code_storage.dart';
 import 'package:dynamic_emr/core/local_storage/token_storage.dart';
 import 'package:dynamic_emr/features/auth/domain/entities/hospital_branch_entity.dart';
@@ -33,6 +33,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<GetHospitalBaseUrlEvent>(_onGetHospitalBaseUrl);
     on<GetHospitalBranchEvent>(_onGetHospitalBranchEvent);
     on<GetHospitalFinancialYearEvent>(_onGetHospitalFinancialYear);
+    on<LogoutEvent>(_onLogoutEvent);
   }
 
   Future<void> _onLogin(LoginEvent event, Emitter<AuthState> emit) async {
@@ -112,6 +113,26 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           errorMessage: "Failed getting Financial Year data  : $e",
         ),
       );
+    }
+  }
+
+  Future<void> _onLogoutEvent(
+    LogoutEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoadingState());
+    try {
+      await injection<TokenSecureStorage>().removeAccessToken();
+      await injection<TokenSecureStorage>().removeRefreshToken();
+      await injection<TokenSecureStorage>().removeExpirationTime();
+      await injection<BranchSecureStorage>().removeSelectedFiscalYearId();
+      await injection<BranchSecureStorage>().removeWorkingBranchId();
+      await injection<ISecureStorage>().removeHospitalCode();
+      await injection<ISecureStorage>().removeHospitalBaseUrl();
+      emit(AuthLogoutSuccessState());
+    } catch (e) {
+      log("Error Logging out :$e");
+      emit(AuthLogoutErrorState(errorMessage: e.toString()));
     }
   }
 }

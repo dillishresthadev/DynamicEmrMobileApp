@@ -1,6 +1,7 @@
 import 'package:dynamic_emr/core/routes/app_routes.dart';
 import 'package:dynamic_emr/core/routes/route_names.dart';
 import 'package:dynamic_emr/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:dynamic_emr/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:dynamic_emr/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,6 +24,9 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthBloc>(create: (context) => injection<AuthBloc>()),
+        BlocProvider<ProfileBloc>(
+          create: (context) => injection<ProfileBloc>(),
+        ),
       ],
       child: MaterialApp(
         title: 'Dynamic EMR',

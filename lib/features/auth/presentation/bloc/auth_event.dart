@@ -24,7 +24,6 @@ class GetHospitalBaseUrlEvent extends AuthEvent {
   @override
   List<Object> get props => [hospitalCode];
 }
-
 class GetHospitalBranchEvent extends AuthEvent {}
 
 class GetHospitalFinancialYearEvent extends AuthEvent {}

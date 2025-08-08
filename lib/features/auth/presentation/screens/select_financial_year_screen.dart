@@ -1,8 +1,10 @@
 import 'package:dynamic_emr/core/constants/app_colors.dart';
+import 'package:dynamic_emr/core/local_storage/branch_storage.dart';
 import 'package:dynamic_emr/core/routes/route_names.dart';
 import 'package:dynamic_emr/core/widgets/dropdown/custom_dropdown.dart';
 import 'package:dynamic_emr/features/auth/domain/entities/user_financial_year_entity.dart';
 import 'package:dynamic_emr/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:dynamic_emr/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -84,6 +86,8 @@ class _SelectFinancialYearScreenState extends State<SelectFinancialYearScreen> {
                           setState(() {
                             selectedFiscalYear = value;
                           });
+                          injection<BranchSecureStorage>()
+                              .saveSelectedFiscalYearId(value.toString());
                         }
                       },
                     ),
