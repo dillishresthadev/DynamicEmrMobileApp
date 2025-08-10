@@ -5,7 +5,15 @@ class AttendanceSummaryUsecase {
   final AttendanceRepository repository;
 
   AttendanceSummaryUsecase({required this.repository});
-  Future<List<AttendenceSummaryEntity>> call() async {
-    return await repository.getAttendanceSummary();
+  Future<List<AttendenceSummaryEntity>> call({
+    required DateTime fromDate,
+    required DateTime toDate,
+    required String shiftType,
+  }) async {
+    return await repository.getAttendanceSummary(
+      fromDate: fromDate,
+      toDate: toDate,
+      shiftType: shiftType,
+    );
   }
 }

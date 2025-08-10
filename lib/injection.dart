@@ -5,6 +5,13 @@ import 'package:dynamic_emr/core/local_storage/hospital_code_storage.dart';
 import 'package:dynamic_emr/core/local_storage/token_storage.dart';
 import 'package:dynamic_emr/core/network/connectivity_check.dart';
 import 'package:dynamic_emr/core/network/dio_http_client.dart';
+import 'package:dynamic_emr/features/attendance/data/datasource/attendance_remote_datasource.dart';
+import 'package:dynamic_emr/features/attendance/data/repository/attendance_repository_impl.dart';
+import 'package:dynamic_emr/features/attendance/domain/repository/attendance_repository.dart';
+import 'package:dynamic_emr/features/attendance/domain/usecases/attendance_summary_usecase.dart';
+import 'package:dynamic_emr/features/attendance/domain/usecases/current_month_attendance_extended_usecase.dart';
+import 'package:dynamic_emr/features/attendance/domain/usecases/current_month_attendance_primary_usecase.dart';
+import 'package:dynamic_emr/features/attendance/presentation/bloc/attendance_bloc.dart';
 import 'package:dynamic_emr/features/auth/data/datasource/auth_remote_datasource.dart';
 import 'package:dynamic_emr/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:dynamic_emr/features/auth/domain/repositories/auth_repository.dart';
@@ -97,5 +104,37 @@ Future<void> initDependencies() async {
   );
   injection.registerLazySingleton<EmployeeRemoteDatasource>(
     () => EmployeeRemoteDatasourceImpl(client: injection<DioHttpClient>()),
+  );
+  // Employee Attendance
+  injection.registerLazySingleton<AttendanceBloc>(
+    () => AttendanceBloc(
+      currentMonthAttendanceExtendedUsecase:
+          injection<CurrentMonthAttendanceExtendedUsecase>(),
+      currentMonthAttendancePrimaryUsecase:
+          injection<CurrentMonthAttendancePrimaryUsecase>(),
+      attendanceSummaryUsecase: injection<AttendanceSummaryUsecase>(),
+    ),
+  );
+  injection.registerLazySingleton<AttendanceSummaryUsecase>(
+    () =>
+        AttendanceSummaryUsecase(repository: injection<AttendanceRepository>()),
+  );
+  injection.registerLazySingleton<CurrentMonthAttendancePrimaryUsecase>(
+    () => CurrentMonthAttendancePrimaryUsecase(
+      repository: injection<AttendanceRepository>(),
+    ),
+  );
+  injection.registerLazySingleton<CurrentMonthAttendanceExtendedUsecase>(
+    () => CurrentMonthAttendanceExtendedUsecase(
+      repository: injection<AttendanceRepository>(),
+    ),
+  );
+  injection.registerLazySingleton<AttendanceRepository>(
+    () => AttendanceRepositoryImpl(
+      remoteDatasource: injection<AttendanceRemoteDatasource>(),
+    ),
+  );
+  injection.registerLazySingleton<AttendanceRemoteDatasource>(
+    () => AttendanceRemoteDatasourceImpl(client: injection<DioHttpClient>()),
   );
 }

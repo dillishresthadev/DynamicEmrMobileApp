@@ -1,4 +1,5 @@
 import 'package:dynamic_emr/core/constants/app_colors.dart';
+import 'package:dynamic_emr/features/attendance/presentation/screen/attendance_screen.dart';
 import 'package:dynamic_emr/features/home/presentation/screens/home_screen.dart';
 import 'package:dynamic_emr/features/profile/presentation/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class _AppMainNavState extends State<AppMainNav> {
     // LeavesScreen(),
     // ProfileScreen(),
     HomeScreen(),
-    Container(),
+    AttendanceScreen(),
     Container(),
     ProfileScreen(),
   ];
@@ -53,9 +54,9 @@ class _AppMainNavState extends State<AppMainNav> {
             label: "Home",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.account_balance_outlined),
-            activeIcon: Icon(Icons.account_balance_wallet),
-            label: "Payroll",
+            icon: Icon(Icons.abc),
+            activeIcon: Icon(Icons.abc),
+            label: "Attendance",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.email_outlined),
