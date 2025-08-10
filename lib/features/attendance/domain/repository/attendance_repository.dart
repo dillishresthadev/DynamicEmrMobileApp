@@ -4,7 +4,7 @@ import 'package:dynamic_emr/features/attendance/domain/entities/attendence_summa
 abstract class AttendanceRepository {
   Future<List<AttendanceEntity>> getCurrentMonthAttendancePrimary();
   Future<List<AttendanceEntity>> getCurrentMonthAttendanceExtended();
-  Future<List<AttendenceSummaryEntity>> getAttendanceSummary({
+  Future<AttendenceSummaryEntity> getAttendanceSummary({
     required DateTime fromDate,
     required DateTime toDate,
     required String shiftType,

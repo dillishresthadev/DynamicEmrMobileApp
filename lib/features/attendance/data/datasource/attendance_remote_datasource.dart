@@ -4,6 +4,7 @@ import 'package:dynamic_emr/core/constants/api_constants.dart';
 import 'package:dynamic_emr/core/local_storage/hospital_code_storage.dart';
 import 'package:dynamic_emr/core/local_storage/token_storage.dart';
 import 'package:dynamic_emr/core/network/dio_http_client.dart';
+import 'package:dynamic_emr/features/attendance/data/models/attendance_filter_model.dart';
 import 'package:dynamic_emr/features/attendance/data/models/attendance_model.dart';
 import 'package:dynamic_emr/features/attendance/data/models/attendance_summary_model.dart';
 import 'package:dynamic_emr/injection.dart';
@@ -11,7 +12,11 @@ import 'package:dynamic_emr/injection.dart';
 abstract class AttendanceRemoteDatasource {
   Future<List<AttendanceModel>> getCurrentMonthAttendancePrimary();
   Future<List<AttendanceModel>> getCurrentMonthAttendanceExtended();
-  Future<List<AttendanceSummaryModel>> getAttendanceSummary();
+  Future<AttendanceSummaryModel> getAttendanceSummary(
+    DateTime fromDate,
+    DateTime toDate,
+    String shiftType,
+  );
 }
 
 class AttendanceRemoteDatasourceImpl extends AttendanceRemoteDatasource {
@@ -74,28 +79,26 @@ class AttendanceRemoteDatasourceImpl extends AttendanceRemoteDatasource {
   }
 
   @override
-  Future<List<AttendanceSummaryModel>> getAttendanceSummary() async {
+  Future<AttendanceSummaryModel> getAttendanceSummary(
+    DateTime fromDate,
+    DateTime toDate,
+    String shiftType,
+  ) async {
     try {
       final accessToken = await injection<TokenSecureStorage>()
           .getAccessToken();
       final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
-      final dynamic response = await client.get(
+      final filter = AttendanceFilterModel(
+        fromDate: fromDate,
+        toDate: toDate,
+        shiftType: shiftType,
+      );
+      final response = await client.post(
         "$baseUrl${ApiConstants.getMyAttendanceSummary}",
         token: accessToken,
+        body: filter.toJson(),
       );
-      List<dynamic> jsonList;
-
-      if (response is List) {
-        jsonList = response;
-      } else if (response is Map<String, dynamic>) {
-        jsonList = response['data'];
-      } else {
-        jsonList = [];
-        log('Unexpected response format: $response');
-      }
-      return jsonList
-          .map((json) => AttendanceSummaryModel.fromJson(json))
-          .toList();
+      return AttendanceSummaryModel.fromJson(response);
     } catch (e) {
       log("Error getting attendance summary :$e");
       rethrow;

@@ -21,11 +21,18 @@ class AttendanceRepositoryImpl extends AttendanceRepository {
         .getCurrentMonthAttendancePrimary();
     return currentMonthAttendancePrimary;
   }
-  
-  @override
-  Future<List<AttendenceSummaryEntity>> getAttendanceSummary({required DateTime fromDate, required DateTime toDate, required String shiftType}) {
-    // TODO: implement getAttendanceSummary
-    throw UnimplementedError();
-  }
 
+  @override
+  Future<AttendenceSummaryEntity> getAttendanceSummary({
+    required DateTime fromDate,
+    required DateTime toDate,
+    required String shiftType,
+  }) async {
+    final attendanceSummary = await remoteDatasource.getAttendanceSummary(
+      fromDate,
+      toDate,
+      shiftType,
+    );
+    return attendanceSummary;
+  }
 }

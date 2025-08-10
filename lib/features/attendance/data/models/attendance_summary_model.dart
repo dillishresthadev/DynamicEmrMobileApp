@@ -13,12 +13,18 @@ class AttendanceSummaryModel extends AttendenceSummaryEntity {
   factory AttendanceSummaryModel.fromJson(Map<String, dynamic> json) {
     return AttendanceSummaryModel(
       attendanceFilter: AttendanceFilterModel.fromJson(json['filter']),
-      attendanceSummary: (json['attendanceSummary'] as List)
-          .map((e) => AttendanceModel.fromJson(e))
-          .toList(),
-      attendanceDetails: (json['attendanceDetails'] as List)
-          .map((e) => AttendanceDetailsModel.fromJson(e))
-          .toList(),
+
+      attendanceSummary: (json['attendanceSummary'] is List)
+          ? (json['attendanceSummary'] as List)
+                .map((e) => AttendanceModel.fromJson(e))
+                .toList()
+          : [],
+
+      attendanceDetails: (json['attendanceDetails'] is List)
+          ? (json['attendanceDetails'] as List)
+                .map((e) => AttendanceDetailsModel.fromJson(e))
+                .toList()
+          : [],
     );
   }
 }

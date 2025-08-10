@@ -1,5 +1,5 @@
 import 'package:dynamic_emr/core/constants/app_colors.dart';
-import 'package:dynamic_emr/features/attendance/presentation/screen/attendance_screen.dart';
+import 'package:dynamic_emr/features/attendance/presentation/screen/attendance_summary_screen.dart';
 import 'package:dynamic_emr/features/home/presentation/screens/home_screen.dart';
 import 'package:dynamic_emr/features/profile/presentation/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +20,7 @@ class _AppMainNavState extends State<AppMainNav> {
     // LeavesScreen(),
     // ProfileScreen(),
     HomeScreen(),
-    AttendanceScreen(),
+    AttendanceSummaryScreen(),
     Container(),
     ProfileScreen(),
   ];

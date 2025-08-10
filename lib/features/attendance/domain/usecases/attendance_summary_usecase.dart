@@ -5,7 +5,7 @@ class AttendanceSummaryUsecase {
   final AttendanceRepository repository;
 
   AttendanceSummaryUsecase({required this.repository});
-  Future<List<AttendenceSummaryEntity>> call({
+  Future<AttendenceSummaryEntity> call({
     required DateTime fromDate,
     required DateTime toDate,
     required String shiftType,
