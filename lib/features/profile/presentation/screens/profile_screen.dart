@@ -30,6 +30,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: Text("Profile", style: TextStyle(color: Colors.white)),
         centerTitle: false,
         backgroundColor: AppColors.primary,
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             onPressed: () {

@@ -28,7 +28,7 @@ class _AttendanceSummaryScreenState extends State<AttendanceSummaryScreen> {
       GetAttendanceSummaryEvent(
         fromDate: firstDayOfMonth,
         toDate: lastDayOfMonth,
-        shiftType: "",
+        shiftType: "Primary",
       ),
     );
   }
@@ -63,7 +63,10 @@ class _AttendanceSummaryScreenState extends State<AttendanceSummaryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Attendance Summary")),
+      appBar: AppBar(
+        title: const Text("Attendance Summary"),
+        automaticallyImplyLeading: false,
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12.0),
         child: BlocBuilder<AttendanceBloc, AttendanceState>(

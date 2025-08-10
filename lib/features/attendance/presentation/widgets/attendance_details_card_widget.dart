@@ -69,6 +69,14 @@ class AttendanceDetailsCardWidget extends StatelessWidget {
                         color: Color(0xFF1E293B),
                       ),
                     ),
+                    Text(
+                      attendanceDetails.shiftTitle,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF1E293B),
+                      ),
+                    ),
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
