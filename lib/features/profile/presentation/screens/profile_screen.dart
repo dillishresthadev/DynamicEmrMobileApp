@@ -5,6 +5,9 @@ import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/core/widgets/curved_divider_painter.dart';
 import 'package:dynamic_emr/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dynamic_emr/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:dynamic_emr/features/profile/presentation/screens/employee_details/personal_details_screen.dart';
+import 'package:dynamic_emr/features/profile/presentation/screens/employee_details/qualification_experience_screen.dart';
+import 'package:dynamic_emr/features/profile/presentation/screens/employee_details/work_and_shift_details_screen.dart';
 import 'package:dynamic_emr/features/profile/presentation/widgets/profile_menu_card.dart';
 import 'package:dynamic_emr/features/profile/presentation/widgets/profile_picture_widget.dart';
 import 'package:flutter/material.dart';
@@ -121,14 +124,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             icon: Icons.person,
                             title: "Profile Information",
                             subTitle: "Change your account information",
-                            press: () {},
+                            press: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    PersonalDetailsScreen(employee: employee),
+                              ),
+                            ),
                           ),
                           ProfileMenuCard(
                             icon: Icons.person,
                             title: "Qualifications and Working Experience",
                             subTitle:
                                 "Change your Qualifications and Working Experience",
-                            press: () {},
+                            press: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    QualificationExperienceScreen(
+                                      employee: employee,
+                                    ),
+                              ),
+                            ),
                           ),
                           ProfileMenuCard(
                             icon: Icons.model_training_rounded,
@@ -148,7 +165,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ProfileMenuCard(
                             icon: Icons.business_center,
                             title: "Work and Shift Information",
-                            press: () {},
+                            press: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => WorkAndShiftDetailsScreen(
+                                  employee: employee,
+                                ),
+                              ),
+                            ),
                           ),
                           ProfileMenuCard(
                             icon: Icons.file_copy_sharp,
@@ -190,7 +214,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             LogoutEvent(),
                                           );
                                           // After Logout Event is call navigate to Hospital Code Screen
-
                                           Navigator.pushReplacementNamed(
                                             context,
                                             RouteNames.hospitalCodeScreen,

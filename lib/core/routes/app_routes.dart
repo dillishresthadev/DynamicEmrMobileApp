@@ -5,7 +5,7 @@ import 'package:dynamic_emr/features/auth/presentation/screens/login_screen.dart
 import 'package:dynamic_emr/features/auth/presentation/screens/select_branch_screen.dart';
 import 'package:dynamic_emr/features/auth/presentation/screens/select_financial_year_screen.dart';
 import 'package:dynamic_emr/features/profile/presentation/screens/setting_screen.dart';
-import 'package:dynamic_emr/splash_screen.dart';
+import 'package:dynamic_emr/features/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
 
 class AppRoutes {
