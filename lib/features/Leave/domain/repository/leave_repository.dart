@@ -4,4 +4,6 @@ import 'package:dynamic_emr/features/Leave/domain/entities/leave_history_entity.
 abstract class LeaveRepository {
   Future<List<LeaveHistoryEntity>> getLeaveHistory();
   Future<List<LeaveApplicationEntity>> getLeaveApplicationHistory();
+  Future<List<LeaveApplicationEntity>> getApprovedLeaveList();
+  Future<List<LeaveApplicationEntity>> getPendingLeaveList();
 }

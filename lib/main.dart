@@ -1,5 +1,6 @@
 import 'package:dynamic_emr/core/routes/app_routes.dart';
 import 'package:dynamic_emr/core/routes/route_names.dart';
+import 'package:dynamic_emr/features/Leave/presentation/bloc/leave_bloc.dart';
 import 'package:dynamic_emr/features/attendance/presentation/bloc/attendance_bloc.dart';
 import 'package:dynamic_emr/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dynamic_emr/features/profile/presentation/bloc/profile_bloc.dart';
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
           create: (context) => injection<ProfileBloc>(),
         ),
         BlocProvider(create: (context) => injection<AttendanceBloc>()),
+        BlocProvider(create: (context) => injection<LeaveBloc>()),
       ],
       child: MaterialApp(
         title: 'Dynamic EMR',

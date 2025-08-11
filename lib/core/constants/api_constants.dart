@@ -55,7 +55,7 @@ class ApiConstants {
   static const String employeeLeaves = "/api/LeaveApplication/EmployeeLeaves";
   static const String approvedEmployeeLeavesToCome =
       "/api/LeaveApplication/ApprovedEmployeeLeavesToCome";
-  static const String notApprovedEmployeeLeavesToCome =
+  static const String pendingEmployeeLeavesToCome =
       "/api/LeaveApplication/NotApprovedEmployeeLeavesToCome";
   // Apply leave
   static const String leaveApplicationPost =

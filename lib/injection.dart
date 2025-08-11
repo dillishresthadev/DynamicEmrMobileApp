@@ -5,6 +5,14 @@ import 'package:dynamic_emr/core/local_storage/hospital_code_storage.dart';
 import 'package:dynamic_emr/core/local_storage/token_storage.dart';
 import 'package:dynamic_emr/core/network/connectivity_check.dart';
 import 'package:dynamic_emr/core/network/dio_http_client.dart';
+import 'package:dynamic_emr/features/Leave/data/datasource/leave_remote_datasource.dart';
+import 'package:dynamic_emr/features/Leave/data/repository/leave_repository_impl.dart';
+import 'package:dynamic_emr/features/Leave/domain/repository/leave_repository.dart';
+import 'package:dynamic_emr/features/Leave/domain/usecases/approved_leave_list_usecase.dart';
+import 'package:dynamic_emr/features/Leave/domain/usecases/leave_application_history_usecase.dart';
+import 'package:dynamic_emr/features/Leave/domain/usecases/leave_history_usecase.dart';
+import 'package:dynamic_emr/features/Leave/domain/usecases/pending_leave_list_usecase.dart';
+import 'package:dynamic_emr/features/Leave/presentation/bloc/leave_bloc.dart';
 import 'package:dynamic_emr/features/attendance/data/datasource/attendance_remote_datasource.dart';
 import 'package:dynamic_emr/features/attendance/data/repository/attendance_repository_impl.dart';
 import 'package:dynamic_emr/features/attendance/domain/repository/attendance_repository.dart';
@@ -136,5 +144,37 @@ Future<void> initDependencies() async {
   );
   injection.registerLazySingleton<AttendanceRemoteDatasource>(
     () => AttendanceRemoteDatasourceImpl(client: injection<DioHttpClient>()),
+  );
+  // Employee Available Leave History - allocated,taken, etc
+  injection.registerLazySingleton<LeaveBloc>(
+    () => LeaveBloc(
+      leaveHistoryUsecase: injection<LeaveHistoryUsecase>(),
+      leaveApplicationHistoryUsecase:
+          injection<LeaveApplicationHistoryUsecase>(),
+      approvedLeaveListUsecase: injection<ApprovedLeaveListUsecase>(),
+      pendingLeaveListUsecase: injection<PendingLeaveListUsecase>(),
+    ),
+  );
+  injection.registerLazySingleton<ApprovedLeaveListUsecase>(
+    () => ApprovedLeaveListUsecase(repository: injection<LeaveRepository>()),
+  );
+  injection.registerLazySingleton<PendingLeaveListUsecase>(
+    () => PendingLeaveListUsecase(repository: injection<LeaveRepository>()),
+  );
+  injection.registerLazySingleton<LeaveHistoryUsecase>(
+    () => LeaveHistoryUsecase(repository: injection<LeaveRepository>()),
+  );
+  injection.registerLazySingleton<LeaveApplicationHistoryUsecase>(
+    () => LeaveApplicationHistoryUsecase(
+      repository: injection<LeaveRepository>(),
+    ),
+  );
+  injection.registerLazySingleton<LeaveRepository>(
+    () => LeaveRepositoryImpl(
+      remoteDatasource: injection<LeaveRemoteDatasource>(),
+    ),
+  );
+  injection.registerLazySingleton<LeaveRemoteDatasource>(
+    () => LeaveRemoteDatasourceImpl(client: injection<DioHttpClient>()),
   );
 }
