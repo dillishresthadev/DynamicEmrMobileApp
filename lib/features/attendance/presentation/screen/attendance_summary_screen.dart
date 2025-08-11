@@ -1,12 +1,16 @@
+import 'package:dynamic_emr/core/constants/app_colors.dart';
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
+import 'package:dynamic_emr/core/widgets/dropdown/custom_dropdown.dart';
+import 'package:dynamic_emr/core/widgets/form/custom_date_time_field.dart';
+import 'package:dynamic_emr/features/attendance/domain/entities/attendence_summary_entity.dart';
 import 'package:dynamic_emr/features/attendance/presentation/bloc/attendance_bloc.dart';
-import 'package:dynamic_emr/features/attendance/presentation/widgets/attendance_card_widget.dart';
 import 'package:dynamic_emr/features/attendance/presentation/widgets/attendance_details_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AttendanceSummaryScreen extends StatefulWidget {
-  const AttendanceSummaryScreen({super.key});
+  final AttendenceSummaryEntity attendenceSummary;
+  const AttendanceSummaryScreen({super.key, required this.attendenceSummary});
 
   @override
   State<AttendanceSummaryScreen> createState() =>
@@ -14,213 +18,185 @@ class AttendanceSummaryScreen extends StatefulWidget {
 }
 
 class _AttendanceSummaryScreenState extends State<AttendanceSummaryScreen> {
+  final TextEditingController _startdatecontroller = TextEditingController();
+  final TextEditingController _enddatecontroller = TextEditingController();
+  String? _selectedShift;
+
+  final List<String> type = ["Primary", "Extended"];
+
   @override
   void initState() {
     super.initState();
-    context.read<AttendanceBloc>().add(GetCurrentMonthAttendancePrimaryEvent());
-    context.read<AttendanceBloc>().add(
-      GetCurrentMonthAttendanceExtendedEvent(),
-    );
-    // setting fromDate and toDate to cover the current month by default when creating the GetAttendanceSummaryEvent
-    // final now = DateTime.now();
-    // final firstDayOfMonth = DateTime(now.year, now.month, 1);
-    // final lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
-    // context.read<AttendanceBloc>().add(
-    //   GetAttendanceSummaryEvent(
-    //     fromDate: firstDayOfMonth,
-    //     toDate: lastDayOfMonth,
-    //     shiftType: "Primary",
-    //   ),
-    // );
-    // setting fromDate and toDate to cover the This week by default when creating the GetAttendanceSummaryEvent
-
-    final now = DateTime.now();
-    final oneWeekAgo = now.subtract(
-      const Duration(days: 6),
-    ); // last 7 days including today
-
     context.read<AttendanceBloc>().add(
       GetAttendanceSummaryEvent(
-        fromDate: oneWeekAgo,
-        toDate: now,
-        shiftType: "Primary",
+        fromDate: DateTime.now().subtract(Duration(days: 7)),
+        toDate: DateTime.now(),
+        shiftType: "",
       ),
     );
   }
 
-  final statusCards = [
-    {
-      'title': 'Working Days',
-      'icon': Icons.work_outline,
-      'color': const Color(0xFF2563EB),
-      'bgColor': const Color(0xFFEFF6FF),
-    },
-    {
-      'title': 'Present',
-      'icon': Icons.check_circle_outline,
-      'color': const Color(0xFF10B981),
-      'bgColor': const Color(0xFFECFDF5),
-    },
-    {
-      'title': 'Leave',
-      'icon': Icons.cancel_outlined,
-      'color': const Color(0xFFEF4444),
-      'bgColor': const Color(0xFFFEF2F2),
-    },
-    {
-      'title': 'Week End',
-      'icon': Icons.timelapse,
-      'color': Colors.orange,
-      'bgColor': const Color(0xFFFFF7E6),
-    },
-  ];
+  @override
+  void dispose() {
+    super.dispose();
+    _startdatecontroller.dispose();
+    _enddatecontroller.dispose();
+  }
+
+  void _showFilterBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                "Filter Attendance",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+
+              Row(
+                children: [
+                  // Start Date
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Start Date",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        SizedBox(height: 5),
+                        CustomDateTimeField(
+                          prefixIcon: Icon(Icons.date_range),
+                          controller: _startdatecontroller,
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime.now(),
+                          hintText: "Start Date",
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  // End Date
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text("End Date", style: TextStyle(fontSize: 16)),
+                        const SizedBox(height: 5),
+                        CustomDateTimeField(
+                          prefixIcon: Icon(Icons.date_range),
+                          controller: _enddatecontroller,
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime.now(),
+                          hintText: "End Date",
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
+              CustomDropdown(
+                value: _selectedShift,
+                items: type,
+                hintText: "Type",
+                onChanged: (value) {
+                  setState(() {
+                    _selectedShift = value;
+                  });
+                },
+              ),
+              SizedBox(height: 10),
+
+              ElevatedButton(
+                onPressed: () {
+                  if (_startdatecontroller.text.isEmpty ||
+                      _enddatecontroller.text.isEmpty) {
+                    return;
+                  }
+                  context.read<AttendanceBloc>().add(
+                    GetAttendanceSummaryEvent(
+                      fromDate: DateTime.parse(_startdatecontroller.text),
+                      toDate: DateTime.parse(_enddatecontroller.text),
+                      shiftType: _selectedShift ?? '',
+                    ),
+                  );
+                  Navigator.of(context).pop();
+                },
+                style: ElevatedButton.styleFrom(
+                  minimumSize: const Size(double.infinity, 48),
+                  backgroundColor: AppColors.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                ),
+                child: const Text(
+                  "Apply Filter",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: DynamicEMRAppBar(title: "Attendance Summary"),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12.0),
-        child: BlocBuilder<AttendanceBloc, AttendanceState>(
-          builder: (context, state) {
-            if (state is AttendanceLoadingState) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (state is AttendanceErrorState) {
-              return Center(child: Text("Error: ${state.errorMessage}"));
-            } else if (state is AttendanceCompleteState) {
-              final primary = state.primary;
-              final extended = state.extended;
-              final attendanceSummary = state.attendanceSummary;
+      appBar: DynamicEMRAppBar(
+        title: "Attendance Summary",
+        automaticallyImplyLeading: true,
+        actions: [
+          IconButton(
+            onPressed: _showFilterBottomSheet,
+            icon: Icon(Icons.filter_list, color: Colors.white),
+          ),
+        ],
+      ),
+      body: BlocBuilder<AttendanceBloc, AttendanceState>(
+        builder: (context, state) {
+          if (state is AttendanceLoadingState) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is AttendanceErrorState) {
+            return Center(child: Text("Error: ${state.errorMessage}"));
+          } else if (state is AttendanceCompleteState) {
+            final attendanceSummary = state.attendanceSummary;
 
-              return SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Primary Attendance Section
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Primary Attendance',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1E293B),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 8,
-                            mainAxisSpacing: 8,
-                            childAspectRatio: 1.8,
-                          ),
-                      itemCount: primary.length,
-                      itemBuilder: (context, index) {
-                        final primaryAttendance = primary[index];
-                        final stat = statusCards.firstWhere(
-                          (e) => e['title'] == primaryAttendance.category,
-                          orElse: () => {
-                            'title': primaryAttendance.category,
-                            'icon': Icons.help_outline,
-                            'color': Colors.grey,
-                            'bgColor': Colors.grey.shade200,
-                          },
-                        );
-
-                        return AttendanceCardWidget(
-                          icon: stat['icon'] as IconData,
-                          color: stat['color'] as Color,
-                          bgColor: stat['bgColor'] as Color,
-                          count: primaryAttendance.qty.toString(),
-                          label: primaryAttendance.category,
-                        );
-                      },
-                    ),
-
-                    const SizedBox(height: 32),
-                    // Extended Attendance Section
-                    const Text(
-                      'Extended Attendance',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1E293B),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 8,
-                            mainAxisSpacing: 8,
-                            childAspectRatio: 1.8,
-                          ),
-                      itemCount: extended.length,
-                      itemBuilder: (context, index) {
-                        final extendedAttendance = extended[index];
-                        final stat = statusCards.firstWhere(
-                          (e) => e['title'] == extendedAttendance.category,
-                          orElse: () => {
-                            'title': extendedAttendance.category,
-                            'icon': Icons.help_outline,
-                            'color': Colors.grey,
-                            'bgColor': Colors.grey.shade200,
-                          },
-                        );
-
-                        return AttendanceCardWidget(
-                          icon: stat['icon'] as IconData,
-                          color: stat['color'] as Color,
-                          bgColor: stat['bgColor'] as Color,
-                          count: extendedAttendance.qty.toString(),
-                          label: extendedAttendance.category,
-                        );
-                      },
-                    ),
-
-                    const SizedBox(height: 32),
-
-                    // Attendance Summary Section
-                    if (attendanceSummary != null) ...[
-                      const Text(
-                        'Recent Attendance',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF1E293B),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      ListView.builder(
-                        shrinkWrap: true,
-                        reverse: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: attendanceSummary.attendanceDetails.length,
-                        itemBuilder: (context, index) {
-                          final attendanceDetails =
-                              attendanceSummary.attendanceDetails[index];
-                          return AttendanceDetailsCardWidget(
-                            attendanceDetails: attendanceDetails,
-                          );
-                        },
-                      ),
-                    ],
-                    const SizedBox(height: 32),
-                  ],
-                ),
-              );
-            } else {
-              return const SizedBox.shrink();
-            }
-          },
-        ),
+            return ListView.builder(
+              shrinkWrap: true,
+              itemCount: attendanceSummary?.attendanceDetails.length,
+              itemBuilder: (context, index) {
+                final attendanceDetails =
+                    attendanceSummary?.attendanceDetails[index];
+                if (attendanceSummary!.attendanceDetails.isEmpty) {
+                  return Center(child: Text("No Attendence Details"));
+                } else {
+                  return AttendanceDetailsCardWidget(
+                    attendanceDetails: attendanceDetails!,
+                  );
+                }
+              },
+            );
+          }
+          return SizedBox.shrink();
+        },
       ),
     );
   }

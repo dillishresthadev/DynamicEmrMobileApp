@@ -31,21 +31,29 @@ class CustomDateTimeField extends StatefulWidget {
 
 class _CustomDateTimeFieldState extends State<CustomDateTimeField> {
   late TextEditingController _controller;
+  bool _isControllerOwner = false;
 
   @override
   void initState() {
     super.initState();
-    _controller = widget.controller ?? TextEditingController();
+    if (widget.controller == null) {
+      _controller = TextEditingController();
+      _isControllerOwner = true;
+    } else {
+      _controller = widget.controller!;
+      _isControllerOwner = false;
+    }
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    if (_isControllerOwner) {
+      _controller.dispose();
+    }
     super.dispose();
   }
 
   Future<void> _selectDateTime(BuildContext context) async {
-    // Pick a date
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -54,17 +62,15 @@ class _CustomDateTimeFieldState extends State<CustomDateTimeField> {
     );
 
     if (pickedDate != null) {
-      final DateTime dateTime = DateTime(
+      final dateTime = DateTime(
         pickedDate.year,
         pickedDate.month,
         pickedDate.day,
       );
-
-      final String formattedDate = DateFormat('d/MM/yyyy').format(dateTime);
-
+      final formattedDate = DateFormat('yyyy-MM-dd').format(dateTime);
       setState(() {
         _controller.text = formattedDate;
-        widget.onChanged!(dateTime.toIso8601String());
+        widget.onChanged?.call(dateTime.toIso8601String());
       });
     }
   }
