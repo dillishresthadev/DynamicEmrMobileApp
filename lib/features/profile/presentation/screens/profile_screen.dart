@@ -1,6 +1,7 @@
 import 'package:dynamic_emr/core/constants/app_colors.dart';
 import 'package:dynamic_emr/core/routes/route_names.dart';
 import 'package:dynamic_emr/core/utils/app_snack_bar.dart';
+import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/core/widgets/curved_divider_painter.dart';
 import 'package:dynamic_emr/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dynamic_emr/features/profile/presentation/bloc/profile_bloc.dart';
@@ -26,11 +27,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Profile", style: TextStyle(color: Colors.white)),
-        centerTitle: false,
-        backgroundColor: AppColors.primary,
-        automaticallyImplyLeading: false,
+      // appBar: AppBar(
+      //   title: Text("Profile", style: TextStyle(color: Colors.white)),
+      //   centerTitle: false,
+      //   backgroundColor: AppColors.primary,
+      //   automaticallyImplyLeading: false,
+      //   actions: [
+      //     IconButton(
+      //       onPressed: () {
+      //         Navigator.pushNamed(context, RouteNames.settingScreen);
+      //       },
+      //       icon: Icon(Icons.settings_outlined, color: Colors.white),
+      //     ),
+      //   ],
+      // ),
+      appBar: DynamicEMRAppBar(
+        title: "Profile",
         actions: [
           IconButton(
             onPressed: () {
@@ -40,6 +52,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
       ),
+
       body: BlocListener<ProfileBloc, ProfileState>(
         listener: (context, state) {
           if (state is ProfileErrorState) {

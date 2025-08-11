@@ -54,13 +54,13 @@ class _AppMainNavState extends State<AppMainNav> {
             label: "Home",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.abc),
-            activeIcon: Icon(Icons.abc),
+            icon: Icon(Icons.access_time),
+            activeIcon: Icon(Icons.access_time_filled),
             label: "Attendance",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.email_outlined),
-            activeIcon: Icon(Icons.email),
+            icon: Icon(Icons.date_range_outlined),
+            activeIcon: Icon(Icons.date_range),
             label: "Leaves",
           ),
           BottomNavigationBarItem(

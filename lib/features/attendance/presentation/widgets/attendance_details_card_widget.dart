@@ -58,6 +58,14 @@ class AttendanceDetailsCardWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Date & Status
+                Text(
+                  attendanceDetails.shiftTitle,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF1E293B),
+                  ),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -69,29 +77,31 @@ class AttendanceDetailsCardWidget extends StatelessWidget {
                         color: Color(0xFF1E293B),
                       ),
                     ),
-                    Text(
-                      attendanceDetails.shiftTitle,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF1E293B),
-                      ),
-                    ),
+
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.grey.withValues(alpha: 0.1),
+                        color:
+                            attendanceDetails.statusColorCode.startsWith("#") &&
+                                attendanceDetails.statusColorCode.length == 7
+                            ? Color(
+                                int.parse(
+                                  attendanceDetails.statusColorCode
+                                      .replaceFirst("#", "0xFF"),
+                                ),
+                              )
+                            : null,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        attendanceDetails.status.toString(),
+                        attendanceDetails.statusFullName.toString(),
                         style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: Colors.blueGrey,
+                          color: Colors.white,
                         ),
                       ),
                     ),
@@ -103,40 +113,22 @@ class AttendanceDetailsCardWidget extends StatelessWidget {
                   children: [
                     Expanded(
                       child: _buildActivityDetail(
-                        'Check In',
-                        formatTime(attendanceDetails.checkInTime),
+                        'Check In / Out',
+                        "${formatTime(attendanceDetails.checkInTime)} - ${formatTime(attendanceDetails.checkOutTime)}",
                       ),
                     ),
                     Expanded(
                       child: _buildActivityDetail(
-                        'Check Out',
-                        formatTime(attendanceDetails.checkOutTime),
+                        'Shift Time',
+                        "${formatTime(attendanceDetails.shiftStartTime)} - ${formatTime(attendanceDetails.shiftEndTime)}",
                       ),
                     ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Type",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey.shade600,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            attendanceDetails.dutyType.toString(),
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Color(0xFF1E293B),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    // Expanded(
+                    //   child: _buildActivityDetail(
+                    //     "Type",
+                    //     attendanceDetails.dutyType.toString(),
+                    //   ),
+                    // ),
                   ],
                 ),
               ],

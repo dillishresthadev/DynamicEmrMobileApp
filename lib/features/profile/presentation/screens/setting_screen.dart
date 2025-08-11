@@ -1,3 +1,4 @@
+import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/features/profile/presentation/widgets/profile_menu_card.dart';
 import 'package:flutter/material.dart';
 
@@ -7,6 +8,10 @@ class SettingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: DynamicEMRAppBar(
+        title: "Settings",
+        automaticallyImplyLeading: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: SingleChildScrollView(

@@ -29,17 +29,14 @@ class AttendanceCardWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Icon(icon, color: color, size: 24),
-            ),
+            Icon(icon, color: color, size: 18),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   count,
                   style: const TextStyle(
-                    fontSize: 28,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF1E293B),
                   ),

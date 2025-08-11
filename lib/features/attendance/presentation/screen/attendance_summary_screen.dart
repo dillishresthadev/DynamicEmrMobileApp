@@ -1,3 +1,4 @@
+import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/features/attendance/presentation/bloc/attendance_bloc.dart';
 import 'package:dynamic_emr/features/attendance/presentation/widgets/attendance_card_widget.dart';
 import 'package:dynamic_emr/features/attendance/presentation/widgets/attendance_details_card_widget.dart';
@@ -21,13 +22,27 @@ class _AttendanceSummaryScreenState extends State<AttendanceSummaryScreen> {
       GetCurrentMonthAttendanceExtendedEvent(),
     );
     // setting fromDate and toDate to cover the current month by default when creating the GetAttendanceSummaryEvent
+    // final now = DateTime.now();
+    // final firstDayOfMonth = DateTime(now.year, now.month, 1);
+    // final lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
+    // context.read<AttendanceBloc>().add(
+    //   GetAttendanceSummaryEvent(
+    //     fromDate: firstDayOfMonth,
+    //     toDate: lastDayOfMonth,
+    //     shiftType: "Primary",
+    //   ),
+    // );
+    // setting fromDate and toDate to cover the This week by default when creating the GetAttendanceSummaryEvent
+
     final now = DateTime.now();
-    final firstDayOfMonth = DateTime(now.year, now.month, 1);
-    final lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
+    final oneWeekAgo = now.subtract(
+      const Duration(days: 6),
+    ); // last 7 days including today
+
     context.read<AttendanceBloc>().add(
       GetAttendanceSummaryEvent(
-        fromDate: firstDayOfMonth,
-        toDate: lastDayOfMonth,
+        fromDate: oneWeekAgo,
+        toDate: now,
         shiftType: "Primary",
       ),
     );
@@ -37,8 +52,8 @@ class _AttendanceSummaryScreenState extends State<AttendanceSummaryScreen> {
     {
       'title': 'Working Days',
       'icon': Icons.work_outline,
-      'color': const Color(0xFF1097B9),
-      'bgColor': const Color(0xFFECFDF5),
+      'color': const Color(0xFF2563EB),
+      'bgColor': const Color(0xFFEFF6FF),
     },
     {
       'title': 'Present',
@@ -63,10 +78,7 @@ class _AttendanceSummaryScreenState extends State<AttendanceSummaryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Attendance Summary"),
-        automaticallyImplyLeading: false,
-      ),
+      appBar: DynamicEMRAppBar(title: "Attendance Summary"),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12.0),
         child: BlocBuilder<AttendanceBloc, AttendanceState>(
@@ -101,9 +113,9 @@ class _AttendanceSummaryScreenState extends State<AttendanceSummaryScreen> {
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 12,
-                            childAspectRatio: 1.3,
+                            crossAxisSpacing: 8,
+                            mainAxisSpacing: 8,
+                            childAspectRatio: 1.8,
                           ),
                       itemCount: primary.length,
                       itemBuilder: (context, index) {
@@ -145,9 +157,9 @@ class _AttendanceSummaryScreenState extends State<AttendanceSummaryScreen> {
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
-                            crossAxisSpacing: 12,
-                            mainAxisSpacing: 12,
-                            childAspectRatio: 1.3,
+                            crossAxisSpacing: 8,
+                            mainAxisSpacing: 8,
+                            childAspectRatio: 1.8,
                           ),
                       itemCount: extended.length,
                       itemBuilder: (context, index) {
@@ -188,6 +200,7 @@ class _AttendanceSummaryScreenState extends State<AttendanceSummaryScreen> {
 
                       ListView.builder(
                         shrinkWrap: true,
+                        reverse: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: attendanceSummary.attendanceDetails.length,
                         itemBuilder: (context, index) {
