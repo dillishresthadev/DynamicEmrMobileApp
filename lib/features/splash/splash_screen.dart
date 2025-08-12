@@ -1,4 +1,3 @@
-import 'package:dynamic_emr/core/constants/app_colors.dart';
 import 'package:dynamic_emr/core/routes/route_names.dart';
 import 'package:dynamic_emr/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
@@ -40,11 +39,11 @@ class SplashScreenState extends State<SplashScreen> {
       child: Scaffold(
         body: Container(
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [AppColors.primary, Colors.white],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
+            // gradient: LinearGradient(
+            //   colors: [AppColors.primary, Colors.white],
+            //   begin: Alignment.topCenter,
+            //   end: Alignment.bottomCenter,
+            // ),
           ),
           child: Center(child: Image.asset('assets/logo/logo.jpeg')),
         ),

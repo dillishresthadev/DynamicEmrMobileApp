@@ -1,5 +1,7 @@
 import 'package:dynamic_emr/features/Leave/data/datasource/leave_remote_datasource.dart';
+import 'package:dynamic_emr/features/Leave/data/models/leave_application_request_model.dart';
 import 'package:dynamic_emr/features/Leave/domain/entities/leave_application_entity.dart';
+import 'package:dynamic_emr/features/Leave/domain/entities/leave_application_request_entity.dart';
 import 'package:dynamic_emr/features/Leave/domain/entities/leave_history_entity.dart';
 import 'package:dynamic_emr/features/Leave/domain/repository/leave_repository.dart';
 
@@ -25,5 +27,27 @@ class LeaveRepositoryImpl extends LeaveRepository {
   @override
   Future<List<LeaveApplicationEntity>> getPendingLeaveList() async {
     return await remoteDatasource.getPendingLeaveList();
+  }
+
+  @override
+  Future<bool> applyLeave(LeaveApplicationRequestEntity leaveRequest) async {
+    final model = LeaveApplicationRequestModel(
+      leaveTypeId: leaveRequest.leaveTypeId,
+      fromDate: leaveRequest.fromDate,
+      fromDateNp: leaveRequest.fromDateNp,
+      toDate: leaveRequest.toDate,
+      toDateNp: leaveRequest.toDateNp,
+      halfDayStatus: leaveRequest.halfDayStatus,
+      totalLeaveDays: leaveRequest.totalLeaveDays,
+      reason: leaveRequest.reason,
+      extendedFromDate: leaveRequest.extendedFromDate,
+      extendedToDate: leaveRequest.extendedToDate,
+      extendedFromDateNp: leaveRequest.extendedFromDateNp,
+      extendedLeaveTypeId: leaveRequest.extendedLeaveTypeId,
+      substituteEmployeeId: leaveRequest.substituteEmployeeId,
+      isHalfDay: leaveRequest.isHalfDay,
+    );
+
+    return await remoteDatasource.applyLeave(model);
   }
 }

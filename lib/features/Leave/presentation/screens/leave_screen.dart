@@ -1,6 +1,7 @@
 import 'package:dynamic_emr/core/constants/app_colors.dart';
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/features/Leave/presentation/bloc/leave_bloc.dart';
+import 'package:dynamic_emr/features/Leave/presentation/screens/apply_leave_form_screen.dart';
 import 'package:dynamic_emr/features/Leave/presentation/screens/tabs/approved_leaves_tab.dart';
 import 'package:dynamic_emr/features/Leave/presentation/screens/tabs/pending_leaves_tab.dart';
 import 'package:dynamic_emr/features/Leave/presentation/widgets/leave_card_widget.dart';
@@ -95,6 +96,18 @@ class _LeaveScreenState extends State<LeaveScreen>
           _buildTabBarSection(),
           _buildTabViewSection(),
         ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ApplyLeaveFormScreen()),
+        ),
+        label: Text('Apply Leave'),
+        icon: Icon(Icons.add),
+
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }

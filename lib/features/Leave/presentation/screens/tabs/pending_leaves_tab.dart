@@ -21,33 +21,39 @@ class _PendingLeavesTabState extends State<PendingLeavesTab> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<LeaveBloc, LeaveState>(
-        buildWhen: (previous, current) {
-          // Only rebuild UI if approved leaves list changes
-          return previous.pendingLeave != current.pendingLeave ||
-              (previous.status == LeaveStatus.loading) !=
-                  (current.status == LeaveStatus.loading);
-        },
-        builder: (context, state) {
-          if ((state.status == LeaveStatus.loading) &&
-              (state.pendingLeave.isEmpty)) {
-            return Center(child: CircularProgressIndicator());
-          } else if (state.approvedLeave.isNotEmpty) {
-            final pendingLeave = state.pendingLeave;
-            return ListView.builder(
-              itemCount: pendingLeave.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsets.only(
-                    bottom: index < pendingLeave.length - 1 ? 8.0 : 0,
-                  ),
-                  child: LeaveApplicationCardWidget(leave: pendingLeave[index]),
-                );
-              },
-            );
-          }
-          return const Center(child: Text("No approved leaves found"));
-        },
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: BlocBuilder<LeaveBloc, LeaveState>(
+          // buildWhen: (previous, current) {
+          //   // Only rebuild UI if approved leaves list changes
+          //   return previous.pendingLeave != current.pendingLeave ||
+          //       (previous.status == LeaveStatus.loading) !=
+          //           (current.status == LeaveStatus.loading);
+          // },
+          builder: (context, state) {
+            if (state.status == LeaveStatus.loading) {
+              return Center(child: CircularProgressIndicator());
+            } else if (state.status == LeaveStatus.pendingLeaveLoadSuccess) {
+              final pendingLeave = state.pendingLeave;
+              return ListView.builder(
+                itemCount: pendingLeave.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      bottom: index < pendingLeave.length - 1 ? 8.0 : 0,
+                    ),
+                    child: LeaveApplicationCardWidget(
+                      leave: pendingLeave[index],
+                    ),
+                  );
+                },
+              );
+            } else if (state.status == LeaveStatus.pendingLeaveLoadError) {
+              return Center(child: Text(state.message));
+            }
+            return const Center(child: Text("No pending leaves found"));
+          },
+        ),
       ),
     );
   }

@@ -175,6 +175,8 @@ class DioHttpClient {
         } catch (e) {
           throw Exception("Invalid JSON format in response");
         }
+      } else if (response.data is bool) {
+        return {"data": response.data};
       } else if (response.data == null) {
         throw Exception("Response data is null");
       } else {

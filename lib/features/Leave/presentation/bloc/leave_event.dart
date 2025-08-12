@@ -14,3 +14,11 @@ final class LeaveApplicationHistoryEvent extends LeaveEvent {}
 final class ApprovedLeaveListEvent extends LeaveEvent {}
 
 final class PendingLeaveListEvent extends LeaveEvent {}
+
+final class ApplyLeaveEvent extends LeaveEvent {
+  final LeaveApplicationRequestEntity leaveRequest;
+
+  const ApplyLeaveEvent({required this.leaveRequest});
+  @override
+  List<Object> get props => [leaveRequest];
+}

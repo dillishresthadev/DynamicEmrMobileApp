@@ -61,6 +61,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       final isConnected = await connectivityCheck.isConnected;
 
+      if (accessToken == null || refreshToken == null) {
+        emit(AuthUnauthenticated());
+      }
+
       // If offline, allow login with existing credentials
       if (!isConnected) {
         emit(AuthErrorState(errorMessage: "No Internet"));

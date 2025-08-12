@@ -8,6 +8,7 @@ import 'package:dynamic_emr/core/network/dio_http_client.dart';
 import 'package:dynamic_emr/features/Leave/data/datasource/leave_remote_datasource.dart';
 import 'package:dynamic_emr/features/Leave/data/repository/leave_repository_impl.dart';
 import 'package:dynamic_emr/features/Leave/domain/repository/leave_repository.dart';
+import 'package:dynamic_emr/features/Leave/domain/usecases/apply_leave_usecase.dart';
 import 'package:dynamic_emr/features/Leave/domain/usecases/approved_leave_list_usecase.dart';
 import 'package:dynamic_emr/features/Leave/domain/usecases/leave_application_history_usecase.dart';
 import 'package:dynamic_emr/features/Leave/domain/usecases/leave_history_usecase.dart';
@@ -145,7 +146,7 @@ Future<void> initDependencies() async {
   injection.registerLazySingleton<AttendanceRemoteDatasource>(
     () => AttendanceRemoteDatasourceImpl(client: injection<DioHttpClient>()),
   );
-  // Employee Available Leave History - allocated,taken, etc
+  // Employee (Leave)
   injection.registerLazySingleton<LeaveBloc>(
     () => LeaveBloc(
       leaveHistoryUsecase: injection<LeaveHistoryUsecase>(),
@@ -153,7 +154,11 @@ Future<void> initDependencies() async {
           injection<LeaveApplicationHistoryUsecase>(),
       approvedLeaveListUsecase: injection<ApprovedLeaveListUsecase>(),
       pendingLeaveListUsecase: injection<PendingLeaveListUsecase>(),
+      applyLeaveUsecase: injection<ApplyLeaveUsecase>(),
     ),
+  );
+  injection.registerLazySingleton<ApplyLeaveUsecase>(
+    () => ApplyLeaveUsecase(repository: injection<LeaveRepository>()),
   );
   injection.registerLazySingleton<ApprovedLeaveListUsecase>(
     () => ApprovedLeaveListUsecase(repository: injection<LeaveRepository>()),

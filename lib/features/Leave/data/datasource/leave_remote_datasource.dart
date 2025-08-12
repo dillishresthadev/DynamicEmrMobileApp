@@ -6,6 +6,7 @@ import 'package:dynamic_emr/core/local_storage/hospital_code_storage.dart';
 import 'package:dynamic_emr/core/local_storage/token_storage.dart';
 import 'package:dynamic_emr/core/network/dio_http_client.dart';
 import 'package:dynamic_emr/features/Leave/data/models/leave_application_model.dart';
+import 'package:dynamic_emr/features/Leave/data/models/leave_application_request_model.dart';
 import 'package:dynamic_emr/features/Leave/data/models/leave_history_model.dart';
 import 'package:dynamic_emr/injection.dart';
 
@@ -14,6 +15,7 @@ abstract class LeaveRemoteDatasource {
   Future<List<LeaveApplicationModel>> getLeaveApplicationHistory();
   Future<List<LeaveApplicationModel>> getApprovedLeaveList();
   Future<List<LeaveApplicationModel>> getPendingLeaveList();
+  Future<bool> applyLeave(LeaveApplicationRequestModel leaveRequest);
 }
 
 class LeaveRemoteDatasourceImpl implements LeaveRemoteDatasource {
@@ -174,6 +176,37 @@ class LeaveRemoteDatasourceImpl implements LeaveRemoteDatasource {
           .toList();
     } catch (e) {
       log("Error getting leave history: $e");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool> applyLeave(LeaveApplicationRequestModel leaveRequest) async {
+    try {
+      final accessToken = await injection<TokenSecureStorage>()
+          .getAccessToken();
+      final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
+      final workingBranchId = await injection<BranchSecureStorage>()
+          .getWorkingBranchId();
+      final workingFinancialId = await injection<BranchSecureStorage>()
+          .getSelectedFiscalYearId();
+
+      final rawResponse = await client.post(
+        "$baseUrl/${ApiConstants.leaveApplicationPost}",
+        token: accessToken,
+        body: leaveRequest.toJson(),
+        headers: {
+          "workingBranchId": workingBranchId.toString(),
+          "workingFinancialId": workingFinancialId.toString(),
+        },
+      );
+
+      if (rawResponse['data'] is bool) {
+        return rawResponse['data'];
+      }
+      throw Exception("Unexpected response format");
+    } catch (e) {
+      log("Error getting while applying leave: $e");
       rethrow;
     }
   }

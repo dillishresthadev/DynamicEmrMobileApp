@@ -1,3 +1,4 @@
+import 'package:dynamic_emr/core/extension/date_extension.dart';
 import 'package:dynamic_emr/features/Leave/domain/entities/leave_application_entity.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +15,8 @@ class _LeaveApplicationCardWidgetState
     extends State<LeaveApplicationCardWidget> {
   @override
   Widget build(BuildContext context) {
+    final leave = widget.leave;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -31,19 +34,20 @@ class _LeaveApplicationCardWidgetState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Top Row: Status Icon + Leave Type + Status Badge
           Row(
             children: [
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: widget.leave.isApproved
+                  color: leave.isApproved
                       ? Colors.green.shade50
                       : Colors.orange.shade50,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
-                  widget.leave.isApproved ? Icons.check_circle : Icons.schedule,
-                  color: widget.leave.isApproved ? Colors.green : Colors.orange,
+                  leave.isApproved ? Icons.check_circle : Icons.schedule,
+                  color: leave.isApproved ? Colors.green : Colors.orange,
                   size: 20,
                 ),
               ),
@@ -53,7 +57,7 @@ class _LeaveApplicationCardWidgetState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.leave.leaveTypeName,
+                      leave.leaveTypeName,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -61,7 +65,7 @@ class _LeaveApplicationCardWidgetState
                       ),
                     ),
                     Text(
-                      'Duration: ${widget.leave.totalLeaveDays} days',
+                      'Duration: ${leave.totalLeaveDays} day${leave.totalLeaveDays > 1 ? "s" : ""}',
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey.shade600,
@@ -73,17 +77,17 @@ class _LeaveApplicationCardWidgetState
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: widget.leave.isApproved
+                  color: leave.isApproved
                       ? Colors.green.shade100
                       : Colors.orange.shade100,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  widget.leave.isApproved ? 'Approved' : 'Pending',
+                  leave.isApproved ? 'Approved' : 'Pending',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: widget.leave.isApproved
+                    color: leave.isApproved
                         ? Colors.green.shade700
                         : Colors.orange.shade700,
                   ),
@@ -91,34 +95,125 @@ class _LeaveApplicationCardWidgetState
               ),
             ],
           ),
+
           const SizedBox(height: 12),
+
+          // Dates Row: From - To
           Row(
             children: [
               Icon(Icons.date_range, size: 16, color: Colors.grey.shade600),
               const SizedBox(width: 4),
               Text(
-                'From: ${widget.leave.fromDate}',
+                'From: ${DateTime.parse(leave.fromDate).toDMMMYYYY()}',
                 style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
               ),
               const SizedBox(width: 16),
               Icon(Icons.date_range, size: 16, color: Colors.grey.shade600),
               const SizedBox(width: 4),
               Text(
-                'To: ${widget.leave.toDate}',
+                'To: ${DateTime.parse(leave.toDate).toDMMMYYYY()}',
                 style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
               ),
             ],
           ),
-          if (widget.leave.reason.isNotEmpty) ...[
-            const SizedBox(height: 8),
+
+          const SizedBox(height: 12),
+
+          // Application Date & Leave Number Row
+          Row(
+            children: [
+              Icon(Icons.event_note, size: 16, color: Colors.grey.shade600),
+              const SizedBox(width: 4),
+              Text(
+                'Applied: ${DateTime.parse(leave.applicationDate).toDMMMYYYY()}',
+                style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+              ),
+              const SizedBox(width: 16),
+              Icon(
+                Icons.confirmation_num,
+                size: 16,
+                color: Colors.grey.shade600,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                'Leave No: ${leave.leaveNo}',
+                style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 12),
+
+          // Status Details: Substitute and Recommendation
+          Row(
+            children: [
+              _StatusChip(
+                label: leave.status,
+                color: leave.status.toLowerCase() == 'open'
+                    ? Colors.green.shade100
+                    : leave.substitutationStatus.toLowerCase() == 'close'
+                    ? Colors.red.shade100
+                    : Colors.orange.shade100,
+                textColor: leave.status.toLowerCase() == 'open'
+                    ? Colors.green.shade800
+                    : leave.status.toLowerCase() == 'close'
+                    ? Colors.red.shade800
+                    : Colors.orange.shade800,
+              ),
+              const SizedBox(width: 8),
+              _StatusChip(
+                label: 'Approved By: ${leave.leaveApprovedBy}',
+                color: leave.leaveApprovedBy != null
+                    ? Colors.green.shade100
+                    : Colors.green.shade100,
+
+                textColor: Colors.green.shade800,
+              ),
+            ],
+          ),
+
+          // Reason (if present and non-empty)
+          if (leave.reason != null && leave.reason!.trim().isNotEmpty) ...[
+            const SizedBox(height: 12),
             Text(
-              'Reason: ${widget.leave.reason}',
+              'Reason: ${leave.reason}',
               style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
-              maxLines: 2,
+              maxLines: 3,
               overflow: TextOverflow.ellipsis,
             ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+class _StatusChip extends StatelessWidget {
+  final String label;
+  final Color color;
+  final Color textColor;
+
+  const _StatusChip({
+    required this.label,
+    required this.color,
+    required this.textColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: textColor,
+        ),
       ),
     );
   }

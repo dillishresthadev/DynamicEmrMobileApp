@@ -11,6 +11,8 @@ enum LeaveStatus {
   approvedLeaveLoadError,
   pendingLeaveLoadSuccess,
   pendingLeaveLoadError,
+  applyLeaveSuccess,
+  applyLeaveError,
 }
 
 final class LeaveState extends Equatable {
@@ -18,6 +20,7 @@ final class LeaveState extends Equatable {
   final List<LeaveApplicationEntity> leaveApplicationHistory;
   final List<LeaveApplicationEntity> approvedLeave;
   final List<LeaveApplicationEntity> pendingLeave;
+  final bool applyLeave;
 
   final LeaveStatus status;
   final String message;
@@ -29,6 +32,7 @@ final class LeaveState extends Equatable {
     this.pendingLeave = const [],
     this.status = LeaveStatus.initial,
     this.message = '',
+    this.applyLeave= false,
   });
 
   LeaveState copyWith({
@@ -36,6 +40,7 @@ final class LeaveState extends Equatable {
     List<LeaveApplicationEntity>? leaveApplicationHistory,
     List<LeaveApplicationEntity>? approvedLeave,
     List<LeaveApplicationEntity>? pendingLeave,
+    bool? applyLeave,
     LeaveStatus? status,
     String? message,
   }) {
@@ -45,6 +50,7 @@ final class LeaveState extends Equatable {
           leaveApplicationHistory ?? this.leaveApplicationHistory,
       approvedLeave: approvedLeave ?? this.approvedLeave,
       pendingLeave: pendingLeave ?? this.pendingLeave,
+      applyLeave: applyLeave ?? this.applyLeave,
       status: status ?? this.status,
       message: message ?? this.message,
     );
@@ -56,6 +62,7 @@ final class LeaveState extends Equatable {
     leaveApplicationHistory,
     approvedLeave,
     pendingLeave,
+    applyLeave,
     status,
     message,
   ];
