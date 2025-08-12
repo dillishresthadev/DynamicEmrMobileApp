@@ -14,6 +14,7 @@ class _PendingLeavesTabState extends State<PendingLeavesTab> {
   @override
   void initState() {
     super.initState();
+    // Only call Pending API for this tab
     context.read<LeaveBloc>().add(PendingLeaveListEvent());
   }
 
@@ -21,10 +22,17 @@ class _PendingLeavesTabState extends State<PendingLeavesTab> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocBuilder<LeaveBloc, LeaveState>(
+        buildWhen: (previous, current) {
+          // Only rebuild UI if approved leaves list changes
+          return previous.pendingLeave != current.pendingLeave ||
+              (previous.status == LeaveStatus.loading) !=
+                  (current.status == LeaveStatus.loading);
+        },
         builder: (context, state) {
-          if (state is LeaveLoadingState) {
+          if ((state.status == LeaveStatus.loading) &&
+              (state.pendingLeave.isEmpty)) {
             return Center(child: CircularProgressIndicator());
-          } else if (state is PendingLeaveLoadedState) {
+          } else if (state.approvedLeave.isNotEmpty) {
             final pendingLeave = state.pendingLeave;
             return ListView.builder(
               itemCount: pendingLeave.length,
@@ -37,10 +45,8 @@ class _PendingLeavesTabState extends State<PendingLeavesTab> {
                 );
               },
             );
-          } else if (state is PendingLeaveErrorState) {
-            return Center(child: Text(state.errorMessage));
           }
-          return SizedBox.shrink();
+          return const Center(child: Text("No approved leaves found"));
         },
       ),
     );

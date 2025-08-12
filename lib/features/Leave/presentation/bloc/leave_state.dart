@@ -1,84 +1,62 @@
 part of 'leave_bloc.dart';
 
-sealed class LeaveState extends Equatable {
-  const LeaveState();
-
-  @override
-  List<Object> get props => [];
+enum LeaveStatus {
+  initial,
+  loading,
+  leaveHistoryLoadSuccess,
+  leaveHistoryLoadError,
+  leaveApplicationHistoryLoadSuccess,
+  leaveApplicationHistoryLoadError,
+  approvedLeaveLoadSuccess,
+  approvedLeaveLoadError,
+  pendingLeaveLoadSuccess,
+  pendingLeaveLoadError,
 }
 
-final class LeaveInitialState extends LeaveState {}
-
-final class LeaveLoadingState extends LeaveState {}
-
-final class LeaveApplicationHistoryLoadingState extends LeaveState {}
-
-final class LeaveHistoryLoadingState extends LeaveState {}
-
-// Employee leave application history list taken by employee
-final class LeaveApplicationHistoryLoadedState extends LeaveState {
-  final List<LeaveApplicationEntity> leaveApplication;
-
-  const LeaveApplicationHistoryLoadedState({required this.leaveApplication});
-  @override
-  List<Object> get props => [leaveApplication];
-}
-
-final class LeaveApplicationHistoryErrorState extends LeaveState {
-  final String errorMessage;
-
-  const LeaveApplicationHistoryErrorState({required this.errorMessage});
-  @override
-  List<Object> get props => [errorMessage];
-}
-
-// Employee leave history - allocated,taken leaves data
-final class LeaveHistoryLoadedState extends LeaveState {
+final class LeaveState extends Equatable {
   final List<LeaveHistoryEntity> leaveHistory;
-
-  const LeaveHistoryLoadedState({required this.leaveHistory});
-  @override
-  List<Object> get props => [leaveHistory];
-}
-
-final class LeaveHistoryErrorState extends LeaveState {
-  final String errorMessage;
-
-  const LeaveHistoryErrorState({required this.errorMessage});
-  @override
-  List<Object> get props => [errorMessage];
-}
-
-// Employee Approved Leaves
-final class ApprovedLeaveLoadedState extends LeaveState {
+  final List<LeaveApplicationEntity> leaveApplicationHistory;
   final List<LeaveApplicationEntity> approvedLeave;
-
-  const ApprovedLeaveLoadedState({required this.approvedLeave});
-  @override
-  List<Object> get props => [approvedLeave];
-}
-
-final class ApprovedLeaveErrorState extends LeaveState {
-  final String errorMessage;
-
-  const ApprovedLeaveErrorState({required this.errorMessage});
-  @override
-  List<Object> get props => [errorMessage];
-}
-
-// Employee Pending Leaves
-final class PendingLeaveLoadedState extends LeaveState {
   final List<LeaveApplicationEntity> pendingLeave;
 
-  const PendingLeaveLoadedState({required this.pendingLeave});
-  @override
-  List<Object> get props => [pendingLeave];
-}
+  final LeaveStatus status;
+  final String message;
 
-final class PendingLeaveErrorState extends LeaveState {
-  final String errorMessage;
+  const LeaveState({
+    this.leaveHistory = const [],
+    this.leaveApplicationHistory = const [],
+    this.approvedLeave = const [],
+    this.pendingLeave = const [],
+    this.status = LeaveStatus.initial,
+    this.message = '',
+  });
 
-  const PendingLeaveErrorState({required this.errorMessage});
+  LeaveState copyWith({
+    List<LeaveHistoryEntity>? leaveHistory,
+    List<LeaveApplicationEntity>? leaveApplicationHistory,
+    List<LeaveApplicationEntity>? approvedLeave,
+    List<LeaveApplicationEntity>? pendingLeave,
+    LeaveStatus? status,
+    String? message,
+  }) {
+    return LeaveState(
+      leaveHistory: leaveHistory ?? this.leaveHistory,
+      leaveApplicationHistory:
+          leaveApplicationHistory ?? this.leaveApplicationHistory,
+      approvedLeave: approvedLeave ?? this.approvedLeave,
+      pendingLeave: pendingLeave ?? this.pendingLeave,
+      status: status ?? this.status,
+      message: message ?? this.message,
+    );
+  }
+
   @override
-  List<Object> get props => [errorMessage];
+  List<Object?> get props => [
+    leaveHistory,
+    leaveApplicationHistory,
+    approvedLeave,
+    pendingLeave,
+    status,
+    message,
+  ];
 }

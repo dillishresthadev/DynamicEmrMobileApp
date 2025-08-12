@@ -74,7 +74,7 @@ class _SelectFinancialYearScreenState extends State<SelectFinancialYearScreen> {
                     const SizedBox(height: 8),
                     const Text(
                       "Please select the fiscal year to continue",
-                      style: TextStyle(fontSize: 16, color: Colors.white),
+                      style: TextStyle(fontSize: 16, color: Colors.black),
                     ),
                     const SizedBox(height: 20),
                     CustomDropdown2(

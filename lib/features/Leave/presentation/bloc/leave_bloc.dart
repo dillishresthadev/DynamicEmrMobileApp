@@ -18,12 +18,13 @@ class LeaveBloc extends Bloc<LeaveEvent, LeaveState> {
   final LeaveApplicationHistoryUsecase leaveApplicationHistoryUsecase;
   final ApprovedLeaveListUsecase approvedLeaveListUsecase;
   final PendingLeaveListUsecase pendingLeaveListUsecase;
+
   LeaveBloc({
     required this.leaveHistoryUsecase,
     required this.leaveApplicationHistoryUsecase,
     required this.approvedLeaveListUsecase,
     required this.pendingLeaveListUsecase,
-  }) : super(LeaveInitialState()) {
+  }) : super(const LeaveState()) {
     on<LeaveHistoryEvent>(_onLeaveHistory);
     on<LeaveApplicationHistoryEvent>(_onLeaveApplicationHistory);
     on<ApprovedLeaveListEvent>(_onApprovedLeaveList);
@@ -34,32 +35,48 @@ class LeaveBloc extends Bloc<LeaveEvent, LeaveState> {
     LeaveHistoryEvent event,
     Emitter<LeaveState> emit,
   ) async {
+    emit(state.copyWith(status: LeaveStatus.loading));
     try {
-      emit(LeaveHistoryLoadingState());
       final leaveHistory = await leaveHistoryUsecase.call();
-      emit(LeaveHistoryLoadedState(leaveHistory: leaveHistory));
-    } catch (e) {
-      log("Error on Bloc [LeaveHistory] $e");
-      emit(LeaveHistoryErrorState(errorMessage: e.toString()));
-    }
-  }
-
-  FutureOr<void> _onLeaveApplicationHistory(
-    LeaveApplicationHistoryEvent event,
-    Emitter<LeaveState> emit,
-  ) async {
-    try {
-      emit(LeaveApplicationHistoryLoadingState());
-      final leaveApplicationHistory = await leaveApplicationHistoryUsecase
-          .call();
       emit(
-        LeaveApplicationHistoryLoadedState(
-          leaveApplication: leaveApplicationHistory,
+        state.copyWith(
+          leaveHistory: leaveHistory,
+          status: LeaveStatus.leaveHistoryLoadSuccess,
         ),
       );
     } catch (e) {
-      log("Error on Bloc [leaveApplicationHistory] $e");
-      emit(LeaveApplicationHistoryErrorState(errorMessage: e.toString()));
+      log("Error on Bloc [LeaveHistory] $e");
+      emit(
+        state.copyWith(
+          status: LeaveStatus.leaveHistoryLoadError,
+          message: e.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onLeaveApplicationHistory(
+    LeaveApplicationHistoryEvent event,
+    Emitter<LeaveState> emit,
+  ) async {
+    emit(state.copyWith(status: LeaveStatus.loading));
+    try {
+      final leaveApplicationHistory = await leaveApplicationHistoryUsecase
+          .call();
+      emit(
+        state.copyWith(
+          leaveApplicationHistory: leaveApplicationHistory,
+          status: LeaveStatus.leaveApplicationHistoryLoadSuccess,
+        ),
+      );
+    } catch (e) {
+      log("Error on Bloc [LeaveApplicationHistory] $e");
+      emit(
+        state.copyWith(
+          status: LeaveStatus.leaveApplicationHistoryLoadError,
+          message: e.toString(),
+        ),
+      );
     }
   }
 
@@ -67,27 +84,47 @@ class LeaveBloc extends Bloc<LeaveEvent, LeaveState> {
     ApprovedLeaveListEvent event,
     Emitter<LeaveState> emit,
   ) async {
+    emit(state.copyWith(status: LeaveStatus.loading));
     try {
-      emit(LeaveLoadingState());
       final approvedLeave = await approvedLeaveListUsecase.call();
-      emit(ApprovedLeaveLoadedState(approvedLeave: approvedLeave));
+      emit(
+        state.copyWith(
+          approvedLeave: approvedLeave,
+          status: LeaveStatus.approvedLeaveLoadSuccess,
+        ),
+      );
     } catch (e) {
       log("Error on Bloc [ApprovedLeave] $e");
-      emit(ApprovedLeaveErrorState(errorMessage: e.toString()));
+      emit(
+        state.copyWith(
+          status: LeaveStatus.approvedLeaveLoadError,
+          message: e.toString(),
+        ),
+      );
     }
   }
 
-  FutureOr<void> _onPendingLeaveList(
+  Future<void> _onPendingLeaveList(
     PendingLeaveListEvent event,
     Emitter<LeaveState> emit,
   ) async {
+    emit(state.copyWith(status: LeaveStatus.loading));
     try {
-      emit(LeaveLoadingState());
       final pendingLeave = await pendingLeaveListUsecase.call();
-      emit(PendingLeaveLoadedState(pendingLeave: pendingLeave));
+      emit(
+        state.copyWith(
+          pendingLeave: pendingLeave,
+          status: LeaveStatus.pendingLeaveLoadSuccess,
+        ),
+      );
     } catch (e) {
-      log("Error on Bloc [pendingLeave] $e");
-      emit(PendingLeaveErrorState(errorMessage: e.toString()));
+      log("Error on Bloc [PendingLeave] $e");
+      emit(
+        state.copyWith(
+          status: LeaveStatus.pendingLeaveLoadError,
+          message: e.toString(),
+        ),
+      );
     }
   }
 }

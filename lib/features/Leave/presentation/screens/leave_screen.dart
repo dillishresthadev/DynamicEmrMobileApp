@@ -58,15 +58,18 @@ class _LeaveScreenState extends State<LeaveScreen>
     _loadLeaveData();
   }
 
+  void _loadLeaveData() {
+    final leaveBloc = context.read<LeaveBloc>();
+    leaveBloc
+      ..add(LeaveHistoryEvent())
+      ..add(ApprovedLeaveListEvent())
+      ..add(PendingLeaveListEvent());
+  }
+
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
-  }
-
-  void _loadLeaveData() {
-    final leaveBloc = context.read<LeaveBloc>();
-    leaveBloc.add(LeaveHistoryEvent());
   }
 
   Map<String, dynamic> _getLeaveCardConfig(String leaveType) {
@@ -88,10 +91,8 @@ class _LeaveScreenState extends State<LeaveScreen>
       appBar: DynamicEMRAppBar(title: "Leaves"),
       body: Column(
         children: [
-          // Fixed header section
           _buildAvailableLeavesSection(),
           _buildTabBarSection(),
-          // Scrollable tab content
           _buildTabViewSection(),
         ],
       ),
@@ -116,7 +117,27 @@ class _LeaveScreenState extends State<LeaveScreen>
           const SizedBox(height: 12),
           BlocBuilder<LeaveBloc, LeaveState>(
             builder: (context, state) {
-              return _buildLeaveHistoryGrid(state);
+              // Loading state for leave history
+              if (state.status == LeaveStatus.loading &&
+                  state.leaveHistory.isEmpty) {
+                return const SizedBox(
+                  height: 120,
+                  child: Center(child: CircularProgressIndicator()),
+                );
+              }
+
+              // Error state
+              if (state.status == LeaveStatus.leaveHistoryLoadError &&
+                  state.leaveHistory.isEmpty) {
+                return _buildErrorContainer(state.message);
+              }
+
+              // Show grid
+              if (state.leaveHistory.isEmpty) {
+                return _buildEmptyContainer();
+              }
+
+              return _buildLeaveHistoryGrid(state.leaveHistory);
             },
           ),
         ],
@@ -124,97 +145,84 @@ class _LeaveScreenState extends State<LeaveScreen>
     );
   }
 
-  Widget _buildLeaveHistoryGrid(LeaveState state) {
-    if (state is LeaveHistoryLoadingState) {
-      return const SizedBox(
-        height: 120,
-        child: Center(child: CircularProgressIndicator()),
-      );
-    }
+  Widget _buildLeaveHistoryGrid(List<dynamic> leaveHistory) {
+    final itemCount = leaveHistory.length;
+    final crossAxisCount = 2;
+    final rowCount = (itemCount / crossAxisCount).ceil();
+    const itemHeight = 80.0;
+    const spacing = 8.0;
+    final gridHeight = (rowCount * itemHeight) + ((rowCount - 1) * spacing);
 
-    if (state is LeaveHistoryErrorState) {
-      return Container(
-        height: MediaQuery.sizeOf(context).height * 0.2,
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.red.shade50,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.red.shade200),
+    return SizedBox(
+      height: gridHeight,
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
+          childAspectRatio: 2.3,
         ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.error_outline, color: Colors.red.shade600),
-              const SizedBox(height: 8),
-              Text(
-                "Error: ${state.errorMessage}",
-                style: TextStyle(color: Colors.red.shade700),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-      );
-    }
+        itemCount: leaveHistory.length,
+        itemBuilder: (context, index) {
+          final leave = leaveHistory[index];
+          final config = _getLeaveCardConfig(leave.leaveType);
 
-    if (state is LeaveHistoryLoadedState) {
-      final leaveHistory = state.leaveHistory;
+          return LeaveCardWidget(
+            icon: config['icon'] as IconData,
+            color: config['color'] as Color,
+            bgColor: config['bgColor'] as Color,
+            count: leave.balance.toString(),
+            label: leave.leaveType,
+          );
+        },
+      ),
+    );
+  }
 
-      if (leaveHistory.isEmpty) {
-        return Container(
-          height: 120,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.grey.shade50,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.grey.shade200),
-          ),
-          child: const Center(
-            child: Text(
-              'No leave data available',
-              style: TextStyle(color: Colors.grey),
+  Widget _buildErrorContainer(String message) {
+    return Container(
+      height: MediaQuery.sizeOf(context).height * 0.2,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.red.shade50,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.red.shade200),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, color: Colors.red.shade600),
+            const SizedBox(height: 8),
+            Text(
+              "Error: $message",
+              style: TextStyle(color: Colors.red.shade700),
+              textAlign: TextAlign.center,
             ),
-          ),
-        );
-      }
-
-      // Calculate height based on number of items to avoid infinite height issues
-      final itemCount = leaveHistory.length;
-      final crossAxisCount = 2;
-      final rowCount = (itemCount / crossAxisCount).ceil();
-      const itemHeight = 80.0; // Approximate height per item
-      const spacing = 8.0;
-      final gridHeight = (rowCount * itemHeight) + ((rowCount - 1) * spacing);
-
-      return SizedBox(
-        height: gridHeight,
-        child: GridView.builder(
-          shrinkWrap: true,
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
-            childAspectRatio: 1.8,
-          ),
-          itemCount: leaveHistory.length,
-          itemBuilder: (context, index) {
-            final leave = leaveHistory[index];
-            final config = _getLeaveCardConfig(leave.leaveType);
-
-            return LeaveCardWidget(
-              icon: config['icon'] as IconData,
-              color: config['color'] as Color,
-              bgColor: config['bgColor'] as Color,
-              count: leave.balance.toString(),
-              label: leave.leaveType,
-            );
-          },
+          ],
         ),
-      );
-    }
+      ),
+    );
+  }
 
-    return const SizedBox.shrink();
+  Widget _buildEmptyContainer() {
+    return Container(
+      height: 120,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: const Center(
+        child: Text(
+          'No leave data available',
+          style: TextStyle(color: Colors.grey),
+        ),
+      ),
+    );
   }
 
   Widget _buildTabBarSection() {
@@ -250,7 +258,7 @@ class _LeaveScreenState extends State<LeaveScreen>
     return Expanded(
       child: TabBarView(
         controller: _tabController,
-        children: [ApprovedLeavesTab(), PendingLeavesTab()],
+        children: const [ApprovedLeavesTab(), PendingLeavesTab()],
       ),
     );
   }

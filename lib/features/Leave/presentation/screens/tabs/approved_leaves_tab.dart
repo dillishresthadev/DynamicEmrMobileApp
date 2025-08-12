@@ -11,19 +11,28 @@ class ApprovedLeavesTab extends StatefulWidget {
 }
 
 class _ApprovedLeavesTabState extends State<ApprovedLeavesTab> {
-    @override
+  @override
   void initState() {
     super.initState();
-    context.read<LeaveBloc>().add(PendingLeaveListEvent());
+    // Only call Approved API for this tab
+    context.read<LeaveBloc>().add(ApprovedLeaveListEvent());
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocBuilder<LeaveBloc, LeaveState>(
+        buildWhen: (previous, current) {
+          // Only rebuild UI if approved leaves list changes
+          return previous.approvedLeave != current.approvedLeave ||
+              (previous.status == LeaveStatus.loading) !=
+                  (current.status == LeaveStatus.loading);
+        },
         builder: (context, state) {
-          if (state is LeaveLoadingState) {
-            return Center(child: CircularProgressIndicator());
-          } else if (state is ApprovedLeaveLoadedState) {
+          if ((state.status == LeaveStatus.loading) &&
+              (state.approvedLeave.isEmpty)) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state.approvedLeave.isNotEmpty) {
             final approvedLeave = state.approvedLeave;
             return ListView.builder(
               itemCount: approvedLeave.length,
@@ -39,7 +48,7 @@ class _ApprovedLeavesTabState extends State<ApprovedLeavesTab> {
               },
             );
           }
-          return Center(child: Text("Unknown state $state"));
+          return const Center(child: Text("No approved leaves found"));
         },
       ),
     );
