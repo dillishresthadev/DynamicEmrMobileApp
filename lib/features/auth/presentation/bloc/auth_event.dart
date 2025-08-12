@@ -4,8 +4,10 @@ sealed class AuthEvent extends Equatable {
   const AuthEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
+
+class CheckAuthStatusEvent extends AuthEvent {}
 
 class LoginEvent extends AuthEvent {
   final String username;
@@ -17,6 +19,14 @@ class LoginEvent extends AuthEvent {
   List<Object> get props => [username, password];
 }
 
+class RefreshTokenEvent extends AuthEvent {
+  final String refreshToken;
+
+  const RefreshTokenEvent({required this.refreshToken});
+  @override
+  List<Object?> get props => [refreshToken];
+}
+
 class GetHospitalBaseUrlEvent extends AuthEvent {
   final String hospitalCode;
 
@@ -24,6 +34,7 @@ class GetHospitalBaseUrlEvent extends AuthEvent {
   @override
   List<Object> get props => [hospitalCode];
 }
+
 class GetHospitalBranchEvent extends AuthEvent {}
 
 class GetHospitalFinancialYearEvent extends AuthEvent {}

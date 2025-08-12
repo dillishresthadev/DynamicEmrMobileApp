@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:dynamic_emr/features/auth/data/datasource/auth_remote_datasource.dart';
 import 'package:dynamic_emr/features/auth/domain/entities/hospital_branch_entity.dart';
 import 'package:dynamic_emr/features/auth/domain/entities/login_response_entity.dart';
@@ -41,16 +40,13 @@ class AuthRepositoryImpl extends AuthRepository {
   }
 
   @override
-  Future<String?> refreshToken({required String refreshToken}) async {
-    try {
-      final newToken = await remoteDataSource.refreshToken(
-        refreshToken: refreshToken,
-      );
-      return newToken;
-    } catch (e) {
-      log('Refresh token failed: $e');
-    }
-    return null;
+  Future<LoginResponseEntity> refreshToken({
+    required String refreshToken,
+  }) async {
+    final loginResponse = await remoteDataSource.refreshToken(
+      refreshToken: refreshToken,
+    );
+    return loginResponse;
   }
 
   @override

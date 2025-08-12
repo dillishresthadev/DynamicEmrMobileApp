@@ -18,7 +18,7 @@ abstract class AuthRemoteDatasource {
     required String password,
   });
 
-  Future<String?> refreshToken({required String refreshToken});
+  Future<LoginResponseModel> refreshToken({required String refreshToken});
 
   Future<List<HospitalBranchModel>> getUserBranches();
 
@@ -133,15 +133,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDatasource {
   }
 
   @override
-  Future<String?> refreshToken({required String refreshToken}) async {
+  Future<LoginResponseModel> refreshToken({
+    required String refreshToken,
+  }) async {
     try {
       final response = await client.post(
         ApiConstants.userRefreshToken,
         body: {"RefreshToken": refreshToken},
       );
-
-      log('Refresh Token Response: $response');
-      return response['token'];
+      log('New Access Token Response: ${response['token']}');
+      return LoginResponseModel.fromJson(response);
     } catch (e) {
       log('Error refreshing token: $e');
       rethrow;

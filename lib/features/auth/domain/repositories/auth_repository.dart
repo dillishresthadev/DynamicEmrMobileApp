@@ -9,7 +9,7 @@ abstract class AuthRepository {
     required String password,
   });
   Future<void> logout();
-  Future<String?> refreshToken({required String refreshToken});
+  Future<LoginResponseEntity?> refreshToken({required String refreshToken});
   Future<List<HospitalBranchEntity>> getUserBranches();
   Future<List<UserFinancialYearEntity>> getUserFinancialYears();
 }

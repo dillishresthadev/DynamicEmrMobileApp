@@ -11,6 +11,8 @@ final class AuthInitialState extends AuthState {}
 
 final class AuthLoadingState extends AuthState {}
 
+class AuthUnauthenticated extends AuthState {}
+
 final class AuthLoginSuccessState extends AuthState {
   final LoginResponseEntity loginResponse;
 

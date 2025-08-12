@@ -3,10 +3,12 @@ import 'dart:developer';
 import 'package:dynamic_emr/core/local_storage/branch_storage.dart';
 import 'package:dynamic_emr/core/local_storage/hospital_code_storage.dart';
 import 'package:dynamic_emr/core/local_storage/token_storage.dart';
+import 'package:dynamic_emr/core/network/connectivity_check.dart';
 import 'package:dynamic_emr/features/auth/domain/entities/hospital_branch_entity.dart';
 import 'package:dynamic_emr/features/auth/domain/entities/login_response_entity.dart';
 import 'package:dynamic_emr/features/auth/domain/entities/user_entity.dart';
 import 'package:dynamic_emr/features/auth/domain/entities/user_financial_year_entity.dart';
+import 'package:dynamic_emr/features/auth/domain/repositories/auth_repository.dart';
 import 'package:dynamic_emr/features/auth/domain/usecases/fetch_hospital_base_url_usecase.dart';
 import 'package:dynamic_emr/features/auth/domain/usecases/fetch_hospital_branch_usecase.dart';
 import 'package:dynamic_emr/features/auth/domain/usecases/fetch_user_financial_year_usecase.dart';
@@ -29,11 +31,93 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.hospitalBranchUsecase,
     required this.financialYearUsecase,
   }) : super(AuthInitialState()) {
+    on<CheckAuthStatusEvent>(_onCheckAuthStatus);
+
     on<LoginEvent>(_onLogin);
     on<GetHospitalBaseUrlEvent>(_onGetHospitalBaseUrl);
     on<GetHospitalBranchEvent>(_onGetHospitalBranchEvent);
     on<GetHospitalFinancialYearEvent>(_onGetHospitalFinancialYear);
     on<LogoutEvent>(_onLogoutEvent);
+  }
+
+  Future<void> _onCheckAuthStatus(
+    CheckAuthStatusEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoadingState());
+
+    try {
+      final authRepo = injection<AuthRepository>();
+      final accessToken = await injection<TokenSecureStorage>()
+          .getAccessToken();
+      final refreshToken = await injection<TokenSecureStorage>()
+          .getRefreshToken();
+
+      final connectivityCheck = injection<ConnectivityCheck>();
+
+      log(
+        'Checking auth status - Token: $accessToken, RefreshToken: $refreshToken ',
+      );
+
+      final isConnected = await connectivityCheck.isConnected;
+
+      // If offline, allow login with existing credentials
+      if (!isConnected) {
+        emit(AuthErrorState(errorMessage: "No Internet"));
+      }
+
+      // If token expires refresh access token
+      if (await isTokenExpired()) {
+        if (refreshToken == null) {
+          emit(AuthUnauthenticated());
+        }
+        // Try to refresh the token
+        final loginResponse = await authRepo.refreshToken(
+          refreshToken: refreshToken!,
+        );
+        if (loginResponse?.token != null) {
+          // save new access token ,refresh token and expiration time
+          await injection<TokenSecureStorage>().saveAccessToken(
+            loginResponse!.token,
+          );
+          await injection<TokenSecureStorage>().saveRefreshToken(
+            loginResponse.refreshToken,
+          );
+          await injection<TokenSecureStorage>().saveTokenExpirationTime(
+            loginResponse.expiration,
+          );
+          emit(
+            AuthLoginSuccessState(
+              loginResponse: LoginResponseEntity(
+                token: loginResponse.token,
+                refreshToken: loginResponse.refreshToken,
+                expiration: loginResponse.expiration,
+              ),
+            ),
+          );
+        } else {
+          await authRepo.logout();
+          emit(AuthUnauthenticated());
+        }
+      }
+    } catch (e) {
+      log('Error in _onCheckAuthStatus: $e');
+      emit(
+        AuthErrorState(
+          errorMessage: 'Failed to check auth status. Please try again.',
+        ),
+      );
+    }
+  }
+
+  Future<bool> isTokenExpired() async {
+    final expirationTime = await injection<TokenSecureStorage>()
+        .getTokenExpirationTime();
+    log("Expiration time: $expirationTime");
+    if (expirationTime == null) return true;
+    final currentTime = DateTime.now();
+    log("Current time: $currentTime -- Exp time $expirationTime");
+    return currentTime.isAfter(expirationTime);
   }
 
   Future<void> _onLogin(LoginEvent event, Emitter<AuthState> emit) async {
@@ -45,9 +129,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       log('Login successful !! Token : ${loginResponse.token}');
       // save access and refresh token on login success
-      injection<TokenSecureStorage>().saveAccessToken(loginResponse.token);
-      injection<TokenSecureStorage>().saveRefreshToken(
+      await injection<TokenSecureStorage>().saveAccessToken(
+        loginResponse.token,
+      );
+      await injection<TokenSecureStorage>().saveRefreshToken(
         loginResponse.refreshToken,
+      );
+      await injection<TokenSecureStorage>().saveTokenExpirationTime(
+        loginResponse.expiration,
       );
 
       emit(AuthLoginSuccessState(loginResponse: loginResponse));
