@@ -18,11 +18,12 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
   final CurrentMonthAttendanceExtendedUsecase
   currentMonthAttendanceExtendedUsecase;
   final AttendanceSummaryUsecase attendanceSummaryUsecase;
+
   AttendanceBloc({
     required this.currentMonthAttendancePrimaryUsecase,
     required this.currentMonthAttendanceExtendedUsecase,
     required this.attendanceSummaryUsecase,
-  }) : super(AttendanceInitialState()) {
+  }) : super(const AttendanceState()) {
     on<GetCurrentMonthAttendancePrimaryEvent>(
       _onGetCurrentMonthAttendancePrimary,
     );
@@ -36,23 +37,24 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
     GetCurrentMonthAttendancePrimaryEvent event,
     Emitter<AttendanceState> emit,
   ) async {
+    emit(state.copyWith(status: AttendanceStatus.loading));
     try {
-      emit(AttendanceLoadingState());
       final currentMonthAttendancePrimary =
           await currentMonthAttendancePrimaryUsecase.call();
-
-      if (state is AttendanceCompleteState) {
-        emit(
-          (state as AttendanceCompleteState).copyWith(
-            primary: currentMonthAttendancePrimary,
-          ),
-        );
-      } else {
-        emit(AttendanceCompleteState(primary: currentMonthAttendancePrimary));
-      }
+      emit(
+        state.copyWith(
+          primary: currentMonthAttendancePrimary,
+          status: AttendanceStatus.loadPrimarySuccess,
+        ),
+      );
     } catch (e) {
-      log("Error on bloc [currentMonthAttendancePrimary] :$e");
-      emit(AttendanceErrorState(errorMessage: e.toString()));
+      log("Error on bloc [currentMonthAttendancePrimary] : $e");
+      emit(
+        state.copyWith(
+          status: AttendanceStatus.loadPrimaryError,
+          message: e.toString(),
+        ),
+      );
     }
   }
 
@@ -60,23 +62,24 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
     GetCurrentMonthAttendanceExtendedEvent event,
     Emitter<AttendanceState> emit,
   ) async {
+    emit(state.copyWith(status: AttendanceStatus.loading));
     try {
-      emit(AttendanceLoadingState());
       final currentMonthAttendanceExtended =
           await currentMonthAttendanceExtendedUsecase.call();
-
-      if (state is AttendanceCompleteState) {
-        emit(
-          (state as AttendanceCompleteState).copyWith(
-            extended: currentMonthAttendanceExtended,
-          ),
-        );
-      } else {
-        emit(AttendanceCompleteState(extended: currentMonthAttendanceExtended));
-      }
+      emit(
+        state.copyWith(
+          extended: currentMonthAttendanceExtended,
+          status: AttendanceStatus.loadExtendedSuccess,
+        ),
+      );
     } catch (e) {
-      log("Error on bloc [currentMonthAttendanceExtended] :$e");
-      emit(AttendanceErrorState(errorMessage: e.toString()));
+      log("Error on bloc [currentMonthAttendanceExtended] : $e");
+      emit(
+        state.copyWith(
+          status: AttendanceStatus.loadExtendedError,
+          message: e.toString(),
+        ),
+      );
     }
   }
 
@@ -84,24 +87,27 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
     GetAttendanceSummaryEvent event,
     Emitter<AttendanceState> emit,
   ) async {
+    emit(state.copyWith(status: AttendanceStatus.loading));
     try {
-    emit(AttendanceLoadingState());
-    final attendanceSummary = await attendanceSummaryUsecase.call(
-      fromDate: event.fromDate,
-      toDate: event.toDate,
-      shiftType: event.shiftType,
-    );
-
-    if (state is AttendanceCompleteState) {
-      emit((state as AttendanceCompleteState).copyWith(
-        attendanceSummary: attendanceSummary,
-      ));
-    } else {
-      emit(AttendanceCompleteState(attendanceSummary: attendanceSummary));
+      final attendanceSummary = await attendanceSummaryUsecase.call(
+        fromDate: event.fromDate,
+        toDate: event.toDate,
+        shiftType: event.shiftType,
+      );
+      emit(
+        state.copyWith(
+          summary: attendanceSummary,
+          status: AttendanceStatus.loadSummarySuccess,
+        ),
+      );
+    } catch (e) {
+      log("Error on bloc [GetAttendanceSummary] : $e");
+      emit(
+        state.copyWith(
+          status: AttendanceStatus.loadSummaryError,
+          message: e.toString(),
+        ),
+      );
     }
-  } catch (e) {
-    log("Error on bloc [GetAttendanceSummary] :$e");
-    emit(AttendanceSummaryErrorState(errorMessage: e.toString()));
-  }
   }
 }

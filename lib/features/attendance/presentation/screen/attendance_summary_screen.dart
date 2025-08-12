@@ -172,12 +172,10 @@ class _AttendanceSummaryScreenState extends State<AttendanceSummaryScreen> {
       ),
       body: BlocBuilder<AttendanceBloc, AttendanceState>(
         builder: (context, state) {
-          if (state is AttendanceLoadingState) {
+          if (state.status == AttendanceStatus.loading) {
             return const Center(child: CircularProgressIndicator());
-          } else if (state is AttendanceErrorState) {
-            return Center(child: Text("Error: ${state.errorMessage}"));
-          } else if (state is AttendanceCompleteState) {
-            final attendanceSummary = state.attendanceSummary;
+          } else if (state.status == AttendanceStatus.loadSummarySuccess) {
+            final attendanceSummary = state.summary;
 
             return ListView.builder(
               shrinkWrap: true,

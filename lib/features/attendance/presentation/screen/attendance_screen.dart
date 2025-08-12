@@ -21,24 +21,9 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
     context.read<AttendanceBloc>().add(
       GetCurrentMonthAttendanceExtendedEvent(),
     );
-    // setting fromDate and toDate to cover the current month by default when creating the GetAttendanceSummaryEvent
-    // final now = DateTime.now();
-    // final firstDayOfMonth = DateTime(now.year, now.month, 1);
-    // final lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
-    // context.read<AttendanceBloc>().add(
-    //   GetAttendanceSummaryEvent(
-    //     fromDate: firstDayOfMonth,
-    //     toDate: lastDayOfMonth,
-    //     shiftType: "Primary",
-    //   ),
-    // );
-    // setting fromDate and toDate to cover the This week by default when creating the GetAttendanceSummaryEvent
 
     final now = DateTime.now();
-    final oneWeekAgo = now.subtract(
-      const Duration(days: 6),
-    ); // last 7 days including today
-
+    final oneWeekAgo = now.subtract(const Duration(days: 6));
     context.read<AttendanceBloc>().add(
       GetAttendanceSummaryEvent(
         fromDate: oneWeekAgo,
@@ -84,30 +69,33 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 12.0),
         child: BlocBuilder<AttendanceBloc, AttendanceState>(
           builder: (context, state) {
-            if (state is AttendanceLoadingState) {
+            // If no data has loaded yet
+            if (state.primary == null &&
+                state.extended == null &&
+                state.summary == null &&
+                state.status == AttendanceStatus.loading) {
               return const Center(child: CircularProgressIndicator());
-            } else if (state is AttendanceErrorState) {
-              return Center(child: Text("Error: ${state.errorMessage}"));
-            } else if (state is AttendanceCompleteState) {
-              final primary = state.primary;
-              final extended = state.extended;
-              final attendanceSummary = state.attendanceSummary;
+            }
 
-              return SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Primary Attendance Section
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Primary Attendance',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1E293B),
-                      ),
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Primary Attendance',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1E293B),
                     ),
-                    const SizedBox(height: 12),
+                  ),
+                  const SizedBox(height: 12),
+
+                  if (state.status == AttendanceStatus.loading &&
+                      state.primary == null)
+                    const Center(child: CircularProgressIndicator())
+                  else if (state.primary != null)
                     GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -116,11 +104,11 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                             crossAxisCount: 2,
                             crossAxisSpacing: 8,
                             mainAxisSpacing: 8,
-                            childAspectRatio: 1.8,
+                            childAspectRatio: 2.3,
                           ),
-                      itemCount: primary.length,
+                      itemCount: state.primary!.length,
                       itemBuilder: (context, index) {
-                        final primaryAttendance = primary[index];
+                        final primaryAttendance = state.primary![index];
                         final stat = statusCards.firstWhere(
                           (e) => e['title'] == primaryAttendance.category,
                           orElse: () => {
@@ -130,7 +118,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                             'bgColor': Colors.grey.shade200,
                           },
                         );
-
                         return AttendanceCardWidget(
                           icon: stat['icon'] as IconData,
                           color: stat['color'] as Color,
@@ -139,19 +126,25 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                           label: primaryAttendance.category,
                         );
                       },
-                    ),
+                    )
+                  else
+                    const Text("No primary attendance data"),
 
-                    const SizedBox(height: 32),
-                    // Extended Attendance Section
-                    const Text(
-                      'Extended Attendance',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1E293B),
-                      ),
+                  const SizedBox(height: 32),
+                  const Text(
+                    'Extended Attendance',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1E293B),
                     ),
-                    const SizedBox(height: 16),
+                  ),
+                  const SizedBox(height: 16),
+
+                  if (state.status == AttendanceStatus.loading &&
+                      state.extended == null)
+                    const Center(child: CircularProgressIndicator())
+                  else if (state.extended != null)
                     GridView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -160,11 +153,11 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                             crossAxisCount: 2,
                             crossAxisSpacing: 8,
                             mainAxisSpacing: 8,
-                            childAspectRatio: 1.8,
+                            childAspectRatio: 2.3,
                           ),
-                      itemCount: extended.length,
+                      itemCount: state.extended!.length,
                       itemBuilder: (context, index) {
-                        final extendedAttendance = extended[index];
+                        final extendedAttendance = state.extended![index];
                         final stat = statusCards.firstWhere(
                           (e) => e['title'] == extendedAttendance.category,
                           orElse: () => {
@@ -174,7 +167,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                             'bgColor': Colors.grey.shade200,
                           },
                         );
-
                         return AttendanceCardWidget(
                           icon: stat['icon'] as IconData,
                           color: stat['color'] as Color,
@@ -183,69 +175,65 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                           label: extendedAttendance.category,
                         );
                       },
-                    ),
+                    )
+                  else
+                    const Text("No extended attendance data"),
 
-                    const SizedBox(height: 32),
+                  const SizedBox(height: 32),
 
-                    // Attendance Summary Section
-                    if (attendanceSummary != null) ...[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          const Text(
-                            'Recent Attendance',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF1E293B),
-                            ),
+                  if (state.summary != null) ...[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Recent Attendance',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF1E293B),
                           ),
-
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AttendanceSummaryScreen(
-                                    attendenceSummary: attendanceSummary,
-                                  ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AttendanceSummaryScreen(
+                                  attendenceSummary: state.summary!,
                                 ),
-                              );
-                            },
-                            child: Text(
-                              'View All',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.blue,
-                                fontWeight: FontWeight.w500,
                               ),
+                            );
+                          },
+                          child: const Text(
+                            'View All',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.blue,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-
-                      ListView.builder(
-                        shrinkWrap: true,
-                        reverse: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: attendanceSummary.attendanceDetails.length,
-                        itemBuilder: (context, index) {
-                          final attendanceDetails =
-                              attendanceSummary.attendanceDetails[index];
-                          return AttendanceDetailsCardWidget(
-                            attendanceDetails: attendanceDetails,
-                          );
-                        },
-                      ),
-                    ],
-                    const SizedBox(height: 32),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      reverse: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: state.summary!.attendanceDetails.length,
+                      itemBuilder: (context, index) {
+                        final attendanceDetails =
+                            state.summary!.attendanceDetails[index];
+                        return AttendanceDetailsCardWidget(
+                          attendanceDetails: attendanceDetails,
+                        );
+                      },
+                    ),
                   ],
-                ),
-              );
-            } else {
-              return const SizedBox.shrink();
-            }
+                  const SizedBox(height: 32),
+                ],
+              ),
+            );
           },
         ),
       ),

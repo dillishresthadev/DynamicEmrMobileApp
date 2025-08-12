@@ -1,89 +1,53 @@
 part of 'attendance_bloc.dart';
 
-sealed class AttendanceState extends Equatable {
-  const AttendanceState();
-
-  @override
-  List<Object?> get props => [];
+enum AttendanceStatus {
+  initial,
+  loading,
+  loadPrimarySuccess,
+  loadPrimaryError,
+  loadExtendedSuccess,
+  loadExtendedError,
+  loadSummarySuccess,
+  loadSummaryError,
 }
 
-final class AttendanceInitialState extends AttendanceState {}
-
-final class AttendanceLoadingState extends AttendanceState {}
-
-final class AttendanceDataState extends AttendanceState {
+final class AttendanceState extends Equatable {
   final List<AttendanceEntity> primary;
   final List<AttendanceEntity> extended;
+  final AttendenceSummaryEntity? summary;
+  final AttendanceStatus status;
+  final String message;
 
-  const AttendanceDataState({
+  const AttendanceState({
     this.primary = const [],
     this.extended = const [],
+    this.summary,
+    this.status = AttendanceStatus.initial,
+    this.message = '',
   });
 
-  AttendanceDataState copyWith({
+  AttendanceState copyWith({
     List<AttendanceEntity>? primary,
     List<AttendanceEntity>? extended,
+    AttendenceSummaryEntity? summary,
+    AttendanceStatus? status,
+    String? message,
   }) {
-    return AttendanceDataState(
+    return AttendanceState(
       primary: primary ?? this.primary,
       extended: extended ?? this.extended,
+      summary: summary ?? this.summary,
+      status: status ?? this.status,
+      message: message ?? this.message,
     );
   }
 
   @override
-  List<Object?> get props => [primary, extended];
-}
-
-final class AttendanceSummaryLoadedState extends AttendanceState {
-  final AttendenceSummaryEntity attendanceSummary;
-
-  const AttendanceSummaryLoadedState({required this.attendanceSummary});
-
-  @override
-  List<Object?> get props => [attendanceSummary];
-}
-
-final class AttendanceSummaryErrorState extends AttendanceState {
-  final String errorMessage;
-
-  const AttendanceSummaryErrorState({required this.errorMessage});
-  @override
-  List<Object?> get props => [errorMessage];
-}
-
-final class AttendanceCompleteState extends AttendanceState {
-  final List<AttendanceEntity> primary;
-  final List<AttendanceEntity> extended;
-  final AttendenceSummaryEntity? attendanceSummary;
-
-  const AttendanceCompleteState({
-    this.primary = const [],
-    this.extended = const [],
-    this.attendanceSummary,
-  });
-
-  AttendanceCompleteState copyWith({
-    List<AttendanceEntity>? primary,
-    List<AttendanceEntity>? extended,
-    AttendenceSummaryEntity? attendanceSummary,
-  }) {
-    return AttendanceCompleteState(
-      primary: primary ?? this.primary,
-      extended: extended ?? this.extended,
-      attendanceSummary: attendanceSummary ?? this.attendanceSummary,
-    );
-  }
-
-  @override
-  List<Object?> get props => [primary, extended, attendanceSummary];
-}
-
-
-final class AttendanceErrorState extends AttendanceState {
-  final String errorMessage;
-
-  const AttendanceErrorState({required this.errorMessage});
-
-  @override
-  List<Object?> get props => [errorMessage];
+  List<Object?> get props => [
+        primary,
+        extended,
+        summary,
+        status,
+        message,
+      ];
 }
