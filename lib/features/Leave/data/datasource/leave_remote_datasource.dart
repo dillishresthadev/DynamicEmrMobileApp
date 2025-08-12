@@ -8,6 +8,7 @@ import 'package:dynamic_emr/core/network/dio_http_client.dart';
 import 'package:dynamic_emr/features/Leave/data/models/leave_application_model.dart';
 import 'package:dynamic_emr/features/Leave/data/models/leave_application_request_model.dart';
 import 'package:dynamic_emr/features/Leave/data/models/leave_history_model.dart';
+import 'package:dynamic_emr/features/Leave/data/models/leave_type_model.dart';
 import 'package:dynamic_emr/injection.dart';
 
 abstract class LeaveRemoteDatasource {
@@ -16,6 +17,10 @@ abstract class LeaveRemoteDatasource {
   Future<List<LeaveApplicationModel>> getApprovedLeaveList();
   Future<List<LeaveApplicationModel>> getPendingLeaveList();
   Future<bool> applyLeave(LeaveApplicationRequestModel leaveRequest);
+
+  Future<List<LeaveTypeModel>> getLeaveType();
+  Future<List<LeaveTypeModel>> getExtendedLeaveType();
+  Future<List<LeaveTypeModel>> getSubstitutionLeaveEmployee();
 }
 
 class LeaveRemoteDatasourceImpl implements LeaveRemoteDatasource {
@@ -207,6 +212,117 @@ class LeaveRemoteDatasourceImpl implements LeaveRemoteDatasource {
       throw Exception("Unexpected response format");
     } catch (e) {
       log("Error getting while applying leave: $e");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<LeaveTypeModel>> getExtendedLeaveType() async {
+    try {
+      final accessToken = await injection<TokenSecureStorage>()
+          .getAccessToken();
+      final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
+      final workingBranchId = await injection<BranchSecureStorage>()
+          .getWorkingBranchId();
+      final workingFinancialId = await injection<BranchSecureStorage>()
+          .getSelectedFiscalYearId();
+      final dynamic response = await client.get(
+        "$baseUrl/${ApiConstants.getExtendedLeaveTypes}",
+        token: accessToken,
+        headers: {
+          "workingBranchId": workingBranchId.toString(),
+          "workingFinancialId": workingFinancialId.toString(),
+        },
+      );
+
+      List<dynamic> jsonList;
+
+      if (response is List) {
+        jsonList = response;
+      } else if (response is Map<String, dynamic>) {
+        jsonList = response['data'];
+      } else {
+        jsonList = [];
+        log('Unexpected response format: $response');
+      }
+
+      return jsonList.map((json) => LeaveTypeModel.fromJson(json)).toList();
+    } catch (e) {
+      log("Error getting extended leave type: $e");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<LeaveTypeModel>> getLeaveType() async {
+    try {
+      final accessToken = await injection<TokenSecureStorage>()
+          .getAccessToken();
+      final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
+      final workingBranchId = await injection<BranchSecureStorage>()
+          .getWorkingBranchId();
+      final workingFinancialId = await injection<BranchSecureStorage>()
+          .getSelectedFiscalYearId();
+      final dynamic response = await client.get(
+        "$baseUrl/${ApiConstants.getLeaveTypes}",
+        token: accessToken,
+        headers: {
+          "workingBranchId": workingBranchId.toString(),
+          "workingFinancialId": workingFinancialId.toString(),
+        },
+      );
+
+      List<dynamic> jsonList;
+
+      if (response is List) {
+        jsonList = response;
+      } else if (response is Map<String, dynamic>) {
+        jsonList = response['data'];
+      } else {
+        jsonList = [];
+        log('Unexpected response format: $response');
+      }
+
+      return jsonList.map((json) => LeaveTypeModel.fromJson(json)).toList();
+    } catch (e) {
+      log("Error getting leave type: $e");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<LeaveTypeModel>> getSubstitutionLeaveEmployee() async {
+    try {
+      final accessToken = await injection<TokenSecureStorage>()
+          .getAccessToken();
+      final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
+      final workingBranchId = await injection<BranchSecureStorage>()
+          .getWorkingBranchId();
+      final workingFinancialId = await injection<BranchSecureStorage>()
+          .getSelectedFiscalYearId();
+      final dynamic response = await client.get(
+        "$baseUrl/${ApiConstants.getSubstitutionEmployee}",
+        token: accessToken,
+        headers: {
+          "workingBranchId": workingBranchId.toString(),
+          "workingFinancialId": workingFinancialId.toString(),
+        },
+      );
+
+      List<dynamic> jsonList;
+
+      if (response is List) {
+        jsonList = response;
+      } else if (response is Map<String, dynamic>) {
+        jsonList = response['data'];
+      } else {
+        jsonList = [];
+        log('Unexpected response format: $response');
+      }
+
+      return jsonList.map((json) => LeaveTypeModel.fromJson(json)).toList();
+    } catch (e) {
+      log("Error getting substitute employee: $e");
       rethrow;
     }
   }

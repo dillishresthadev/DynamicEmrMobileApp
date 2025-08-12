@@ -13,6 +13,12 @@ enum LeaveStatus {
   pendingLeaveLoadError,
   applyLeaveSuccess,
   applyLeaveError,
+  leaveTypeSuccess,
+  leaveTypeError,
+  extendedLeaveTypeSuccess,
+  extendedLeaveTypeError,
+  substitutionEmployeeSuccess,
+  substitutionEmployeeError,
 }
 
 final class LeaveState extends Equatable {
@@ -21,6 +27,9 @@ final class LeaveState extends Equatable {
   final List<LeaveApplicationEntity> approvedLeave;
   final List<LeaveApplicationEntity> pendingLeave;
   final bool applyLeave;
+  final List<LeaveTypeEntity> leaveType;
+  final List<LeaveTypeEntity> extendedLeaveType;
+  final List<LeaveTypeEntity> substitutionEmployee;
 
   final LeaveStatus status;
   final String message;
@@ -32,7 +41,10 @@ final class LeaveState extends Equatable {
     this.pendingLeave = const [],
     this.status = LeaveStatus.initial,
     this.message = '',
-    this.applyLeave= false,
+    this.applyLeave = false,
+    this.leaveType = const [],
+    this.extendedLeaveType = const [],
+    this.substitutionEmployee = const [],
   });
 
   LeaveState copyWith({
@@ -40,6 +52,9 @@ final class LeaveState extends Equatable {
     List<LeaveApplicationEntity>? leaveApplicationHistory,
     List<LeaveApplicationEntity>? approvedLeave,
     List<LeaveApplicationEntity>? pendingLeave,
+    final List<LeaveTypeEntity>? leaveType,
+    final List<LeaveTypeEntity>? extendedLeaveType,
+    final List<LeaveTypeEntity>? substitutionEmployee,
     bool? applyLeave,
     LeaveStatus? status,
     String? message,
@@ -50,6 +65,9 @@ final class LeaveState extends Equatable {
           leaveApplicationHistory ?? this.leaveApplicationHistory,
       approvedLeave: approvedLeave ?? this.approvedLeave,
       pendingLeave: pendingLeave ?? this.pendingLeave,
+      leaveType: leaveType ?? this.leaveType,
+      extendedLeaveType: extendedLeaveType ?? this.extendedLeaveType,
+      substitutionEmployee: substitutionEmployee ?? this.substitutionEmployee,
       applyLeave: applyLeave ?? this.applyLeave,
       status: status ?? this.status,
       message: message ?? this.message,
@@ -62,6 +80,9 @@ final class LeaveState extends Equatable {
     leaveApplicationHistory,
     approvedLeave,
     pendingLeave,
+    leaveType,
+    extendedLeaveType,
+    substitutionEmployee,
     applyLeave,
     status,
     message,

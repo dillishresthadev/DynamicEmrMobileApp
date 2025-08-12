@@ -10,9 +10,12 @@ import 'package:dynamic_emr/features/Leave/data/repository/leave_repository_impl
 import 'package:dynamic_emr/features/Leave/domain/repository/leave_repository.dart';
 import 'package:dynamic_emr/features/Leave/domain/usecases/apply_leave_usecase.dart';
 import 'package:dynamic_emr/features/Leave/domain/usecases/approved_leave_list_usecase.dart';
+import 'package:dynamic_emr/features/Leave/domain/usecases/extended_leave_type_usecase.dart';
 import 'package:dynamic_emr/features/Leave/domain/usecases/leave_application_history_usecase.dart';
 import 'package:dynamic_emr/features/Leave/domain/usecases/leave_history_usecase.dart';
+import 'package:dynamic_emr/features/Leave/domain/usecases/leave_type_usecase.dart';
 import 'package:dynamic_emr/features/Leave/domain/usecases/pending_leave_list_usecase.dart';
+import 'package:dynamic_emr/features/Leave/domain/usecases/substitution_leave_employee_usecase.dart';
 import 'package:dynamic_emr/features/Leave/presentation/bloc/leave_bloc.dart';
 import 'package:dynamic_emr/features/attendance/data/datasource/attendance_remote_datasource.dart';
 import 'package:dynamic_emr/features/attendance/data/repository/attendance_repository_impl.dart';
@@ -155,6 +158,21 @@ Future<void> initDependencies() async {
       approvedLeaveListUsecase: injection<ApprovedLeaveListUsecase>(),
       pendingLeaveListUsecase: injection<PendingLeaveListUsecase>(),
       applyLeaveUsecase: injection<ApplyLeaveUsecase>(),
+      leaveTypeUsecase: injection<LeaveTypeUsecase>(),
+      extendedLeaveTypeUsecase: injection<ExtendedLeaveTypeUsecase>(),
+      substitutionLeaveEmployeeUsecase:
+          injection<SubstitutionLeaveEmployeeUsecase>(),
+    ),
+  );
+  injection.registerLazySingleton<LeaveTypeUsecase>(
+    () => LeaveTypeUsecase(repository: injection<LeaveRepository>()),
+  );
+  injection.registerLazySingleton<ExtendedLeaveTypeUsecase>(
+    () => ExtendedLeaveTypeUsecase(repository: injection<LeaveRepository>()),
+  );
+  injection.registerLazySingleton<SubstitutionLeaveEmployeeUsecase>(
+    () => SubstitutionLeaveEmployeeUsecase(
+      repository: injection<LeaveRepository>(),
     ),
   );
   injection.registerLazySingleton<ApplyLeaveUsecase>(

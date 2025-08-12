@@ -7,6 +7,7 @@ import 'package:dynamic_emr/core/widgets/dropdown/custom_dropdown.dart';
 import 'package:dynamic_emr/core/widgets/form/custom_date_time_field.dart';
 import 'package:dynamic_emr/core/widgets/form/custom_input_field.dart';
 import 'package:dynamic_emr/features/Leave/domain/entities/leave_application_request_entity.dart';
+import 'package:dynamic_emr/features/Leave/domain/entities/leave_type_entity.dart';
 import 'package:dynamic_emr/features/Leave/presentation/bloc/leave_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,22 +33,9 @@ class _ApplyLeaveFormScreenState extends State<ApplyLeaveFormScreen> {
   bool _isLoading = false;
   final List<String> _shiftType = ["Primary", "Extended"];
 
-  final List<String> _leaveTypes = [
-    "Annual Leave",
-    "Sick Leave",
-    "Emergency Leave",
-    "Maternity Leave",
-    "Paternity Leave",
-    "Bereavement Leave",
-  ];
-
-  final List<String> _employees = [
-    "Dr. John Smith",
-    "Dr. Sarah Johnson",
-    "Dr. Michael Brown",
-    "Dr. Emily Davis",
-    "Dr. Robert Wilson",
-  ];
+  List<LeaveTypeEntity> leaveTypeList = [];
+  List<LeaveTypeEntity> extendedLeaveTypeList = [];
+  List<LeaveTypeEntity> substitutionEmployeeList = [];
 
   @override
   void dispose() {
@@ -140,228 +128,264 @@ class _ApplyLeaveFormScreenState extends State<ApplyLeaveFormScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    // Trigger events to load the lists if needed
+    context.read<LeaveBloc>().add(LeaveTypeEvent());
+    context.read<LeaveBloc>().add(LeaveTypeExtendedEvent());
+    context.read<LeaveBloc>().add(SubstitutionEmployeeEvent());
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: DynamicEMRAppBar(
-        title: 'Apply for Leave',
-        automaticallyImplyLeading: true,
-        actions: [
-          IconButton(
-            onPressed: _resetForm,
-            icon: const Icon(Icons.refresh),
-            tooltip: 'Reset Form',
-          ),
-        ],
-      ),
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.shade50,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.blue.shade200),
-                    ),
-                    child: Row(
+    return BlocListener<LeaveBloc, LeaveState>(
+      listener: (context, state) {
+        if (state.status == LeaveStatus.leaveTypeSuccess) {
+          leaveTypeList = state.leaveType;
+        }
+        if (state.status == LeaveStatus.extendedLeaveTypeSuccess) {
+          extendedLeaveTypeList = state.extendedLeaveType;
+        }
+        if (state.status == LeaveStatus.substitutionEmployeeSuccess) {
+          substitutionEmployeeList = state.substitutionEmployee;
+        }
+      },
+      child: Scaffold(
+        appBar: DynamicEMRAppBar(
+          title: 'Apply for Leave',
+          automaticallyImplyLeading: true,
+          actions: [
+            IconButton(
+              onPressed: _resetForm,
+              icon: const Icon(Icons.refresh),
+              tooltip: 'Reset Form',
+            ),
+          ],
+        ),
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: BlocBuilder<LeaveBloc, LeaveState>(
+            builder: (context, state) {
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Form(
+                  key: _formKey,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Icon(
-                          Icons.info_outline,
-                          color: Colors.blue.shade600,
-                          size: 20,
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.blue.shade50,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.blue.shade200),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.info_outline,
+                                color: Colors.blue.shade600,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Your leave request will be reviewed by your supervisor. You will receive a notification once it has been approved or rejected.',
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(color: Colors.blue.shade800),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Text(
-                            'Your leave request will be reviewed by your supervisor. You will receive a notification once it has been approved or rejected.',
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(color: Colors.blue.shade800),
+                        SizedBox(height: 10),
+
+                        // Date Selection Section
+                        Text(
+                          "Shift Type",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 10),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomDropdown(
+                              value: _selectedShiftType,
+                              items: _shiftType,
+                              hintText: "Select Shift Type *",
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedShiftType = value;
+                                });
+                              },
+                            ),
+                            const SizedBox(height: 10),
+
+                            Text(
+                              "Date FROM - TO",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: CustomDateTimeField(
+                                    controller: _startDateController,
+                                    hintText: "Start Date *",
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: CustomDateTimeField(
+                                    controller: _endDateController,
+                                    hintText: "End Date *",
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 16),
+                        Text(
+                          "Leave Type",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Leave Type Section
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomDropdown(
+                              value: _selectedLeaveType,
+                              items: _selectedShiftType == "Primary"
+                                  ? leaveTypeList.map((e) => e.text).toList()
+                                  : extendedLeaveTypeList
+                                        .map((e) => e.text)
+                                        .toList(),
+                              hintText: "Select Leave Type *",
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedLeaveType = value;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        Text(
+                          "Substitute Employee",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Substitute Section
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomDropdown(
+                              value: _selectedSubstituteEmployee,
+                              items: substitutionEmployeeList
+                                  .map((e) => e.text)
+                                  .toList(),
+                              hintText: "Select Substitute Employee",
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedSubstituteEmployee = value;
+                                });
+                              },
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Select a colleague who can cover your responsibilities during your absence',
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(
+                                    color: Colors.grey[600],
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Reason Section
+                        Text(
+                          "Leave Reason",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 10),
+
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomInputField(
+                              controller: _reasonController,
+                              hintText:
+                                  "Please provide a reason for your leave *",
+                              maxLines: 2,
+
+                              validator: (value) {
+                                if (value == null || value.trim().isEmpty) {
+                                  return 'Reason is required';
+                                }
+                                if (value.trim().length < 10) {
+                                  return 'Please provide a more detailed reason (at least 10 characters)';
+                                }
+                                return null;
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 24),
+
+                        // Submit Button
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
+                          child: ElevatedButton.icon(
+                            onPressed: _isLoading ? null : _submitForm,
+                            icon: _isLoading
+                                ? const SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
+                                    ),
+                                  )
+                                : const Icon(Icons.send),
+                            label: Text(
+                              _isLoading
+                                  ? 'Submitting...'
+                                  : 'Submit Leave Request',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              foregroundColor: Colors.white,
+                              elevation: 3,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(height: 10),
-
-                  // Date Selection Section
-                  Text(
-                    "Shift Type",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 10),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomDropdown(
-                        value: _selectedShiftType,
-                        items: _shiftType,
-                        hintText: "Select Shift Type *",
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedShiftType = value;
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 10),
-
-                      Text(
-                        "Date FROM - TO",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CustomDateTimeField(
-                              controller: _startDateController,
-                              hintText: "Start Date *",
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: CustomDateTimeField(
-                              controller: _endDateController,
-                              hintText: "End Date *",
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-                  Text(
-                    "Leave Type",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 10),
-
-                  // Leave Type Section
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomDropdown(
-                        value: _selectedLeaveType,
-                        items: _leaveTypes,
-                        hintText: "Select Leave Type *",
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedLeaveType = value;
-                          });
-                        },
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  Text(
-                    "Substitute Employee",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 10),
-
-                  // Substitute Section
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomDropdown(
-                        value: _selectedSubstituteEmployee,
-                        items: _employees,
-                        hintText: "Select Substitute Employee",
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedSubstituteEmployee = value;
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Select a colleague who can cover your responsibilities during your absence',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600],
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Reason Section
-                  Text(
-                    "Leave Reason",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 10),
-
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomInputField(
-                        controller: _reasonController,
-                        hintText: "Please provide a reason for your leave *",
-                        maxLines: 2,
-
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Reason is required';
-                          }
-                          if (value.trim().length < 10) {
-                            return 'Please provide a more detailed reason (at least 10 characters)';
-                          }
-                          return null;
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-
-                  // Submit Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton.icon(
-                      onPressed: _isLoading ? null : _submitForm,
-                      icon: _isLoading
-                          ? const SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
-                                ),
-                              ),
-                            )
-                          : const Icon(Icons.send),
-                      label: Text(
-                        _isLoading ? 'Submitting...' : 'Submit Leave Request',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                        elevation: 3,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           ),
         ),
       ),

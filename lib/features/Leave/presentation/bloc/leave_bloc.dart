@@ -4,11 +4,15 @@ import 'dart:developer';
 import 'package:dynamic_emr/features/Leave/domain/entities/leave_application_entity.dart';
 import 'package:dynamic_emr/features/Leave/domain/entities/leave_application_request_entity.dart';
 import 'package:dynamic_emr/features/Leave/domain/entities/leave_history_entity.dart';
+import 'package:dynamic_emr/features/Leave/domain/entities/leave_type_entity.dart';
 import 'package:dynamic_emr/features/Leave/domain/usecases/apply_leave_usecase.dart';
 import 'package:dynamic_emr/features/Leave/domain/usecases/approved_leave_list_usecase.dart';
+import 'package:dynamic_emr/features/Leave/domain/usecases/extended_leave_type_usecase.dart';
 import 'package:dynamic_emr/features/Leave/domain/usecases/leave_application_history_usecase.dart';
 import 'package:dynamic_emr/features/Leave/domain/usecases/leave_history_usecase.dart';
+import 'package:dynamic_emr/features/Leave/domain/usecases/leave_type_usecase.dart';
 import 'package:dynamic_emr/features/Leave/domain/usecases/pending_leave_list_usecase.dart';
+import 'package:dynamic_emr/features/Leave/domain/usecases/substitution_leave_employee_usecase.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -21,6 +25,9 @@ class LeaveBloc extends Bloc<LeaveEvent, LeaveState> {
   final ApprovedLeaveListUsecase approvedLeaveListUsecase;
   final PendingLeaveListUsecase pendingLeaveListUsecase;
   final ApplyLeaveUsecase applyLeaveUsecase;
+  final LeaveTypeUsecase leaveTypeUsecase;
+  final ExtendedLeaveTypeUsecase extendedLeaveTypeUsecase;
+  final SubstitutionLeaveEmployeeUsecase substitutionLeaveEmployeeUsecase;
 
   LeaveBloc({
     required this.leaveHistoryUsecase,
@@ -28,12 +35,18 @@ class LeaveBloc extends Bloc<LeaveEvent, LeaveState> {
     required this.approvedLeaveListUsecase,
     required this.pendingLeaveListUsecase,
     required this.applyLeaveUsecase,
+    required this.leaveTypeUsecase,
+    required this.extendedLeaveTypeUsecase,
+    required this.substitutionLeaveEmployeeUsecase,
   }) : super(const LeaveState()) {
     on<LeaveHistoryEvent>(_onLeaveHistory);
     on<LeaveApplicationHistoryEvent>(_onLeaveApplicationHistory);
     on<ApprovedLeaveListEvent>(_onApprovedLeaveList);
     on<PendingLeaveListEvent>(_onPendingLeaveList);
     on<ApplyLeaveEvent>(_onApplyLeave);
+    on<LeaveTypeEvent>(_onLeaveType);
+    on<LeaveTypeExtendedEvent>(_onLeaveTypeExtended);
+    on<SubstitutionEmployeeEvent>(_onSubstitutionEmployee);
   }
 
   Future<void> _onLeaveHistory(
@@ -173,6 +186,77 @@ class LeaveBloc extends Bloc<LeaveEvent, LeaveState> {
       emit(
         state.copyWith(
           status: LeaveStatus.applyLeaveError,
+          message: e.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onLeaveType(
+    LeaveTypeEvent event,
+    Emitter<LeaveState> emit,
+  ) async {
+    emit(state.copyWith(status: LeaveStatus.loading));
+    try {
+      final leaveType = await leaveTypeUsecase.call();
+      emit(
+        state.copyWith(
+          leaveType: leaveType,
+          status: LeaveStatus.leaveTypeSuccess,
+        ),
+      );
+    } catch (e) {
+      log("Error on Bloc [Leave Type Primary] $e");
+      emit(
+        state.copyWith(
+          status: LeaveStatus.leaveTypeError,
+          message: e.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onLeaveTypeExtended(
+    LeaveTypeExtendedEvent event,
+    Emitter<LeaveState> emit,
+  ) async {
+    try {
+      final leaveTypeExtended = await extendedLeaveTypeUsecase.call();
+      emit(
+        state.copyWith(
+          extendedLeaveType: leaveTypeExtended,
+          status: LeaveStatus.extendedLeaveTypeSuccess,
+        ),
+      );
+    } catch (e) {
+      log("Error on Bloc [Extended leave type] $e");
+      emit(
+        state.copyWith(
+          status: LeaveStatus.extendedLeaveTypeError,
+          message: e.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onSubstitutionEmployee(
+    SubstitutionEmployeeEvent event,
+    Emitter<LeaveState> emit,
+  ) async {
+    try {
+      final substitutionEmployee = await substitutionLeaveEmployeeUsecase
+          .call();
+      emit(
+        state.copyWith(
+          substitutionEmployee: substitutionEmployee,
+          status: LeaveStatus.substitutionEmployeeSuccess,
+        ),
+      );
+    } catch (e) {
+      log("Error on Bloc [Substitution employee] $e");
+      emit(
+        state.copyWith(
+          status: LeaveStatus.substitutionEmployeeError,
           message: e.toString(),
         ),
       );

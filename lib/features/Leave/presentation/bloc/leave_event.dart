@@ -15,6 +15,12 @@ final class ApprovedLeaveListEvent extends LeaveEvent {}
 
 final class PendingLeaveListEvent extends LeaveEvent {}
 
+final class LeaveTypeEvent extends LeaveEvent {}
+
+final class LeaveTypeExtendedEvent extends LeaveEvent {}
+
+final class SubstitutionEmployeeEvent extends LeaveEvent {}
+
 final class ApplyLeaveEvent extends LeaveEvent {
   final LeaveApplicationRequestEntity leaveRequest;
 

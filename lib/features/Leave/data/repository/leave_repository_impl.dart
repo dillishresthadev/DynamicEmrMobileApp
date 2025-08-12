@@ -3,6 +3,7 @@ import 'package:dynamic_emr/features/Leave/data/models/leave_application_request
 import 'package:dynamic_emr/features/Leave/domain/entities/leave_application_entity.dart';
 import 'package:dynamic_emr/features/Leave/domain/entities/leave_application_request_entity.dart';
 import 'package:dynamic_emr/features/Leave/domain/entities/leave_history_entity.dart';
+import 'package:dynamic_emr/features/Leave/domain/entities/leave_type_entity.dart';
 import 'package:dynamic_emr/features/Leave/domain/repository/leave_repository.dart';
 
 class LeaveRepositoryImpl extends LeaveRepository {
@@ -49,5 +50,20 @@ class LeaveRepositoryImpl extends LeaveRepository {
     );
 
     return await remoteDatasource.applyLeave(model);
+  }
+
+  @override
+  Future<List<LeaveTypeEntity>> getExtendedLeaveType() async {
+    return await remoteDatasource.getExtendedLeaveType();
+  }
+
+  @override
+  Future<List<LeaveTypeEntity>> getLeaveType() async {
+    return await remoteDatasource.getLeaveType();
+  }
+
+  @override
+  Future<List<LeaveTypeEntity>> getSubstitutionLeaveEmployee() async {
+    return await remoteDatasource.getSubstitutionLeaveEmployee();
   }
 }
