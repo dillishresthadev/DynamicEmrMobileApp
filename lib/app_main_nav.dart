@@ -19,6 +19,7 @@ class _AppMainNavState extends State<AppMainNav> {
     HomeScreen(),
     AttendanceScreen(),
     LeaveScreen(),
+    Container(),
     ProfileScreen(),
   ];
 
@@ -59,6 +60,11 @@ class _AppMainNavState extends State<AppMainNav> {
             icon: Icon(Icons.date_range_outlined),
             activeIcon: Icon(Icons.date_range),
             label: "Leaves",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.work_outline),
+            activeIcon: Icon(Icons.work),
+            label: "Work",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.account_circle_outlined),
