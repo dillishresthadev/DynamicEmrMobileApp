@@ -1,6 +1,8 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:dynamic_emr/core/constants/app_colors.dart';
+import 'package:dynamic_emr/core/utils/file_picker_utils.dart';
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/core/widgets/dropdown/custom_dropdown.dart';
 import 'package:dynamic_emr/core/widgets/form/custom_input_field.dart';
@@ -31,6 +33,8 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
 
   List<WorkUserEntity> workUserList = [];
   List<TicketCategoriesEntity> categoriesList = [];
+
+  List<File> attachments = [];
 
   @override
   void initState() {
@@ -74,6 +78,11 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
       return;
     }
 
+    // Convert File objects to paths
+    List<String> attachmentPaths = attachments
+        .map((file) => file.path)
+        .toList();
+
     context.read<WorkBloc>().add(
       CreateTicketEvent(
         ticketCategoryId: _selectedCategoriesType!,
@@ -82,10 +91,9 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
         severity: _selectedSeverityType!,
         priority: _selectedPriorityType!,
         assignToEmployeeId: _selectedAssignToType!,
-        attachmentPaths: [],
+        attachmentPaths: attachmentPaths,
       ),
     );
-
     _resetForm();
   }
 
@@ -205,6 +213,39 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
                               value == null || value.trim().isEmpty
                               ? 'Description is required'
                               : null,
+                        ),
+                        buildSectionTitle("Files/Images"),
+
+                        Row(
+                          children: [
+                            ElevatedButton.icon(
+                              onPressed: () async {
+                                final file = await FilePickerUtils.pickImage(
+                                  fromCamera: true,
+                                );
+                                if (file != null) {
+                                  setState(() {
+                                    attachments.add(file);
+                                  });
+                                }
+                              },
+                              icon: const Icon(Icons.camera_alt),
+                              label: const Text('Camera'),
+                            ),
+
+                            ElevatedButton.icon(
+                              onPressed: () async {
+                                final file = await FilePickerUtils.pickFile();
+                                if (file != null) {
+                                  setState(() {
+                                    attachments.add(file);
+                                  });
+                                }
+                              },
+                              icon: const Icon(Icons.upload_file),
+                              label: const Text('Gallery / File'),
+                            ),
+                          ],
                         ),
 
                         buildSectionTitle("Severity"),

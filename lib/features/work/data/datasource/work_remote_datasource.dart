@@ -208,6 +208,14 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
       final workingFinancialId = await injection<BranchSecureStorage>()
           .getSelectedFiscalYearId();
 
+      // Convert file paths to MultipartFile
+      List<MultipartFile>? files;
+      if (attachmentPaths != null && attachmentPaths.isNotEmpty) {
+        files = attachmentPaths
+            .map((path) => MultipartFile.fromFileSync(path))
+            .toList();
+      }
+
       final formData = FormData.fromMap({
         "TicketCategoryId": ticketCategoryId,
         "Title": title,
@@ -215,7 +223,7 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
         "Severity": severity,
         "Priority": priority,
         "AssignToEmployeeId": assignToEmployeeId,
-        "Attachments": [],
+        "Attachments": files,
       });
 
       final rawResponse = await client.post(
@@ -233,7 +241,7 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
       }
       throw Exception("Unexpected response format");
     } catch (e) {
-      log("Error getting while creating new ticket: $e");
+      log("Error creating new ticket: $e");
       rethrow;
     }
   }
