@@ -18,7 +18,7 @@ class DioHttpClient {
     Map<String, String>? customHeaders,
   }) {
     return {
-      'Content-Type': contentType ?? 'application/json',
+      if (contentType != null) 'Content-Type': contentType,
       if (token != null) 'Authorization': 'Bearer $token',
       ...?customHeaders,
     };
@@ -47,14 +47,39 @@ class DioHttpClient {
 
   Future<Map<String, dynamic>> post(
     String endpoint, {
-    Map<String, dynamic>? body,
+    dynamic body, // <-- can be Map or FormData
     String? token,
     Map<String, dynamic>? queryParams,
     String? contentType,
     Map<String, String>? headers,
   }) async {
     try {
-      log("POST Request: $endpoint, Body: $body, QueryParams: $queryParams");
+      // Auto-detect multipart
+      if (body is FormData) {
+        contentType = 'multipart/form-data';
+      } else {
+        contentType ??= 'application/json';
+      }
+
+      if (body is FormData) {
+        final formDataMap = {
+          'fields': body.fields.map((f) => {f.key: f.value}).toList(),
+          'files': body.files
+              .map(
+                (f) => {
+                  'key': f.key,
+                  'filename': f.value.filename,
+                  'contentType': f.value.contentType.toString(),
+                },
+              )
+              .toList(),
+        };
+        log(
+          "POST Request: $endpoint, FormData: $formDataMap, QueryParams: $queryParams",
+        );
+      } else {
+        log("POST Request: $endpoint, Body: $body, QueryParams: $queryParams");
+      }
       final response = await dio.post(
         endpoint,
         data: body,
