@@ -9,4 +9,13 @@ abstract class WorkRepository {
   Future<TicketDetailsEntity> getTicketDetailsById({required int ticketId});
   Future<List<WorkUserEntity>> getWorkUserList();
   Future<List<TicketCategoriesEntity>> getTicketCategories();
+  Future<bool> createNewTicket(
+    int ticketCategoryId,
+    String title,
+    String description,
+    String severity,
+    String priority,
+    int assignToEmployeeId,
+    List<String>? attachmentPaths,
+  );
 }

@@ -1,6 +1,7 @@
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_summary_entity.dart';
 import 'package:dynamic_emr/features/work/presentation/bloc/work_bloc.dart';
+import 'package:dynamic_emr/features/work/presentation/screens/create_ticket_form_screen.dart';
 import 'package:dynamic_emr/features/work/presentation/widgets/priority_chart_widget.dart';
 import 'package:dynamic_emr/features/work/presentation/widgets/severity_chart_widget.dart';
 import 'package:dynamic_emr/features/work/presentation/widgets/work_completion_rate_card_widget.dart';
@@ -57,6 +58,26 @@ class _WorkScreenState extends State<WorkScreen>
             Tab(text: 'Assigned Tickets'),
           ],
         ),
+        actions: [
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CreateTicketFormScreen(),
+                ),
+              );
+            },
+            child: Row(
+              children: [
+                Icon(Icons.add_circle_outline),
+                SizedBox(width: 5),
+                Text("Create Ticket"),
+                SizedBox(width: 10),
+              ],
+            ),
+          ),
+        ],
       ),
       body: TabBarView(
         controller: _tabController,

@@ -40,8 +40,11 @@ import 'package:dynamic_emr/features/profile/presentation/bloc/profile_bloc.dart
 import 'package:dynamic_emr/features/work/data/datasource/work_remote_datasource.dart';
 import 'package:dynamic_emr/features/work/data/repository/work_repository_impl.dart';
 import 'package:dynamic_emr/features/work/domain/repository/work_repository.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/create_new_ticket_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/ticket_assigned_to_me_summary_usecase.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/ticket_categories_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/ticket_summary_usecase.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/work_user_list_usecase.dart';
 import 'package:dynamic_emr/features/work/presentation/bloc/work_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
@@ -213,7 +216,19 @@ Future<void> initDependencies() async {
       ticketSummaryUsecase: injection<TicketSummaryUsecase>(),
       ticketAssignedToMeSummaryUsecase:
           injection<TicketAssignedToMeSummaryUsecase>(),
+      workUserListUsecase: injection<WorkUserListUsecase>(),
+      ticketCategoriesUsecase: injection<TicketCategoriesUsecase>(),
+      createNewTicketUsecase: injection<CreateNewTicketUsecase>(),
     ),
+  );
+  injection.registerLazySingleton<CreateNewTicketUsecase>(
+    () => CreateNewTicketUsecase(repository: injection<WorkRepository>()),
+  );
+  injection.registerLazySingleton<WorkUserListUsecase>(
+    () => WorkUserListUsecase(repository: injection<WorkRepository>()),
+  );
+  injection.registerLazySingleton<TicketCategoriesUsecase>(
+    () => TicketCategoriesUsecase(repository: injection<WorkRepository>()),
   );
 
   injection.registerLazySingleton<TicketAssignedToMeSummaryUsecase>(

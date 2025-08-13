@@ -35,4 +35,25 @@ class WorkRepositoryImpl extends WorkRepository {
   Future<List<WorkUserEntity>> getWorkUserList() async {
     return await remoteDatasource.getWorkUserList();
   }
+
+  @override
+  Future<bool> createNewTicket(
+    int ticketCategoryId,
+    String title,
+    String description,
+    String severity,
+    String priority,
+    int assignToEmployeeId,
+    List<String>? attachmentPaths,
+  ) async {
+    return await remoteDatasource.createNewTicket(
+      ticketCategoryId,
+      title,
+      description,
+      severity,
+      priority,
+      assignToEmployeeId,
+      attachmentPaths,
+    );
+  }
 }

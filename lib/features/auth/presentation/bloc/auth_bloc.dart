@@ -106,11 +106,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     } catch (e) {
       log('Error in _onCheckAuthStatus: $e');
+
       emit(
         AuthErrorState(
           errorMessage: 'Failed to check auth status. Please try again.',
         ),
       );
+      emit(AuthUnauthenticated());
     }
   }
 
