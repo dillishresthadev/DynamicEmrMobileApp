@@ -3,6 +3,7 @@ import 'package:dynamic_emr/features/Leave/presentation/screens/leave_screen.dar
 import 'package:dynamic_emr/features/attendance/presentation/screen/attendance_screen.dart';
 import 'package:dynamic_emr/features/home/presentation/screens/home_screen.dart';
 import 'package:dynamic_emr/features/profile/presentation/screens/profile_screen.dart';
+import 'package:dynamic_emr/features/work/presentation/screens/work_screen.dart';
 import 'package:flutter/material.dart';
 
 class AppMainNav extends StatefulWidget {
@@ -19,7 +20,7 @@ class _AppMainNavState extends State<AppMainNav> {
     HomeScreen(),
     AttendanceScreen(),
     LeaveScreen(),
-    Container(),
+    WorkScreen(),
     ProfileScreen(),
   ];
 

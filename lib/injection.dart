@@ -37,6 +37,12 @@ import 'package:dynamic_emr/features/profile/data/repository/employee_repository
 import 'package:dynamic_emr/features/profile/domain/repository/employee_repository.dart';
 import 'package:dynamic_emr/features/profile/domain/usecases/employee_details_usecase.dart';
 import 'package:dynamic_emr/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:dynamic_emr/features/work/data/datasource/work_remote_datasource.dart';
+import 'package:dynamic_emr/features/work/data/repository/work_repository_impl.dart';
+import 'package:dynamic_emr/features/work/domain/repository/work_repository.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/ticket_assigned_to_me_summary_usecase.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/ticket_summary_usecase.dart';
+import 'package:dynamic_emr/features/work/presentation/bloc/work_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 
@@ -199,5 +205,30 @@ Future<void> initDependencies() async {
   );
   injection.registerLazySingleton<LeaveRemoteDatasource>(
     () => LeaveRemoteDatasourceImpl(client: injection<DioHttpClient>()),
+  );
+  // Work (Task/Tickets)
+
+  injection.registerLazySingleton<WorkBloc>(
+    () => WorkBloc(
+      ticketSummaryUsecase: injection<TicketSummaryUsecase>(),
+      ticketAssignedToMeSummaryUsecase:
+          injection<TicketAssignedToMeSummaryUsecase>(),
+    ),
+  );
+
+  injection.registerLazySingleton<TicketAssignedToMeSummaryUsecase>(
+    () => TicketAssignedToMeSummaryUsecase(
+      repository: injection<WorkRepository>(),
+    ),
+  );
+  injection.registerLazySingleton<TicketSummaryUsecase>(
+    () => TicketSummaryUsecase(repository: injection<WorkRepository>()),
+  );
+  injection.registerLazySingleton<WorkRepository>(
+    () =>
+        WorkRepositoryImpl(remoteDatasource: injection<WorkRemoteDatasource>()),
+  );
+  injection.registerLazySingleton<WorkRemoteDatasource>(
+    () => WorkRemoteDatasourceImpl(client: injection<DioHttpClient>()),
   );
 }

@@ -13,11 +13,12 @@ class WorkRepositoryImpl extends WorkRepository {
   Future<TicketSummaryEntity> getMyTicketSummary() async {
     return await remoteDatasource.getMyTicketSummary();
   }
-@override
-  Future<TicketSummaryEntity> getTicketAssignedToMeSummary() {
-    // TODO: implement getTicketAssignedToMeSummary
-    throw UnimplementedError();
+
+  @override
+  Future<TicketSummaryEntity> getTicketAssignedToMeSummary() async {
+    return await remoteDatasource.getTicketAssignedToMeSummary();
   }
+
   @override
   Future<List<TicketCategoriesEntity>> getTicketCategories() async {
     return await remoteDatasource.getTicketCategories();
@@ -34,6 +35,4 @@ class WorkRepositoryImpl extends WorkRepository {
   Future<List<WorkUserEntity>> getWorkUserList() async {
     return await remoteDatasource.getWorkUserList();
   }
-  
-  
 }

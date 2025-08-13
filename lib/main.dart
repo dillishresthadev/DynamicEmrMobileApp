@@ -4,6 +4,7 @@ import 'package:dynamic_emr/features/Leave/presentation/bloc/leave_bloc.dart';
 import 'package:dynamic_emr/features/attendance/presentation/bloc/attendance_bloc.dart';
 import 'package:dynamic_emr/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dynamic_emr/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:dynamic_emr/features/work/presentation/bloc/work_bloc.dart';
 import 'package:dynamic_emr/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(create: (context) => injection<AttendanceBloc>()),
         BlocProvider(create: (context) => injection<LeaveBloc>()),
+        BlocProvider(create: (context) => injection<WorkBloc>()),
       ],
       child: MaterialApp(
         title: 'Dynamic EMR',
