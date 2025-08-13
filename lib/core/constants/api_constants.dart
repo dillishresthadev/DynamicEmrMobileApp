@@ -21,7 +21,7 @@ class ApiConstants {
   static const String getUserList = "/api/Ticket/GetUserList";
   // Default Id is passed as 102
   static const String getTicketDetailsById =
-      "/api/Ticket/GetTicketDetailById/102";
+      "/api/Ticket/GetTicketDetailById";
   static const String getMyTicketSummary = "/api/Ticket/GetMyTicketSummary";
   static const String getTicketAssignedToMe =
       "/api/Ticket/GetTicketAssignedToMeSummary";

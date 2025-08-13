@@ -72,4 +72,5 @@ class TicketEntity {
     required this.updateUser,
     this.updateTime,
   });
+
 }

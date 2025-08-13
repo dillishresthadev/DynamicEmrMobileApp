@@ -1,0 +1,39 @@
+import 'package:dynamic_emr/features/work/data/datasource/work_remote_datasource.dart';
+import 'package:dynamic_emr/features/work/domain/entities/ticket_categories_entity.dart';
+import 'package:dynamic_emr/features/work/domain/entities/ticket_details_entity.dart';
+import 'package:dynamic_emr/features/work/domain/entities/ticket_summary_entity.dart';
+import 'package:dynamic_emr/features/work/domain/entities/work_user_entity.dart';
+import 'package:dynamic_emr/features/work/domain/repository/work_repository.dart';
+
+class WorkRepositoryImpl extends WorkRepository {
+  final WorkRemoteDatasource remoteDatasource;
+
+  WorkRepositoryImpl({required this.remoteDatasource});
+  @override
+  Future<TicketSummaryEntity> getMyTicketSummary() async {
+    return await remoteDatasource.getMyTicketSummary();
+  }
+@override
+  Future<TicketSummaryEntity> getTicketAssignedToMeSummary() {
+    // TODO: implement getTicketAssignedToMeSummary
+    throw UnimplementedError();
+  }
+  @override
+  Future<List<TicketCategoriesEntity>> getTicketCategories() async {
+    return await remoteDatasource.getTicketCategories();
+  }
+
+  @override
+  Future<TicketDetailsEntity> getTicketDetailsById({
+    required int ticketId,
+  }) async {
+    return await remoteDatasource.getTicketDetailsById(ticketId: ticketId);
+  }
+
+  @override
+  Future<List<WorkUserEntity>> getWorkUserList() async {
+    return await remoteDatasource.getWorkUserList();
+  }
+  
+  
+}
