@@ -17,6 +17,7 @@ class TicketScreen extends StatefulWidget {
 class _TicketScreenState extends State<TicketScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  TicketFilterData? _currentFilter;
 
   final TextEditingController _fromDateController = TextEditingController();
   final TextEditingController _toDateController = TextEditingController();
@@ -31,28 +32,15 @@ class _TicketScreenState extends State<TicketScreen>
     _fromDateController.text = DateFormat('yyyy-MM-dd').format(oneMonthAgo);
     _toDateController.text = DateFormat('yyyy-MM-dd').format(now);
 
-    context.read<WorkBloc>().add(
-      FilterMyTicketEvent(
+    _applyFilter(
+      TicketFilterData(
         ticketCategoryId: 0,
         status: "",
         priority: "",
         severity: "",
-        assignTo: "",
+        orderBy: "",
         fromDate: "",
         toDate: "",
-        orderBy: "",
-      ),
-    );
-    context.read<WorkBloc>().add(
-      FilterTicketAssignedToMeEvent(
-        ticketCategoryId: 0,
-        status: "",
-        priority: "",
-        severity: "",
-        assignTo: "",
-        fromDate: "",
-        toDate: "",
-        orderBy: "",
       ),
     );
   }
@@ -66,31 +54,40 @@ class _TicketScreenState extends State<TicketScreen>
     super.dispose();
   }
 
-  Future<void> _refreshData() async {
+  void _applyFilter(TicketFilterData filter) {
+    _currentFilter = filter;
+
     context.read<WorkBloc>().add(
       FilterMyTicketEvent(
-        ticketCategoryId: 0,
-        status: "",
-        priority: "",
-        severity: "",
+        ticketCategoryId: filter.ticketCategoryId,
+        status: filter.status ?? "",
+        priority: filter.priority ?? "",
+        severity: filter.severity ?? "",
         assignTo: "",
-        fromDate: "",
-        toDate: "",
-        orderBy: "",
+        fromDate: filter.fromDate,
+        toDate: filter.toDate,
+        orderBy: filter.orderBy ?? "",
       ),
     );
+
     context.read<WorkBloc>().add(
       FilterTicketAssignedToMeEvent(
-        ticketCategoryId: 0,
-        status: "",
-        priority: "",
-        severity: "",
+        ticketCategoryId: filter.ticketCategoryId,
+        status: filter.status ?? "",
+        priority: filter.priority ?? "",
+        severity: filter.severity ?? "",
         assignTo: "",
-        fromDate: "",
-        toDate: "",
-        orderBy: "",
+        fromDate: filter.fromDate,
+        toDate: filter.toDate,
+        orderBy: filter.orderBy ?? "",
       ),
     );
+  }
+
+  Future<void> _refreshData() async {
+    if (_currentFilter != null) {
+      _applyFilter(_currentFilter!);
+    }
   }
 
   @override
@@ -106,7 +103,22 @@ class _TicketScreenState extends State<TicketScreen>
               showModalBottomSheet(
                 context: context,
                 builder: (context) {
-                  return TicketFilterWidget();
+                  return TicketFilterWidget(
+                    onApply: (filter) => _applyFilter(filter),
+                    onClear: () {
+                      _applyFilter(
+                        TicketFilterData(
+                          ticketCategoryId: 0,
+                          status: "",
+                          priority: "",
+                          severity: "",
+                          orderBy: "",
+                          fromDate: "",
+                          toDate: "",
+                        ),
+                      );
+                    },
+                  );
                 },
               );
             },
