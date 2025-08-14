@@ -31,6 +31,7 @@ import 'package:dynamic_emr/features/auth/domain/usecases/fetch_hospital_base_ur
 import 'package:dynamic_emr/features/auth/domain/usecases/fetch_hospital_branch_usecase.dart';
 import 'package:dynamic_emr/features/auth/domain/usecases/fetch_user_financial_year_usecase.dart';
 import 'package:dynamic_emr/features/auth/domain/usecases/login_usecase.dart';
+import 'package:dynamic_emr/features/auth/domain/usecases/refresh_token_usecase.dart';
 import 'package:dynamic_emr/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dynamic_emr/features/profile/data/datasources/employee_remote_datasource.dart';
 import 'package:dynamic_emr/features/profile/data/repository/employee_repository_impl.dart';
@@ -86,7 +87,11 @@ Future<void> initDependencies() async {
       hospitalBaseUrlUsecase: injection<FetchHospitalBaseUrlUsecase>(),
       hospitalBranchUsecase: injection<FetchHospitalBranchUsecase>(),
       financialYearUsecase: injection<FetchUserFinancialYearUsecase>(),
+      refreshTokenUsecase: injection<RefreshTokenUsecase>(),
     ),
+  );
+  injection.registerLazySingleton<RefreshTokenUsecase>(
+    () => RefreshTokenUsecase(repository: injection<AuthRepository>()),
   );
   injection.registerLazySingleton<LoginUsecase>(
     () => LoginUsecase(repository: injection<AuthRepository>()),

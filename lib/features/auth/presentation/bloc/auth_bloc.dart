@@ -3,7 +3,6 @@ import 'dart:developer';
 import 'package:dynamic_emr/core/local_storage/branch_storage.dart';
 import 'package:dynamic_emr/core/local_storage/hospital_code_storage.dart';
 import 'package:dynamic_emr/core/local_storage/token_storage.dart';
-import 'package:dynamic_emr/core/network/connectivity_check.dart';
 import 'package:dynamic_emr/features/auth/domain/entities/hospital_branch_entity.dart';
 import 'package:dynamic_emr/features/auth/domain/entities/login_response_entity.dart';
 import 'package:dynamic_emr/features/auth/domain/entities/user_entity.dart';
@@ -13,6 +12,7 @@ import 'package:dynamic_emr/features/auth/domain/usecases/fetch_hospital_base_ur
 import 'package:dynamic_emr/features/auth/domain/usecases/fetch_hospital_branch_usecase.dart';
 import 'package:dynamic_emr/features/auth/domain/usecases/fetch_user_financial_year_usecase.dart';
 import 'package:dynamic_emr/features/auth/domain/usecases/login_usecase.dart';
+import 'package:dynamic_emr/features/auth/domain/usecases/refresh_token_usecase.dart';
 import 'package:dynamic_emr/injection.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,14 +25,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final FetchHospitalBaseUrlUsecase hospitalBaseUrlUsecase;
   final FetchHospitalBranchUsecase hospitalBranchUsecase;
   final FetchUserFinancialYearUsecase financialYearUsecase;
+  final RefreshTokenUsecase refreshTokenUsecase;
   AuthBloc({
     required this.loginUsecase,
     required this.hospitalBaseUrlUsecase,
     required this.hospitalBranchUsecase,
     required this.financialYearUsecase,
+    required this.refreshTokenUsecase,
   }) : super(AuthInitialState()) {
     on<CheckAuthStatusEvent>(_onCheckAuthStatus);
-
+    on<RefreshTokenEvent>(_onRefreshToken);
     on<LoginEvent>(_onLogin);
     on<GetHospitalBaseUrlEvent>(_onGetHospitalBaseUrl);
     on<GetHospitalBranchEvent>(_onGetHospitalBranchEvent);
@@ -48,65 +50,72 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     try {
       final authRepo = injection<AuthRepository>();
-      final accessToken = await injection<TokenSecureStorage>()
-          .getAccessToken();
-      final refreshToken = await injection<TokenSecureStorage>()
-          .getRefreshToken();
+      final tokenStorage = injection<TokenSecureStorage>();
 
-      final connectivityCheck = injection<ConnectivityCheck>();
+      final accessToken = await tokenStorage.getAccessToken();
+      final refreshToken = await tokenStorage.getRefreshToken();
+      final expirationTime = await tokenStorage.getTokenExpirationTime();
 
-      log(
-        'Checking auth status - Token: $accessToken, RefreshToken: $refreshToken ',
+      log("Checking auth status:");
+      log("Access Token: $accessToken");
+      log("Refresh Token: $refreshToken");
+      log("Expiration Time: $expirationTime");
+
+      // If missing tokens, user is unauthenticated
+      if (accessToken == null ||
+          refreshToken == null ||
+          expirationTime == null) {
+        log("Missing token data — logging out.");
+        emit(AuthUnauthenticated());
+        return;
+      }
+
+      final now = DateTime.now();
+
+      // Token still valid — skip refresh
+      if (now.isBefore(expirationTime)) {
+        log("Token is still valid — skipping refresh.");
+        emit(
+          AuthLoginSuccessState(
+            loginResponse: LoginResponseEntity(
+              token: accessToken,
+              refreshToken: refreshToken,
+              expiration: expirationTime,
+            ),
+          ),
+        );
+        return;
+      }
+
+      // Token expired — try refresh
+      log("Token expired, attempting refresh...");
+      final loginResponse = await authRepo.refreshToken(
+        refreshToken: refreshToken,
       );
 
-      final isConnected = await connectivityCheck.isConnected;
+      if (loginResponse?.token != null) {
+        // Save new tokens
+        await tokenStorage.saveAccessToken(loginResponse!.token);
+        await tokenStorage.saveRefreshToken(loginResponse.refreshToken);
+        await tokenStorage.saveTokenExpirationTime(loginResponse.expiration);
 
-      if (accessToken == null || refreshToken == null) {
+        log("Token refresh successful.");
+        emit(
+          AuthLoginSuccessState(
+            loginResponse: LoginResponseEntity(
+              token: loginResponse.token,
+              refreshToken: loginResponse.refreshToken,
+              expiration: loginResponse.expiration,
+            ),
+          ),
+        );
+      } else {
+        log("Token refresh failed — logging out.");
+        await authRepo.logout();
         emit(AuthUnauthenticated());
       }
-
-      // If offline, allow login with existing credentials
-      if (!isConnected) {
-        emit(AuthErrorState(errorMessage: "No Internet"));
-      }
-
-      // If token expires refresh access token
-      if (await isTokenExpired()) {
-        if (refreshToken == null) {
-          emit(AuthUnauthenticated());
-        }
-        // Try to refresh the token
-        final loginResponse = await authRepo.refreshToken(
-          refreshToken: refreshToken!,
-        );
-        if (loginResponse?.token != null) {
-          // save new access token ,refresh token and expiration time
-          await injection<TokenSecureStorage>().saveAccessToken(
-            loginResponse!.token,
-          );
-          await injection<TokenSecureStorage>().saveRefreshToken(
-            loginResponse.refreshToken,
-          );
-          await injection<TokenSecureStorage>().saveTokenExpirationTime(
-            loginResponse.expiration,
-          );
-          emit(
-            AuthLoginSuccessState(
-              loginResponse: LoginResponseEntity(
-                token: loginResponse.token,
-                refreshToken: loginResponse.refreshToken,
-                expiration: loginResponse.expiration,
-              ),
-            ),
-          );
-        } else {
-          await authRepo.logout();
-          emit(AuthUnauthenticated());
-        }
-      }
-    } catch (e) {
-      log('Error in _onCheckAuthStatus: $e');
-
+    } catch (e, stackTrace) {
+      log("Error in _onCheckAuthStatus: $e", stackTrace: stackTrace);
       emit(
         AuthErrorState(
           errorMessage: 'Failed to check auth status. Please try again.',
@@ -124,6 +133,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final currentTime = DateTime.now();
     log("Current time: $currentTime -- Exp time $expirationTime");
     return currentTime.isAfter(expirationTime);
+  }
+
+  Future<void> _onRefreshToken(
+    RefreshTokenEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoadingState());
+
+    try {
+      await refreshTokenUsecase.call(event.refreshToken);
+    } catch (e) {
+      log('Refresh Token error: $e');
+      emit(AuthErrorState(errorMessage: "Refresh Token : $e"));
+    }
   }
 
   Future<void> _onLogin(LoginEvent event, Emitter<AuthState> emit) async {

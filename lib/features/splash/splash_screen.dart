@@ -14,11 +14,7 @@ class SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _checkAuthStatus();
-  }
-
-  void _checkAuthStatus() async {
-    Future.delayed(Duration(seconds: 3), () {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<AuthBloc>().add(CheckAuthStatusEvent());
     });
   }
@@ -26,6 +22,9 @@ class SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
+      listenWhen: (prev, curr) =>
+          curr is AuthLoginSuccessState || curr is AuthUnauthenticated,
+
       listener: (context, state) {
         if (state is AuthLoginSuccessState) {
           Navigator.pushReplacementNamed(context, RouteNames.appMainNav);
@@ -37,15 +36,14 @@ class SplashScreenState extends State<SplashScreen> {
         }
       },
       child: Scaffold(
-        body: Container(
-          decoration: BoxDecoration(
-            // gradient: LinearGradient(
-            //   colors: [AppColors.primary, Colors.white],
-            //   begin: Alignment.topCenter,
-            //   end: Alignment.bottomCenter,
-            // ),
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Image.asset('assets/logo/logo.jpeg'),
+            ),
           ),
-          child: Center(child: Image.asset('assets/logo/logo.jpeg')),
         ),
       ),
     );
