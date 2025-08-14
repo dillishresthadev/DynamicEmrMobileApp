@@ -2,9 +2,12 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:dynamic_emr/features/work/domain/entities/ticket_categories_entity.dart';
+import 'package:dynamic_emr/features/work/domain/entities/ticket_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_summary_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/work_user_entity.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/create_new_ticket_usecase.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/filter_my_ticket_usecase.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/filter_ticket_assigned_to_me_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/ticket_assigned_to_me_summary_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/ticket_categories_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/ticket_summary_usecase.dart';
@@ -21,18 +24,24 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
   final TicketCategoriesUsecase ticketCategoriesUsecase;
   final WorkUserListUsecase workUserListUsecase;
   final CreateNewTicketUsecase createNewTicketUsecase;
+  final FilterMyTicketUsecase filterMyTicketUsecase;
+  final FilterTicketAssignedToMeUsecase filterTicketAssignedToMeUsecase;
   WorkBloc({
     required this.ticketSummaryUsecase,
     required this.ticketAssignedToMeSummaryUsecase,
     required this.ticketCategoriesUsecase,
     required this.workUserListUsecase,
     required this.createNewTicketUsecase,
+    required this.filterMyTicketUsecase,
+    required this.filterTicketAssignedToMeUsecase,
   }) : super(WorkState()) {
     on<MyTicketSummaryEvent>(_onMyTicketSummary);
     on<TicketAssignedToMeSummaryEvent>(_onTicketAssignedToMeSummary);
     on<TicketCategoriesEvent>(_onTicketCategories);
     on<WorkUserListEvent>(_onWorkUserList);
     on<CreateTicketEvent>(_onCreateTicket);
+    on<FilterMyTicketEvent>(_onFilterMyTicket);
+    on<FilterTicketAssignedToMeEvent>(_onFilterTicketAssignedToMe);
   }
 
   Future<void> _onMyTicketSummary(
@@ -139,12 +148,84 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
         event.attachmentPaths,
       );
       emit(
-        state.copyWith(createTicket: ticket, workStatus: WorkStatus.createTicketSuccess),
+        state.copyWith(
+          createTicket: ticket,
+          workStatus: WorkStatus.createTicketSuccess,
+        ),
       );
     } catch (e) {
       log("Error getting work user list $e");
       emit(
-        state.copyWith(workStatus: WorkStatus.createTicketError, message: e.toString()),
+        state.copyWith(
+          workStatus: WorkStatus.createTicketError,
+          message: e.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onFilterMyTicket(
+    FilterMyTicketEvent event,
+    Emitter<WorkState> emit,
+  ) async {
+    emit(state.copyWith(workStatus: WorkStatus.loading));
+    try {
+      final ticket = await filterMyTicketUsecase.call(
+        event.ticketCategoryId,
+        event.status,
+        event.priority,
+        event.severity,
+        event.assignTo,
+        event.fromDate,
+        event.toDate,
+        event.orderBy,
+      );
+      emit(
+        state.copyWith(
+          filterMyTicket: ticket,
+          filterMyTicketStatus: WorkStatus.success,
+        ),
+      );
+    } catch (e) {
+      log("Error Bloc getting filter ticket $e");
+      emit(
+        state.copyWith(
+          filterMyTicketStatus: WorkStatus.error,
+          filterMyTicketMessage: e.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onFilterTicketAssignedToMe(
+    FilterTicketAssignedToMeEvent event,
+    Emitter<WorkState> emit,
+  ) async {
+    emit(state.copyWith(workStatus: WorkStatus.loading));
+    try {
+      final ticket = await filterTicketAssignedToMeUsecase.call(
+        event.ticketCategoryId,
+        event.status,
+        event.priority,
+        event.severity,
+        event.assignTo,
+        event.fromDate,
+        event.toDate,
+        event.orderBy,
+      );
+      emit(
+        state.copyWith(
+          filterMyAssignedTicket: ticket,
+          filterAssignedTicketStatus: WorkStatus.success,
+        ),
+      );
+    } catch (e) {
+      log("Error Bloc getting assigned ticket filter $e");
+      emit(
+        state.copyWith(
+          filterAssignedTicketStatus: WorkStatus.error,
+          filterMyAssignedTicketMessage: e.toString(),
+        ),
       );
     }
   }

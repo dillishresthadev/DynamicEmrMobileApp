@@ -1,7 +1,9 @@
+import 'package:dynamic_emr/core/constants/app_colors.dart';
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_summary_entity.dart';
 import 'package:dynamic_emr/features/work/presentation/bloc/work_bloc.dart';
 import 'package:dynamic_emr/features/work/presentation/screens/create_ticket_form_screen.dart';
+import 'package:dynamic_emr/features/work/presentation/screens/ticket_screen.dart';
 import 'package:dynamic_emr/features/work/presentation/widgets/priority_chart_widget.dart';
 import 'package:dynamic_emr/features/work/presentation/widgets/severity_chart_widget.dart';
 import 'package:dynamic_emr/features/work/presentation/widgets/work_completion_rate_card_widget.dart';
@@ -86,6 +88,29 @@ class _WorkScreenState extends State<WorkScreen>
           _buildAssignedTicketSummary('Assigned Tickets'),
         ],
       ),
+      persistentFooterButtons: [
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => TicketScreen()),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            minimumSize: Size(double.infinity, 40),
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+          child: Text(
+            'View Ticket',
+            style: TextStyle(color: Colors.white),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ],
     );
   }
 

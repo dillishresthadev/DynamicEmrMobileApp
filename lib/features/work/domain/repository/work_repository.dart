@@ -1,5 +1,6 @@
 import 'package:dynamic_emr/features/work/domain/entities/ticket_categories_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_details_entity.dart';
+import 'package:dynamic_emr/features/work/domain/entities/ticket_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_summary_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/work_user_entity.dart';
 
@@ -17,5 +18,26 @@ abstract class WorkRepository {
     String priority,
     int assignToEmployeeId,
     List<String>? attachmentPaths,
+  );
+
+  Future<List<TicketEntity>> getFilteredMyTickets(
+    int ticketCategoryId,
+    String status,
+    String priority,
+    String severity,
+    String assignTo,
+    String fromDate,
+    String toDate,
+    String orderBy,
+  );
+  Future<List<TicketEntity>> getFilteredMyAssignedTickets(
+    int ticketCategoryId,
+    String status,
+    String priority,
+    String severity,
+    String assignTo,
+    String fromDate,
+    String toDate,
+    String orderBy,
   );
 }

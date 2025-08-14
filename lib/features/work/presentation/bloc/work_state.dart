@@ -6,6 +6,10 @@ enum WorkStatus {
   success,
   createTicketSuccess,
   createTicketError,
+  filterMyTicketSuccess,
+  filterMyTicketError,
+  filterMyAssignedTicketSuccess,
+  filterMyAssignedTicketError,
   error,
 }
 
@@ -26,17 +30,30 @@ final class WorkState extends Equatable {
 
   final bool createTicket;
 
+  final List<TicketEntity>? filterMyTicket;
+  final List<TicketEntity>? filterMyAssignedTicket;
+  final WorkStatus filterMyTicketStatus;
+  final WorkStatus filterAssignedTicketStatus;
+  final String filterMyTicketMessage;
+  final String filterMyAssignedTicketMessage;
+
   const WorkState({
     this.myTicketSummary,
     this.ticketAssignedToMeSummary,
     this.ticketCategories,
     this.workUser,
+    this.filterMyTicket,
+    this.filterMyAssignedTicket,
     this.createTicket = false,
     this.myTicketStatus = WorkStatus.initial,
     this.assignedTicketStatus = WorkStatus.initial,
+    this.filterMyTicketStatus = WorkStatus.initial,
+    this.filterAssignedTicketStatus = WorkStatus.initial,
     this.workStatus = WorkStatus.initial,
     this.myTicketMessage = '',
     this.assignedTicketMessage = '',
+    this.filterMyTicketMessage = '',
+    this.filterMyAssignedTicketMessage = '',
     this.message = '',
   });
 
@@ -45,12 +62,18 @@ final class WorkState extends Equatable {
     TicketSummaryEntity? ticketAssignedToMeSummary,
     WorkStatus? myTicketStatus,
     WorkStatus? assignedTicketStatus,
+    WorkStatus? filterMyTicketStatus,
+    WorkStatus? filterAssignedTicketStatus,
     WorkStatus? workStatus,
     String? myTicketMessage,
     String? assignedTicketMessage,
+    String? filterMyTicketMessage,
+    String? filterMyAssignedTicketMessage,
     bool? createTicket,
     List<TicketCategoriesEntity>? ticketCategories,
     List<WorkUserEntity>? workUser,
+    List<TicketEntity>? filterMyTicket,
+    List<TicketEntity>? filterMyAssignedTicket,
     String? message,
   }) {
     return WorkState(
@@ -60,12 +83,22 @@ final class WorkState extends Equatable {
       myTicketStatus: myTicketStatus ?? this.myTicketStatus,
       workStatus: workStatus ?? this.workStatus,
       assignedTicketStatus: assignedTicketStatus ?? this.assignedTicketStatus,
+      filterMyTicketStatus: filterMyTicketStatus ?? this.filterMyTicketStatus,
+      filterAssignedTicketStatus:
+          filterAssignedTicketStatus ?? this.filterAssignedTicketStatus,
       myTicketMessage: myTicketMessage ?? this.myTicketMessage,
       assignedTicketMessage:
           assignedTicketMessage ?? this.assignedTicketMessage,
+      filterMyTicketMessage:
+          filterMyTicketMessage ?? this.filterMyTicketMessage,
+      filterMyAssignedTicketMessage:
+          filterMyAssignedTicketMessage ?? this.filterMyAssignedTicketMessage,
       createTicket: createTicket ?? this.createTicket,
       ticketCategories: ticketCategories ?? this.ticketCategories,
       workUser: workUser ?? this.workUser,
+      filterMyTicket: filterMyTicket ?? this.filterMyTicket,
+      filterMyAssignedTicket:
+          filterMyAssignedTicket ?? this.filterMyAssignedTicket,
       message: message ?? this.message,
     );
   }
@@ -76,12 +109,18 @@ final class WorkState extends Equatable {
     ticketAssignedToMeSummary,
     myTicketStatus,
     assignedTicketStatus,
+    filterMyTicketStatus,
+    filterAssignedTicketStatus,
     createTicket,
     workStatus,
     myTicketMessage,
     assignedTicketMessage,
+    filterMyTicketMessage,
+    filterMyAssignedTicketMessage,
     ticketCategories,
     workUser,
+    filterMyTicket,
+    filterMyAssignedTicket,
     message,
   ];
 }

@@ -9,6 +9,7 @@ import 'package:dynamic_emr/core/local_storage/token_storage.dart';
 import 'package:dynamic_emr/core/network/dio_http_client.dart';
 import 'package:dynamic_emr/features/work/data/models/ticket_categories_model.dart';
 import 'package:dynamic_emr/features/work/data/models/ticket_details_model.dart';
+import 'package:dynamic_emr/features/work/data/models/ticket_model.dart';
 import 'package:dynamic_emr/features/work/data/models/ticket_summary_model.dart';
 import 'package:dynamic_emr/features/work/data/models/work_user_model.dart';
 import 'package:dynamic_emr/injection.dart';
@@ -27,6 +28,27 @@ abstract class WorkRemoteDatasource {
     String priority,
     int assignToEmployeeId,
     List<String>? attachmentPaths,
+  );
+
+  Future<List<TicketModel>> getFilteredMyTickets(
+    int ticketCategoryId,
+    String status,
+    String priority,
+    String severity,
+    String assignTo,
+    String fromDate,
+    String toDate,
+    String orderBy,
+  );
+  Future<List<TicketModel>> getFilteredMyAssignedTickets(
+    int ticketCategoryId,
+    String status,
+    String priority,
+    String severity,
+    String assignTo,
+    String fromDate,
+    String toDate,
+    String orderBy,
   );
 }
 
@@ -242,6 +264,115 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
       throw Exception("Unexpected response format");
     } catch (e) {
       log("Error creating new ticket: $e");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<TicketModel>> getFilteredMyAssignedTickets(
+    int ticketCategoryId,
+    String status,
+    String priority,
+    String severity,
+    String assignTo,
+    String fromDate,
+    String toDate,
+    String orderBy,
+  ) async {
+    try {
+      final accessToken = await injection<TokenSecureStorage>()
+          .getAccessToken();
+      final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
+      final workingBranchId = await injection<BranchSecureStorage>()
+          .getWorkingBranchId();
+      final workingFinancialId = await injection<BranchSecureStorage>()
+          .getSelectedFiscalYearId();
+
+      final dynamic response = await client.post(
+        "$baseUrl/${ApiConstants.myTicket}",
+        token: accessToken,
+        body: {
+          "CategoryId": ticketCategoryId,
+          "Status": status,
+          "Priority": priority,
+          "Severity": severity,
+          "AssignedTo": assignTo,
+          "FromDate": fromDate,
+          "ToDate": toDate,
+          "OrderBy": orderBy,
+        },
+        headers: {
+          "workingBranchId": workingBranchId.toString(),
+          "workingFinancialId": workingFinancialId.toString(),
+        },
+      );
+      List<dynamic> jsonList;
+      if (response is List) {
+        jsonList = response;
+      } else if (response is Map<String, dynamic>) {
+        jsonList = response['data'];
+      } else {
+        jsonList = [];
+        log('Unexpected response format: $response');
+      }
+      return jsonList.map((json) => TicketModel.fromJson(json)).toList();
+    } catch (e) {
+      log("Error filter myTicket: $e");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<TicketModel>> getFilteredMyTickets(
+    int ticketCategoryId,
+    String status,
+    String priority,
+    String severity,
+    String assignTo,
+    String fromDate,
+    String toDate,
+    String orderBy,
+  ) async {
+    try {
+      final accessToken = await injection<TokenSecureStorage>()
+          .getAccessToken();
+      final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
+      final workingBranchId = await injection<BranchSecureStorage>()
+          .getWorkingBranchId();
+      final workingFinancialId = await injection<BranchSecureStorage>()
+          .getSelectedFiscalYearId();
+
+      final dynamic response = await client.post(
+        "$baseUrl/${ApiConstants.ticketAssignedToMe}",
+        token: accessToken,
+        body: {
+          "CategoryId": ticketCategoryId,
+          "Status": status,
+          "Priority": priority,
+          "Severity": severity,
+          "AssignedTo": assignTo,
+          "FromDate": fromDate,
+          "ToDate": toDate,
+          "OrderBy": orderBy,
+        },
+        headers: {
+          "workingBranchId": workingBranchId.toString(),
+          "workingFinancialId": workingFinancialId.toString(),
+        },
+      );
+
+      List<dynamic> jsonList;
+      if (response is List) {
+        jsonList = response;
+      } else if (response is Map<String, dynamic>) {
+        jsonList = response['data'];
+      } else {
+        jsonList = [];
+        log('Unexpected response format: $response');
+      }
+      return jsonList.map((json) => TicketModel.fromJson(json)).toList();
+    } catch (e) {
+      log("Error filter ticketAssignedToMe: $e");
       rethrow;
     }
   }

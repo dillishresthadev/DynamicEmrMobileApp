@@ -42,6 +42,8 @@ import 'package:dynamic_emr/features/work/data/datasource/work_remote_datasource
 import 'package:dynamic_emr/features/work/data/repository/work_repository_impl.dart';
 import 'package:dynamic_emr/features/work/domain/repository/work_repository.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/create_new_ticket_usecase.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/filter_my_ticket_usecase.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/filter_ticket_assigned_to_me_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/ticket_assigned_to_me_summary_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/ticket_categories_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/ticket_summary_usecase.dart';
@@ -224,6 +226,18 @@ Future<void> initDependencies() async {
       workUserListUsecase: injection<WorkUserListUsecase>(),
       ticketCategoriesUsecase: injection<TicketCategoriesUsecase>(),
       createNewTicketUsecase: injection<CreateNewTicketUsecase>(),
+      filterMyTicketUsecase: injection<FilterMyTicketUsecase>(),
+      filterTicketAssignedToMeUsecase:
+          injection<FilterTicketAssignedToMeUsecase>(),
+    ),
+  );
+
+  injection.registerLazySingleton<FilterMyTicketUsecase>(
+    () => FilterMyTicketUsecase(repository: injection<WorkRepository>()),
+  );
+  injection.registerLazySingleton<FilterTicketAssignedToMeUsecase>(
+    () => FilterTicketAssignedToMeUsecase(
+      repository: injection<WorkRepository>(),
     ),
   );
   injection.registerLazySingleton<CreateNewTicketUsecase>(

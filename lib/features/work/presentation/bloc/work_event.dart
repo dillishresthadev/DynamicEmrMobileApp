@@ -4,7 +4,7 @@ sealed class WorkEvent extends Equatable {
   const WorkEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 final class MyTicketSummaryEvent extends WorkEvent {}
@@ -33,4 +33,80 @@ final class CreateTicketEvent extends WorkEvent {
     required this.assignToEmployeeId,
     required this.attachmentPaths,
   });
+  @override
+  List<Object?> get props => [
+    ticketCategoryId,
+    title,
+    description,
+    severity,
+    priority,
+    assignToEmployeeId,
+    attachmentPaths,
+  ];
+}
+
+final class FilterMyTicketEvent extends WorkEvent {
+  final int ticketCategoryId;
+  final String status;
+  final String priority;
+  final String severity;
+  final String assignTo;
+  final String fromDate;
+  final String toDate;
+  final String orderBy;
+
+  const FilterMyTicketEvent({
+    required this.ticketCategoryId,
+    required this.status,
+    required this.priority,
+    required this.severity,
+    required this.assignTo,
+    required this.fromDate,
+    required this.toDate,
+    required this.orderBy,
+  });
+  @override
+  List<Object> get props => [
+    ticketCategoryId,
+    status,
+    priority,
+    severity,
+    assignTo,
+    fromDate,
+    toDate,
+    orderBy,
+  ];
+}
+
+final class FilterTicketAssignedToMeEvent extends WorkEvent {
+  final int ticketCategoryId;
+  final String status;
+  final String priority;
+  final String severity;
+  final String assignTo;
+  final String fromDate;
+  final String toDate;
+  final String orderBy;
+
+  const FilterTicketAssignedToMeEvent({
+    required this.ticketCategoryId,
+    required this.status,
+    required this.priority,
+    required this.severity,
+    required this.assignTo,
+    required this.fromDate,
+    required this.toDate,
+    required this.orderBy,
+  });
+  @override
+  List<Object> get props => [
+    ticketCategoryId,
+    status,
+    priority,
+    severity,
+    assignTo,
+    fromDate,
+    toDate,
+    orderBy,
+  ];
 }
