@@ -15,6 +15,14 @@ final class WorkUserListEvent extends WorkEvent {}
 
 final class TicketCategoriesEvent extends WorkEvent {}
 
+final class TicketDetailsByIdEvent extends WorkEvent {
+  final int ticketId;
+
+  const TicketDetailsByIdEvent({required this.ticketId});
+  @override
+  List<Object?> get props => [ticketId];
+}
+
 final class CreateTicketEvent extends WorkEvent {
   final int ticketCategoryId;
   final String title;

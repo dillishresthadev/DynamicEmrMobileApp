@@ -1,8 +1,9 @@
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_entity.dart';
 import 'package:dynamic_emr/features/work/presentation/bloc/work_bloc.dart';
+import 'package:dynamic_emr/features/work/presentation/screens/ticket_details_screen.dart';
 import 'package:dynamic_emr/features/work/presentation/widgets/ticket_filter_widget.dart';
-import 'package:dynamic_emr/features/work/presentation/widgets/ticket_overview_widget.dart';
+import 'package:dynamic_emr/features/work/presentation/widgets/ticket_overview_list_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -160,7 +161,10 @@ class _TicketScreenState extends State<TicketScreen>
             if (myTickets == null || myTickets.isEmpty) {
               return Center(child: Text("You haven't created any tickets"));
             }
-            return TicketOverviewList(tickets: myTickets);
+            return TicketOverviewListWidget(
+              tickets: myTickets,
+              onTap: (ticket) {},
+            );
           }
           return Center(child: Text("Error: ${state.filterMyTicketStatus}"));
         },
@@ -181,7 +185,16 @@ class _TicketScreenState extends State<TicketScreen>
             if (assignedTickets == null || assignedTickets.isEmpty) {
               return Center(child: Text("You haven't any assigned tickets"));
             }
-            return TicketOverviewList(tickets: assignedTickets);
+            return TicketOverviewListWidget(
+              tickets: assignedTickets,
+              onTap: (ticket) async {
+              
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => TicketDetailsScreen(ticketId:ticket.id)),
+                );
+              },
+            );
           }
           return Center(
             child: Text("Error: ${state.filterAssignedTicketStatus}"),

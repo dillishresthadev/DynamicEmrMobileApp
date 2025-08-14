@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:dynamic_emr/features/work/domain/entities/ticket_categories_entity.dart';
+import 'package:dynamic_emr/features/work/domain/entities/ticket_details_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_summary_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/work_user_entity.dart';
@@ -10,6 +11,7 @@ import 'package:dynamic_emr/features/work/domain/usecases/filter_my_ticket_useca
 import 'package:dynamic_emr/features/work/domain/usecases/filter_ticket_assigned_to_me_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/ticket_assigned_to_me_summary_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/ticket_categories_usecase.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/ticket_details_by_id_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/ticket_summary_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/work_user_list_usecase.dart';
 import 'package:equatable/equatable.dart';
@@ -26,6 +28,7 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
   final CreateNewTicketUsecase createNewTicketUsecase;
   final FilterMyTicketUsecase filterMyTicketUsecase;
   final FilterTicketAssignedToMeUsecase filterTicketAssignedToMeUsecase;
+  final TicketDetailsByIdUsecase ticketDetailsByIdUsecase;
   WorkBloc({
     required this.ticketSummaryUsecase,
     required this.ticketAssignedToMeSummaryUsecase,
@@ -34,6 +37,7 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
     required this.createNewTicketUsecase,
     required this.filterMyTicketUsecase,
     required this.filterTicketAssignedToMeUsecase,
+    required this.ticketDetailsByIdUsecase,
   }) : super(WorkState()) {
     on<MyTicketSummaryEvent>(_onMyTicketSummary);
     on<TicketAssignedToMeSummaryEvent>(_onTicketAssignedToMeSummary);
@@ -42,6 +46,7 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
     on<CreateTicketEvent>(_onCreateTicket);
     on<FilterMyTicketEvent>(_onFilterMyTicket);
     on<FilterTicketAssignedToMeEvent>(_onFilterTicketAssignedToMe);
+    on<TicketDetailsByIdEvent>(_onTicketDetailsById);
   }
 
   Future<void> _onMyTicketSummary(
@@ -225,6 +230,30 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
         state.copyWith(
           filterAssignedTicketStatus: WorkStatus.error,
           filterMyAssignedTicketMessage: e.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onTicketDetailsById(
+    TicketDetailsByIdEvent event,
+    Emitter<WorkState> emit,
+  ) async {
+    emit(state.copyWith(workStatus: WorkStatus.loading));
+    try {
+      final ticket = await ticketDetailsByIdUsecase.call(event.ticketId);
+      emit(
+        state.copyWith(
+          ticketDetails: ticket,
+          workStatus: WorkStatus.ticketDetailsLoadSuccess,
+        ),
+      );
+    } catch (e) {
+      log("Error Bloc ticket details by Id $e");
+      emit(
+        state.copyWith(
+          workStatus: WorkStatus.ticketDetailsError,
+          message: e.toString(),
         ),
       );
     }
