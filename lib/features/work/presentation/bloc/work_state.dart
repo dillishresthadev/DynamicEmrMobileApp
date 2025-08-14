@@ -8,6 +8,10 @@ enum WorkStatus {
   createTicketError,
   ticketDetailsLoadSuccess,
   ticketDetailsError,
+  ticketReOpenSuccess,
+  ticketReOpenError,
+  ticketClosedSuccess,
+  ticketClosedError,
   error,
 }
 
@@ -37,6 +41,9 @@ final class WorkState extends Equatable {
 
   final TicketDetailsEntity? ticketDetails;
 
+  final bool reOpenTicket;
+  final bool closeTicket;
+
   const WorkState({
     this.myTicketSummary,
     this.ticketAssignedToMeSummary,
@@ -46,6 +53,8 @@ final class WorkState extends Equatable {
     this.filterMyAssignedTicket,
     this.ticketDetails,
     this.createTicket = false,
+    this.reOpenTicket = false,
+    this.closeTicket = false,
     this.myTicketStatus = WorkStatus.initial,
     this.assignedTicketStatus = WorkStatus.initial,
     this.filterMyTicketStatus = WorkStatus.initial,
@@ -71,6 +80,8 @@ final class WorkState extends Equatable {
     String? filterMyTicketMessage,
     String? filterMyAssignedTicketMessage,
     bool? createTicket,
+    bool? reOpenTicket,
+    bool? closeTicket,
     List<TicketCategoriesEntity>? ticketCategories,
     List<WorkUserEntity>? workUser,
     List<TicketEntity>? filterMyTicket,
@@ -101,8 +112,10 @@ final class WorkState extends Equatable {
       filterMyTicket: filterMyTicket ?? this.filterMyTicket,
       filterMyAssignedTicket:
           filterMyAssignedTicket ?? this.filterMyAssignedTicket,
-          ticketDetails:  ticketDetails ?? this.ticketDetails,
+      ticketDetails: ticketDetails ?? this.ticketDetails,
       message: message ?? this.message,
+      reOpenTicket: reOpenTicket ?? this.reOpenTicket,
+      closeTicket: closeTicket ?? this.closeTicket,
     );
   }
 
@@ -126,5 +139,7 @@ final class WorkState extends Equatable {
     filterMyAssignedTicket,
     ticketDetails,
     message,
+    reOpenTicket,
+    closeTicket,
   ];
 }

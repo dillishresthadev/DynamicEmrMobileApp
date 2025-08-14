@@ -163,7 +163,14 @@ class _TicketScreenState extends State<TicketScreen>
             }
             return TicketOverviewListWidget(
               tickets: myTickets,
-              onTap: (ticket) {},
+              onTap: (ticket) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => TicketDetailsScreen(ticketId: ticket.id),
+                  ),
+                );
+              },
             );
           }
           return Center(child: Text("Error: ${state.filterMyTicketStatus}"));
@@ -188,10 +195,11 @@ class _TicketScreenState extends State<TicketScreen>
             return TicketOverviewListWidget(
               tickets: assignedTickets,
               onTap: (ticket) async {
-              
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => TicketDetailsScreen(ticketId:ticket.id)),
+                  MaterialPageRoute(
+                    builder: (_) => TicketDetailsScreen(ticketId: ticket.id),
+                  ),
                 );
               },
             );

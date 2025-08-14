@@ -11,7 +11,9 @@ import 'package:dynamic_emr/features/work/domain/usecases/filter_my_ticket_useca
 import 'package:dynamic_emr/features/work/domain/usecases/filter_ticket_assigned_to_me_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/ticket_assigned_to_me_summary_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/ticket_categories_usecase.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/ticket_close_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/ticket_details_by_id_usecase.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/ticket_reopen_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/ticket_summary_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/work_user_list_usecase.dart';
 import 'package:equatable/equatable.dart';
@@ -29,6 +31,8 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
   final FilterMyTicketUsecase filterMyTicketUsecase;
   final FilterTicketAssignedToMeUsecase filterTicketAssignedToMeUsecase;
   final TicketDetailsByIdUsecase ticketDetailsByIdUsecase;
+  final TicketCloseUsecase ticketCloseUsecase;
+  final TicketReopenUsecase ticketReopenUsecase;
   WorkBloc({
     required this.ticketSummaryUsecase,
     required this.ticketAssignedToMeSummaryUsecase,
@@ -38,6 +42,8 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
     required this.filterMyTicketUsecase,
     required this.filterTicketAssignedToMeUsecase,
     required this.ticketDetailsByIdUsecase,
+    required this.ticketCloseUsecase,
+    required this.ticketReopenUsecase,
   }) : super(WorkState()) {
     on<MyTicketSummaryEvent>(_onMyTicketSummary);
     on<TicketAssignedToMeSummaryEvent>(_onTicketAssignedToMeSummary);
@@ -47,6 +53,8 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
     on<FilterMyTicketEvent>(_onFilterMyTicket);
     on<FilterTicketAssignedToMeEvent>(_onFilterTicketAssignedToMe);
     on<TicketDetailsByIdEvent>(_onTicketDetailsById);
+    on<TicketReopenEvent>(_onTicketReOpen);
+    on<TicketClosedEvent>(_onTicketClosed);
   }
 
   Future<void> _onMyTicketSummary(
@@ -253,6 +261,54 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
       emit(
         state.copyWith(
           workStatus: WorkStatus.ticketDetailsError,
+          message: e.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onTicketReOpen(
+    TicketReopenEvent event,
+    Emitter<WorkState> emit,
+  ) async {
+    emit(state.copyWith(workStatus: WorkStatus.loading));
+    try {
+      final isTicketReOpen = await ticketReopenUsecase.call(event.ticketId);
+      emit(
+        state.copyWith(
+          reOpenTicket: isTicketReOpen,
+          workStatus: WorkStatus.ticketReOpenSuccess,
+        ),
+      );
+    } catch (e) {
+      log("Error Bloc ticket reopen $e");
+      emit(
+        state.copyWith(
+          workStatus: WorkStatus.ticketReOpenError,
+          message: e.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onTicketClosed(
+    TicketClosedEvent event,
+    Emitter<WorkState> emit,
+  ) async {
+    emit(state.copyWith(workStatus: WorkStatus.loading));
+    try {
+      final isTicketClosed = await ticketCloseUsecase.call(event.ticketId);
+      emit(
+        state.copyWith(
+          closeTicket: isTicketClosed,
+          workStatus: WorkStatus.ticketClosedSuccess,
+        ),
+      );
+    } catch (e) {
+      log("Error Bloc ticket closed $e");
+      emit(
+        state.copyWith(
+          workStatus: WorkStatus.ticketClosedError,
           message: e.toString(),
         ),
       );

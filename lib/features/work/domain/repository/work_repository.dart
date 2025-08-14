@@ -9,6 +9,8 @@ abstract class WorkRepository {
   Future<TicketSummaryEntity> getTicketAssignedToMeSummary();
   Future<TicketDetailsEntity> getTicketDetailsById({required int ticketId});
   Future<List<WorkUserEntity>> getWorkUserList();
+  Future<bool> ticketReopen(int ticketId);
+  Future<bool> ticketClose(int ticketId);
   Future<List<TicketCategoriesEntity>> getTicketCategories();
   Future<bool> createNewTicket(
     int ticketCategoryId,

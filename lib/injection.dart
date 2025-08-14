@@ -46,7 +46,9 @@ import 'package:dynamic_emr/features/work/domain/usecases/filter_my_ticket_useca
 import 'package:dynamic_emr/features/work/domain/usecases/filter_ticket_assigned_to_me_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/ticket_assigned_to_me_summary_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/ticket_categories_usecase.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/ticket_close_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/ticket_details_by_id_usecase.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/ticket_reopen_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/ticket_summary_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/work_user_list_usecase.dart';
 import 'package:dynamic_emr/features/work/presentation/bloc/work_bloc.dart';
@@ -231,9 +233,17 @@ Future<void> initDependencies() async {
       filterTicketAssignedToMeUsecase:
           injection<FilterTicketAssignedToMeUsecase>(),
       ticketDetailsByIdUsecase: injection<TicketDetailsByIdUsecase>(),
+      ticketCloseUsecase: injection<TicketCloseUsecase>(),
+      ticketReopenUsecase: injection<TicketReopenUsecase>(),
     ),
   );
 
+  injection.registerLazySingleton<TicketCloseUsecase>(
+    () => TicketCloseUsecase(repository: injection<WorkRepository>()),
+  );
+  injection.registerLazySingleton<TicketReopenUsecase>(
+    () => TicketReopenUsecase(repository: injection<WorkRepository>()),
+  );
   injection.registerLazySingleton<TicketDetailsByIdUsecase>(
     () => TicketDetailsByIdUsecase(repository: injection<WorkRepository>()),
   );

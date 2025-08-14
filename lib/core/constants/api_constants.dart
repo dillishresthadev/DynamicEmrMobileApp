@@ -20,8 +20,7 @@ class ApiConstants {
   static const String getTicketCategories = "/api/Ticket/GetTicketCategories";
   static const String getUserList = "/api/Ticket/GetUserList";
   // Default Id is passed as 102
-  static const String getTicketDetailsById =
-      "/api/Ticket/GetTicketDetailById";
+  static const String getTicketDetailsById = "/api/Ticket/GetTicketDetailById";
   static const String getMyTicketSummary = "/api/Ticket/GetMyTicketSummary";
   static const String getTicketAssignedToMe =
       "/api/Ticket/GetTicketAssignedToMeSummary";
@@ -30,8 +29,8 @@ class ApiConstants {
   static const String editPriority = "/api/Ticket/EditPriority";
   static const String editSeverity = "/api/Ticket/EditSeverity";
   static const String editAssignedTo = "/api/Ticket/EditAssignedTo";
-  static const String closeTicket = "/api/Ticket/CloseTicket/4";
-  static const String reOpenTicket = "/api/Ticket/ReOpenTicket/23";
+  static const String closeTicket = "/api/Ticket/CloseTicket";
+  static const String reOpenTicket = "/api/Ticket/ReOpenTicket";
   static const String createTicketPost = "/api/Ticket/CreateTicketPost";
   static const String commentPost = "/api/Ticket/CommentPost/3";
 

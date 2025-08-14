@@ -78,6 +78,54 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                     color: Colors.black87,
                                   ),
                                 ),
+
+                                // close or reopen
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    ticket.ticket.status == "Open"
+                                        ? context.read<WorkBloc>().add(
+                                            TicketClosedEvent(
+                                              ticketId: ticket.id,
+                                            ),
+                                          )
+                                        : context.read<WorkBloc>().add(
+                                            TicketReopenEvent(
+                                              ticketId: ticket.id,
+                                            ),
+                                          );
+
+                                    Navigator.pop(context);
+                                  },
+                                  icon: Icon(
+                                    ticket.ticket.status == "Open"
+                                        ? Icons.close
+                                        : Icons.refresh,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                  label: Text(
+                                    ticket.ticket.status == "Open"
+                                        ? 'Close'
+                                        : 'Reopen',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        ticket.ticket.status == "Open"
+                                        ? Colors.red
+                                        : Colors.green,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 6,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(4),
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                             const SizedBox(height: 20),

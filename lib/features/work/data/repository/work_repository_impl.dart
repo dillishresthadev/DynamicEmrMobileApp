@@ -103,4 +103,14 @@ class WorkRepositoryImpl extends WorkRepository {
       orderBy,
     );
   }
+
+  @override
+  Future<bool> ticketClose(int ticketId) async {
+    return remoteDatasource.closeTicket(ticketId);
+  }
+
+  @override
+  Future<bool> ticketReopen(int ticketId) async {
+    return remoteDatasource.reOpenTicket(ticketId);
+  }
 }

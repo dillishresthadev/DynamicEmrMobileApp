@@ -19,6 +19,8 @@ abstract class WorkRemoteDatasource {
   Future<TicketSummaryModel> getTicketAssignedToMeSummary();
   Future<TicketDetailsModel> getTicketDetailsById({required int ticketId});
   Future<List<WorkUserModel>> getWorkUserList();
+  Future<bool> closeTicket(int ticketId);
+  Future<bool> reOpenTicket(int ticketId);
   Future<List<TicketCategoriesModel>> getTicketCategories();
   Future<bool> createNewTicket(
     int ticketCategoryId,
@@ -373,6 +375,66 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
       return jsonList.map((json) => TicketModel.fromJson(json)).toList();
     } catch (e) {
       log("Error filter ticketAssignedToMe: $e");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool> closeTicket(int ticketId) async {
+    try {
+      final accessToken = await injection<TokenSecureStorage>()
+          .getAccessToken();
+      final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
+      final workingBranchId = await injection<BranchSecureStorage>()
+          .getWorkingBranchId();
+      final workingFinancialId = await injection<BranchSecureStorage>()
+          .getSelectedFiscalYearId();
+
+      final rawResponse = await client.post(
+        "$baseUrl/${ApiConstants.closeTicket}/$ticketId",
+        token: accessToken,
+        headers: {
+          "workingBranchId": workingBranchId.toString(),
+          "workingFinancialId": workingFinancialId.toString(),
+        },
+      );
+
+      if (rawResponse['data'] is bool) {
+        return rawResponse['data'];
+      }
+      throw Exception("Unexpected response format");
+    } catch (e) {
+      log("Error while closing ticket : $e");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool> reOpenTicket(int ticketId) async {
+    try {
+      final accessToken = await injection<TokenSecureStorage>()
+          .getAccessToken();
+      final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
+      final workingBranchId = await injection<BranchSecureStorage>()
+          .getWorkingBranchId();
+      final workingFinancialId = await injection<BranchSecureStorage>()
+          .getSelectedFiscalYearId();
+
+      final rawResponse = await client.post(
+        "$baseUrl/${ApiConstants.reOpenTicket}/$ticketId",
+        token: accessToken,
+        headers: {
+          "workingBranchId": workingBranchId.toString(),
+          "workingFinancialId": workingFinancialId.toString(),
+        },
+      );
+
+      if (rawResponse['data'] is bool) {
+        return rawResponse['data'];
+      }
+      throw Exception("Unexpected response format");
+    } catch (e) {
+      log("Error while reopening ticket : $e");
       rethrow;
     }
   }

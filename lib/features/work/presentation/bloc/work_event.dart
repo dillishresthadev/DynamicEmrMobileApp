@@ -15,6 +15,22 @@ final class WorkUserListEvent extends WorkEvent {}
 
 final class TicketCategoriesEvent extends WorkEvent {}
 
+final class TicketReopenEvent extends WorkEvent {
+  final int ticketId;
+
+  const TicketReopenEvent({required this.ticketId});
+  @override
+  List<Object?> get props => [ticketId];
+}
+
+final class TicketClosedEvent extends WorkEvent {
+  final int ticketId;
+
+  const TicketClosedEvent({required this.ticketId});
+  @override
+  List<Object?> get props => [ticketId];
+}
+
 final class TicketDetailsByIdEvent extends WorkEvent {
   final int ticketId;
 
