@@ -33,6 +33,12 @@ import 'package:dynamic_emr/features/auth/domain/usecases/fetch_user_financial_y
 import 'package:dynamic_emr/features/auth/domain/usecases/login_usecase.dart';
 import 'package:dynamic_emr/features/auth/domain/usecases/refresh_token_usecase.dart';
 import 'package:dynamic_emr/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:dynamic_emr/features/notice/data/datasource/notice_remote_datasource.dart';
+import 'package:dynamic_emr/features/notice/data/repository/notice_repository_impl.dart';
+import 'package:dynamic_emr/features/notice/domain/repository/notice_repository.dart';
+import 'package:dynamic_emr/features/notice/domain/usecases/notice_by_id_usecase.dart';
+import 'package:dynamic_emr/features/notice/domain/usecases/notice_usecase.dart';
+import 'package:dynamic_emr/features/notice/presentation/bloc/notice_bloc.dart';
 import 'package:dynamic_emr/features/payrolls/data/datasource/payroll_remote_datasource.dart';
 import 'package:dynamic_emr/features/payrolls/data/repository/payroll_repository_impl.dart';
 import 'package:dynamic_emr/features/payrolls/domain/repository/payroll_repository.dart';
@@ -323,5 +329,26 @@ Future<void> initDependencies() async {
   );
   injection.registerLazySingleton<PayrollRemoteDatasource>(
     () => PayrollRemoteDatasourceImpl(client: injection<DioHttpClient>()),
+  );
+  // notice
+  injection.registerLazySingleton<NoticeBloc>(
+    () => NoticeBloc(
+      noticeByIdUsecase: injection<NoticeByIdUsecase>(),
+      noticeUsecase: injection<NoticeUsecase>(),
+    ),
+  );
+  injection.registerLazySingleton<NoticeUsecase>(
+    () => NoticeUsecase(repository: injection<NoticeRepository>()),
+  );
+  injection.registerLazySingleton<NoticeByIdUsecase>(
+    () => NoticeByIdUsecase(repository: injection<NoticeRepository>()),
+  );
+  injection.registerLazySingleton<NoticeRepository>(
+    () => NoticeRepositoryImpl(
+      remoteDatasource: injection<NoticeRemoteDatasource>(),
+    ),
+  );
+  injection.registerLazySingleton<NoticeRemoteDatasource>(
+    () => NoticeRemoteDatasourceImpl(client: injection<DioHttpClient>()),
   );
 }

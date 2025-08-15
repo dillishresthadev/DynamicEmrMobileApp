@@ -1,6 +1,5 @@
 import 'package:dynamic_emr/core/constants/app_colors.dart';
 import 'package:dynamic_emr/features/Leave/presentation/screens/leave_screen.dart';
-import 'package:dynamic_emr/features/attendance/presentation/screen/attendance_screen.dart';
 import 'package:dynamic_emr/features/home/presentation/screens/home_screen.dart';
 import 'package:dynamic_emr/features/payrolls/presentation/screens/payroll_screen.dart';
 import 'package:dynamic_emr/features/profile/presentation/screens/profile_screen.dart';
