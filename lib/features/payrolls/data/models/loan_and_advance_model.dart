@@ -9,9 +9,11 @@ class LoanAndAdvanceModel extends LoanAndAdvanceEntity {
 
   factory LoanAndAdvanceModel.fromJson(Map<String, dynamic> json) {
     return LoanAndAdvanceModel(
-      loanAndAdvanceData: (json['loanAndAdvanceData'] as List)
-          .map((e) => LoanAndAdvanceDataModel.fromJson(e))
-          .toList(),
+      loanAndAdvanceData: json['loanAndAdvanceData'] != null
+          ? (json['loanAndAdvanceData'] as List)
+                .map((e) => LoanAndAdvanceDataModel.fromJson(e))
+                .toList()
+          : [],
       balanceAmount: (json['balanceAmount'] as num).toInt(),
     );
   }

@@ -38,6 +38,7 @@ import 'package:dynamic_emr/features/payrolls/data/repository/payroll_repository
 import 'package:dynamic_emr/features/payrolls/domain/repository/payroll_repository.dart';
 import 'package:dynamic_emr/features/payrolls/domain/usecases/current_month_salary_usecase.dart';
 import 'package:dynamic_emr/features/payrolls/domain/usecases/loan_and_advance_usecase.dart';
+import 'package:dynamic_emr/features/payrolls/domain/usecases/monthly_salary_usecase.dart';
 import 'package:dynamic_emr/features/payrolls/domain/usecases/taxes_usecase.dart';
 import 'package:dynamic_emr/features/payrolls/presentation/bloc/payroll_bloc.dart';
 import 'package:dynamic_emr/features/profile/data/datasources/employee_remote_datasource.dart';
@@ -297,11 +298,15 @@ Future<void> initDependencies() async {
   injection.registerLazySingleton<PayrollBloc>(
     () => PayrollBloc(
       currentMonthSalaryUsecase: injection<CurrentMonthSalaryUsecase>(),
+      monthlySalaryUsecase: injection<MonthlySalaryUsecase>(),
       loanAndAdvanceUsecase: injection<LoanAndAdvanceUsecase>(),
       taxesUsecase: injection<TaxesUsecase>(),
     ),
   );
 
+  injection.registerLazySingleton<MonthlySalaryUsecase>(
+    () => MonthlySalaryUsecase(repository: injection<PayrollRepository>()),
+  );
   injection.registerLazySingleton<TaxesUsecase>(
     () => TaxesUsecase(repository: injection<PayrollRepository>()),
   );
