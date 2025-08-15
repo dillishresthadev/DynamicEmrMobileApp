@@ -2,6 +2,7 @@ import 'package:dynamic_emr/core/constants/app_colors.dart';
 import 'package:dynamic_emr/features/Leave/presentation/screens/leave_screen.dart';
 import 'package:dynamic_emr/features/attendance/presentation/screen/attendance_screen.dart';
 import 'package:dynamic_emr/features/home/presentation/screens/home_screen.dart';
+import 'package:dynamic_emr/features/payrolls/presentation/screens/payroll_screen.dart';
 import 'package:dynamic_emr/features/profile/presentation/screens/profile_screen.dart';
 import 'package:dynamic_emr/features/work/presentation/screens/work_screen.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,8 @@ class _AppMainNavState extends State<AppMainNav> {
 
   final List<Widget> _pages = [
     HomeScreen(),
-    AttendanceScreen(),
+    PayrollScreen(),
+    // AttendanceScreen(),
     LeaveScreen(),
     WorkScreen(),
     ProfileScreen(),
@@ -53,9 +55,9 @@ class _AppMainNavState extends State<AppMainNav> {
             label: "Home",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.access_time),
-            activeIcon: Icon(Icons.access_time_filled),
-            label: "Attendance",
+            icon: Icon(Icons.payment_outlined),
+            activeIcon: Icon(Icons.payment),
+            label: "Payroll",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.date_range_outlined),

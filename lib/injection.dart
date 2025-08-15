@@ -33,6 +33,13 @@ import 'package:dynamic_emr/features/auth/domain/usecases/fetch_user_financial_y
 import 'package:dynamic_emr/features/auth/domain/usecases/login_usecase.dart';
 import 'package:dynamic_emr/features/auth/domain/usecases/refresh_token_usecase.dart';
 import 'package:dynamic_emr/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:dynamic_emr/features/payrolls/data/datasource/payroll_remote_datasource.dart';
+import 'package:dynamic_emr/features/payrolls/data/repository/payroll_repository_impl.dart';
+import 'package:dynamic_emr/features/payrolls/domain/repository/payroll_repository.dart';
+import 'package:dynamic_emr/features/payrolls/domain/usecases/current_month_salary_usecase.dart';
+import 'package:dynamic_emr/features/payrolls/domain/usecases/loan_and_advance_usecase.dart';
+import 'package:dynamic_emr/features/payrolls/domain/usecases/taxes_usecase.dart';
+import 'package:dynamic_emr/features/payrolls/presentation/bloc/payroll_bloc.dart';
 import 'package:dynamic_emr/features/profile/data/datasources/employee_remote_datasource.dart';
 import 'package:dynamic_emr/features/profile/data/repository/employee_repository_impl.dart';
 import 'package:dynamic_emr/features/profile/domain/repository/employee_repository.dart';
@@ -41,6 +48,7 @@ import 'package:dynamic_emr/features/profile/presentation/bloc/profile_bloc.dart
 import 'package:dynamic_emr/features/work/data/datasource/work_remote_datasource.dart';
 import 'package:dynamic_emr/features/work/data/repository/work_repository_impl.dart';
 import 'package:dynamic_emr/features/work/domain/repository/work_repository.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/comment_on_ticket_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/create_new_ticket_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/filter_my_ticket_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/filter_ticket_assigned_to_me_usecase.dart';
@@ -235,9 +243,13 @@ Future<void> initDependencies() async {
       ticketDetailsByIdUsecase: injection<TicketDetailsByIdUsecase>(),
       ticketCloseUsecase: injection<TicketCloseUsecase>(),
       ticketReopenUsecase: injection<TicketReopenUsecase>(),
+      commentOnTicketUsecase: injection<CommentOnTicketUsecase>(),
     ),
   );
 
+  injection.registerLazySingleton<CommentOnTicketUsecase>(
+    () => CommentOnTicketUsecase(repository: injection<WorkRepository>()),
+  );
   injection.registerLazySingleton<TicketCloseUsecase>(
     () => TicketCloseUsecase(repository: injection<WorkRepository>()),
   );
@@ -279,5 +291,32 @@ Future<void> initDependencies() async {
   );
   injection.registerLazySingleton<WorkRemoteDatasource>(
     () => WorkRemoteDatasourceImpl(client: injection<DioHttpClient>()),
+  );
+
+  // payrolls
+  injection.registerLazySingleton<PayrollBloc>(
+    () => PayrollBloc(
+      currentMonthSalaryUsecase: injection<CurrentMonthSalaryUsecase>(),
+      loanAndAdvanceUsecase: injection<LoanAndAdvanceUsecase>(),
+      taxesUsecase: injection<TaxesUsecase>(),
+    ),
+  );
+
+  injection.registerLazySingleton<TaxesUsecase>(
+    () => TaxesUsecase(repository: injection<PayrollRepository>()),
+  );
+  injection.registerLazySingleton<LoanAndAdvanceUsecase>(
+    () => LoanAndAdvanceUsecase(repository: injection<PayrollRepository>()),
+  );
+  injection.registerLazySingleton<CurrentMonthSalaryUsecase>(
+    () => CurrentMonthSalaryUsecase(repository: injection<PayrollRepository>()),
+  );
+  injection.registerLazySingleton<PayrollRepository>(
+    () => PayrollRepositoryImpl(
+      remoteDatasource: injection<PayrollRemoteDatasource>(),
+    ),
+  );
+  injection.registerLazySingleton<PayrollRemoteDatasource>(
+    () => PayrollRemoteDatasourceImpl(client: injection<DioHttpClient>()),
   );
 }

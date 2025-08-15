@@ -32,7 +32,7 @@ class ApiConstants {
   static const String closeTicket = "/api/Ticket/CloseTicket";
   static const String reOpenTicket = "/api/Ticket/ReOpenTicket";
   static const String createTicketPost = "/api/Ticket/CreateTicketPost";
-  static const String commentPost = "/api/Ticket/CommentPost/3";
+  static const String commentPost = "/api/Ticket/CommentPost";
 
   // Leave Info
 
