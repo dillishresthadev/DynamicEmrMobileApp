@@ -1,4 +1,5 @@
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
+import 'package:dynamic_emr/core/widgets/form/custom_input_field.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_activity_entity.dart';
 import 'package:dynamic_emr/features/work/presentation/bloc/work_bloc.dart';
 import 'package:dynamic_emr/features/work/presentation/widgets/ticket_info_widget.dart';
@@ -15,6 +16,7 @@ class TicketDetailsScreen extends StatefulWidget {
 }
 
 class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
+  final TextEditingController _commentController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -49,94 +51,115 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
               } else if (state.workStatus ==
                   WorkStatus.ticketDetailsLoadSuccess) {
                 final ticket = state.ticketDetails;
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Ticket Info
-                    TicketInfoWidget(ticket: ticket!.ticket),
-                    // Ticket Timeline Card
-                    Card(
-                      elevation: 0,
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        side: BorderSide(color: Colors.grey[200]!),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(20),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text(
-                                  'Ticket Timeline',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black87,
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Ticket Info
+                      TicketInfoWidget(ticket: ticket!.ticket),
+                      // Ticket Timeline Card
+                      Card(
+                        elevation: 0,
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          side: BorderSide(color: Colors.grey[200]!),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    'Ticket Timeline',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black87,
+                                    ),
                                   ),
-                                ),
 
-                                // close or reopen
-                                ElevatedButton.icon(
-                                  onPressed: () {
-                                    ticket.ticket.status == "Open"
-                                        ? context.read<WorkBloc>().add(
-                                            TicketClosedEvent(
-                                              ticketId: ticket.id,
-                                            ),
-                                          )
-                                        : context.read<WorkBloc>().add(
-                                            TicketReopenEvent(
-                                              ticketId: ticket.id,
-                                            ),
-                                          );
+                                  // close or reopen
+                                  ElevatedButton.icon(
+                                    onPressed: () {
+                                      ticket.ticket.status == "Open"
+                                          ? context.read<WorkBloc>().add(
+                                              TicketClosedEvent(
+                                                ticketId: ticket.id,
+                                              ),
+                                            )
+                                          : context.read<WorkBloc>().add(
+                                              TicketReopenEvent(
+                                                ticketId: ticket.id,
+                                              ),
+                                            );
 
-                                    Navigator.pop(context);
-                                  },
-                                  icon: Icon(
-                                    ticket.ticket.status == "Open"
-                                        ? Icons.close
-                                        : Icons.refresh,
-                                    color: Colors.white,
-                                    size: 16,
-                                  ),
-                                  label: Text(
-                                    ticket.ticket.status == "Open"
-                                        ? 'Close'
-                                        : 'Reopen',
-                                    style: const TextStyle(
+                                      Navigator.pop(context);
+                                    },
+                                    icon: Icon(
+                                      ticket.ticket.status == "Open"
+                                          ? Icons.close
+                                          : Icons.refresh,
                                       color: Colors.white,
-                                      fontWeight: FontWeight.bold,
+                                      size: 16,
+                                    ),
+                                    label: Text(
+                                      ticket.ticket.status == "Open"
+                                          ? 'Close'
+                                          : 'Reopen',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor:
+                                          ticket.ticket.status == "Open"
+                                          ? Colors.red
+                                          : Colors.green,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 6,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
                                     ),
                                   ),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        ticket.ticket.status == "Open"
-                                        ? Colors.red
-                                        : Colors.green,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 6,
+                                ],
+                              ),
+                              const SizedBox(height: 20),
+                              _buildTimeline(
+                                ticketActivity: ticket.ticketActivity,
+                              ),
+                              const SizedBox(height: 20),
+                              // comment on ticket
+                              CustomInputField(
+                                hintText: "Comments",
+                                controller: _commentController,
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  context.read<WorkBloc>().add(
+                                    CommentOnTicketEvent(
+                                      ticketId: ticket.id,
+                                      message: _commentController.text,
                                     ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(4),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 20),
-                            _buildTimeline(
-                              ticketActivity: ticket.ticketActivity,
-                            ),
-                          ],
+                                  );
+                                },
+                                child: Text("Comment"),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 );
               }
               return Center(child: Text("Unknown State : $state"));

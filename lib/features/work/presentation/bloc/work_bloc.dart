@@ -6,6 +6,7 @@ import 'package:dynamic_emr/features/work/domain/entities/ticket_details_entity.
 import 'package:dynamic_emr/features/work/domain/entities/ticket_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_summary_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/work_user_entity.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/comment_on_ticket_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/create_new_ticket_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/filter_my_ticket_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/filter_ticket_assigned_to_me_usecase.dart';
@@ -33,6 +34,7 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
   final TicketDetailsByIdUsecase ticketDetailsByIdUsecase;
   final TicketCloseUsecase ticketCloseUsecase;
   final TicketReopenUsecase ticketReopenUsecase;
+  final CommentOnTicketUsecase commentOnTicketUsecase;
   WorkBloc({
     required this.ticketSummaryUsecase,
     required this.ticketAssignedToMeSummaryUsecase,
@@ -44,6 +46,7 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
     required this.ticketDetailsByIdUsecase,
     required this.ticketCloseUsecase,
     required this.ticketReopenUsecase,
+    required this.commentOnTicketUsecase,
   }) : super(WorkState()) {
     on<MyTicketSummaryEvent>(_onMyTicketSummary);
     on<TicketAssignedToMeSummaryEvent>(_onTicketAssignedToMeSummary);
@@ -55,6 +58,7 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
     on<TicketDetailsByIdEvent>(_onTicketDetailsById);
     on<TicketReopenEvent>(_onTicketReOpen);
     on<TicketClosedEvent>(_onTicketClosed);
+    on<CommentOnTicketEvent>(_onCommentOnTicket);
   }
 
   Future<void> _onMyTicketSummary(
@@ -309,6 +313,27 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
       emit(
         state.copyWith(
           workStatus: WorkStatus.ticketClosedError,
+          message: e.toString(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onCommentOnTicket(CommentOnTicketEvent event, Emitter<WorkState> emit) async{
+      emit(state.copyWith(workStatus: WorkStatus.loading));
+    try {
+      final isComment = await commentOnTicketUsecase.call(event.ticketId,event.message);
+      emit(
+        state.copyWith(
+          closeTicket: isComment,
+          workStatus: WorkStatus.commentOnTicketSuccess,
+        ),
+      );
+    } catch (e) {
+      log("Error Bloc comment on ticket $e");
+      emit(
+        state.copyWith(
+          workStatus: WorkStatus.commentOnTicketError,
           message: e.toString(),
         ),
       );

@@ -69,24 +69,28 @@ class TicketInfoWidget extends StatelessWidget {
 
   Widget _buildInfoItem(String label, String value, {Color? valueColor}) {
     return SizedBox(
-      width: 200, // Adjust width for responsiveness
+      width: double.infinity,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: const TextStyle(
-              fontWeight: FontWeight.w600,
-              color: Colors.grey,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            value,
-            style: TextStyle(
-              fontWeight: FontWeight.w500,
-              color: valueColor ?? Colors.black87,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: Colors.grey,
+                ),
+              ),
+              Text(
+                value,
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: valueColor ?? Colors.black87,
+                ),
+              ),
+            ],
           ),
           const Divider(height: 12, thickness: 0.5),
         ],

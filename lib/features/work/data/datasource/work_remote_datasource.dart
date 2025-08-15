@@ -21,6 +21,7 @@ abstract class WorkRemoteDatasource {
   Future<List<WorkUserModel>> getWorkUserList();
   Future<bool> closeTicket(int ticketId);
   Future<bool> reOpenTicket(int ticketId);
+  Future<bool> commentOnTicket(int ticketId, String message);
   Future<List<TicketCategoriesModel>> getTicketCategories();
   Future<bool> createNewTicket(
     int ticketCategoryId,
@@ -240,6 +241,7 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
             .toList();
       }
 
+      log("[Datasource] Files : ${files?.first.filename} ");
       final formData = FormData.fromMap({
         "TicketCategoryId": ticketCategoryId,
         "Title": title,
@@ -423,6 +425,43 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
       final rawResponse = await client.post(
         "$baseUrl/${ApiConstants.reOpenTicket}/$ticketId",
         token: accessToken,
+        headers: {
+          "workingBranchId": workingBranchId.toString(),
+          "workingFinancialId": workingFinancialId.toString(),
+        },
+      );
+
+      if (rawResponse['data'] is bool) {
+        return rawResponse['data'];
+      }
+      throw Exception("Unexpected response format");
+    } catch (e) {
+      log("Error while reopening ticket : $e");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool> commentOnTicket(int ticketId, String message) async {
+    try {
+      final accessToken = await injection<TokenSecureStorage>()
+          .getAccessToken();
+      final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
+      final workingBranchId = await injection<BranchSecureStorage>()
+          .getWorkingBranchId();
+      final workingFinancialId = await injection<BranchSecureStorage>()
+          .getSelectedFiscalYearId();
+      final formData = FormData.fromMap({
+        "TicketId": ticketId,
+        "Comment": message,
+        "Attachments": [],
+      });
+
+      final rawResponse = await client.post(
+        "$baseUrl/${ApiConstants.commentPost}/$ticketId",
+        token: accessToken,
+        body: formData,
+
         headers: {
           "workingBranchId": workingBranchId.toString(),
           "workingFinancialId": workingFinancialId.toString(),

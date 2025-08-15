@@ -11,6 +11,7 @@ abstract class WorkRepository {
   Future<List<WorkUserEntity>> getWorkUserList();
   Future<bool> ticketReopen(int ticketId);
   Future<bool> ticketClose(int ticketId);
+  Future<bool> commentOnTicket(int ticketId, String message);
   Future<List<TicketCategoriesEntity>> getTicketCategories();
   Future<bool> createNewTicket(
     int ticketCategoryId,

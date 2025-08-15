@@ -106,11 +106,16 @@ class WorkRepositoryImpl extends WorkRepository {
 
   @override
   Future<bool> ticketClose(int ticketId) async {
-    return remoteDatasource.closeTicket(ticketId);
+    return await remoteDatasource.closeTicket(ticketId);
   }
 
   @override
   Future<bool> ticketReopen(int ticketId) async {
-    return remoteDatasource.reOpenTicket(ticketId);
+    return await remoteDatasource.reOpenTicket(ticketId);
+  }
+
+  @override
+  Future<bool> commentOnTicket(int ticketId, String message) async {
+    return await remoteDatasource.commentOnTicket(ticketId, message);
   }
 }

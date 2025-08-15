@@ -31,6 +31,15 @@ final class TicketClosedEvent extends WorkEvent {
   List<Object?> get props => [ticketId];
 }
 
+final class CommentOnTicketEvent extends WorkEvent {
+  final int ticketId;
+  final String message;
+
+  const CommentOnTicketEvent({required this.ticketId, required this.message});
+  @override
+  List<Object?> get props => [ticketId, message];
+}
+
 final class TicketDetailsByIdEvent extends WorkEvent {
   final int ticketId;
 
