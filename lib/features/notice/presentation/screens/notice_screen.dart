@@ -83,7 +83,6 @@ class _NoticeScreenState extends State<NoticeScreen> {
                     final notices = state.notices;
 
                     return ListView.builder(
-                      reverse: true,
                       padding: const EdgeInsets.all(16),
                       itemCount: notices.length,
                       itemBuilder: (context, index) {

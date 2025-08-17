@@ -33,6 +33,13 @@ import 'package:dynamic_emr/features/auth/domain/usecases/fetch_user_financial_y
 import 'package:dynamic_emr/features/auth/domain/usecases/login_usecase.dart';
 import 'package:dynamic_emr/features/auth/domain/usecases/refresh_token_usecase.dart';
 import 'package:dynamic_emr/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:dynamic_emr/features/holiday/data/datasource/holiday_remote_datasource.dart';
+import 'package:dynamic_emr/features/holiday/data/repository/holiday_repository_impl.dart';
+import 'package:dynamic_emr/features/holiday/domain/repository/holiday_repository.dart';
+import 'package:dynamic_emr/features/holiday/domain/usecases/all_holiday_list_usecase.dart';
+import 'package:dynamic_emr/features/holiday/domain/usecases/past_holiday_list_usecase.dart';
+import 'package:dynamic_emr/features/holiday/domain/usecases/upcomming_holiday_list_usecase.dart';
+import 'package:dynamic_emr/features/holiday/presentation/bloc/holiday_bloc.dart';
 import 'package:dynamic_emr/features/notice/data/datasource/notice_remote_datasource.dart';
 import 'package:dynamic_emr/features/notice/data/repository/notice_repository_impl.dart';
 import 'package:dynamic_emr/features/notice/domain/repository/notice_repository.dart';
@@ -350,5 +357,31 @@ Future<void> initDependencies() async {
   );
   injection.registerLazySingleton<NoticeRemoteDatasource>(
     () => NoticeRemoteDatasourceImpl(client: injection<DioHttpClient>()),
+  );
+  // Holiday
+  injection.registerLazySingleton<HolidayBloc>(
+    () => HolidayBloc(
+      allHolidayListUsecase: injection<AllHolidayListUsecase>(),
+      pastHolidayListUsecase: injection<PastHolidayListUsecase>(),
+      upcommingHolidayListUsecase: injection<UpcommingHolidayListUsecase>(),
+    ),
+  );
+  injection.registerLazySingleton<AllHolidayListUsecase>(
+    () => AllHolidayListUsecase(repository: injection<HolidayRepository>()),
+  );
+  injection.registerLazySingleton<PastHolidayListUsecase>(
+    () => PastHolidayListUsecase(repository: injection<HolidayRepository>()),
+  );
+  injection.registerLazySingleton<UpcommingHolidayListUsecase>(
+    () =>
+        UpcommingHolidayListUsecase(repository: injection<HolidayRepository>()),
+  );
+  injection.registerLazySingleton<HolidayRepository>(
+    () => HolidayRepositoryImpl(
+      remoteDatasource: injection<HolidayRemoteDatasource>(),
+    ),
+  );
+  injection.registerLazySingleton<HolidayRemoteDatasource>(
+    () => HolidayRemoteDatasourceImpl(client: injection<DioHttpClient>()),
   );
 }

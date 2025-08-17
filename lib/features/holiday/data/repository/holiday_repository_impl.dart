@@ -7,20 +7,17 @@ class HolidayRepositoryImpl extends HolidayRepository {
 
   HolidayRepositoryImpl({required this.remoteDatasource});
   @override
-  Future<List<HolidayEntity>> getAllHolidayList() {
-    // TODO: implement getAllHolidayList
-    throw UnimplementedError();
+  Future<List<HolidayEntity>> getAllHolidayList() async {
+    return await remoteDatasource.getAllHolidayList();
   }
 
   @override
-  Future<List<HolidayEntity>> getPastHolidayList() {
-    // TODO: implement getPastHolidayList
-    throw UnimplementedError();
+  Future<List<HolidayEntity>> getPastHolidayList() async {
+    return await remoteDatasource.getPastHolidayList();
   }
 
   @override
-  Future<List<HolidayEntity>> getUpcommingHolidayList() {
-    // TODO: implement getUpcommingHolidayList
-    throw UnimplementedError();
+  Future<List<HolidayEntity>> getUpcommingHolidayList() async {
+    return await remoteDatasource.getUpcommingHolidayList();
   }
 }

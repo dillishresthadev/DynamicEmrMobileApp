@@ -39,7 +39,8 @@ dependencies:
   get_it: ^8.2.0
   dio: ^5.8.0+1
   connectivity_plus: ^6.1.4
-  intl: ^0.20.2
+  # intl: ^0.20.2
+  intl: ^0.18.0
   pin_code_fields: ^8.0.1
   flutter_secure_storage: ^9.2.4
   dropdown_button2: ^2.3.9
@@ -48,6 +49,7 @@ dependencies:
   file_picker: ^10.3.1
   image_picker: ^1.1.2
   nepali_utils: ^3.0.8
+  flutter_bs_ad_calendar: ^1.0.4
 
 dev_dependencies:
   flutter_test:
