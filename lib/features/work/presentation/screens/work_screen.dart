@@ -231,10 +231,10 @@ class _WorkScreenState extends State<WorkScreen>
         SizedBox(width: 8),
         Expanded(
           child: WorkOverviewCardWidget(
-            title: 'In Progress',
-            value: data.inProgress.toString(),
-            icon: Icons.hourglass_empty,
-            color: Color(0xFFF59E0B),
+            title: 'Closed',
+            value: data.closed.toString(),
+            icon: Icons.done,
+            color: Colors.green,
           ),
         ),
       ],

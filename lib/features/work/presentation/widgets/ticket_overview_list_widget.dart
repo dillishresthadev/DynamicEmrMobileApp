@@ -6,122 +6,255 @@ class TicketOverviewListWidget extends StatelessWidget {
   final List<TicketEntity> tickets;
   final void Function(TicketEntity) onTap;
 
-  const TicketOverviewListWidget({required this.tickets, super.key, required this.onTap});
+  const TicketOverviewListWidget({
+    required this.tickets,
+    super.key,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    return ListView.separated(
       itemCount: tickets.length,
-      padding: EdgeInsets.only(top: 8, bottom: 16),
+      padding: const EdgeInsets.all(16),
+      separatorBuilder: (context, index) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final ticket = tickets[index];
-
-        final ticketNo = ticket.ticketNo2;
-        final title = ticket.title;
-        final status = ticket.status;
-        final priority = ticket.priority;
-        final severity = ticket.severity;
-        final assignedTo = ticket.assignedTo;
-        final ticketDate = DateFormat('yyyy-MM-dd').format(ticket.ticketDate);
-
-        Color statusColor;
-        switch (status.toLowerCase()) {
-          case 'open':
-            statusColor = Colors.red;
-            break;
-          case 'closed':
-            statusColor = Colors.green;
-            break;
-          default:
-            statusColor = Colors.grey;
-        }
-
-        return GestureDetector(
-          onTap: ()=>onTap(ticket),
-          child: Card(
-            margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            color: Colors.white,
-            child: Padding(
-              padding: EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Ticket No & Status
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        ticketNo,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: statusColor.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          status,
-                          style: TextStyle(
-                            color: statusColor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  // Title
-                  Text(
-                    title,
-                    style: TextStyle(fontSize: 14, color: Colors.black87),
-                  ),
-                  SizedBox(height: 12),
-                  // Priority, Severity, Assigned To
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      _infoChip('Priority', priority, Colors.orange),
-                      _infoChip('Severity', severity, Colors.redAccent),
-                      _infoChip('Assigned', assignedTo, Colors.blueAccent),
-                    ],
-                  ),
-                  SizedBox(height: 12),
-                  // Date
-                  Text(
-                    'Date: $ticketDate',
-                    style: TextStyle(color: Colors.grey[700], fontSize: 13),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
+        return _TicketCard(ticket: ticket, onTap: () => onTap(ticket));
       },
     );
   }
+}
 
-  Widget _infoChip(String label, String value, Color color) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text(
-        '$label: $value',
-        style: TextStyle(
-          color: color,
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
+class _TicketCard extends StatelessWidget {
+  final TicketEntity ticket;
+  final VoidCallback onTap;
+
+  const _TicketCard({required this.ticket, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      color: Colors.white,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(),
+              const SizedBox(height: 12),
+              _buildTitle(),
+              const SizedBox(height: 16),
+              _buildMetadata(),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Widget _buildHeader() {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            ticket.ticketNo2,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ),
+        _StatusBadge(status: ticket.status),
+      ],
+    );
+  }
+
+  Widget _buildTitle() {
+    return Text(
+      ticket.title,
+      style: TextStyle(fontSize: 15, height: 1.4, color: Colors.grey.shade700),
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  Widget _buildMetadata() {
+    final ticketDate = DateFormat('MMM dd, yyyy').format(ticket.ticketDate);
+
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: _MetadataChip(
+                icon: Icons.flag_outlined,
+                label: "priority : ${ticket.priority}",
+                color: _getPriorityColor(ticket.priority),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _MetadataChip(
+                icon: Icons.error_outline,
+                label: "Severity : ${ticket.severity}",
+                color: _getSeverityColor(ticket.severity),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              child: _MetadataChip(
+                icon: Icons.person_outline,
+                label: "Assigned : ${ticket.assignedTo}",
+                color: Colors.blue.shade600,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _MetadataChip(
+                icon: Icons.schedule_outlined,
+                label: ticketDate,
+                color: Colors.grey.shade600,
+              ),
+            ),
+          ],
+        ),
+        if (ticket.issueBy.isNotEmpty) ...[
+          const SizedBox(height: 8),
+          _MetadataChip(
+            icon: Icons.account_circle_outlined,
+            label: 'Created by ${ticket.issueBy}',
+            color: Colors.purple.shade600,
+            fullWidth: true,
+          ),
+        ],
+      ],
+    );
+  }
+
+  Color _getPriorityColor(String priority) {
+    switch (priority.toLowerCase()) {
+      case 'high':
+        return Colors.red.shade600;
+      case 'medium':
+        return Colors.orange.shade600;
+      case 'low':
+        return Colors.green.shade600;
+      default:
+        return Colors.grey.shade600;
+    }
+  }
+
+  Color _getSeverityColor(String severity) {
+    switch (severity.toLowerCase()) {
+      case 'high':
+        return Colors.red.shade600;
+      case 'medium':
+        return Colors.orange.shade600;
+      case 'low':
+        return Colors.yellow.shade700;
+      default:
+        return Colors.grey.shade600;
+    }
+  }
+}
+
+class _StatusBadge extends StatelessWidget {
+  final String status;
+
+  const _StatusBadge({required this.status});
+
+  @override
+  Widget build(BuildContext context) {
+    final (color, backgroundColor) = _getStatusColors();
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Text(
+        status.toUpperCase(),
+        style: TextStyle(
+          color: color,
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.5,
+        ),
+      ),
+    );
+  }
+
+  (Color, Color) _getStatusColors() {
+    switch (status.toLowerCase()) {
+      case 'open':
+        return (Colors.red.shade700, Colors.red.shade50);
+      case 'closed':
+        return (Colors.green.shade700, Colors.green.shade50);
+      case 'in progress':
+      case 'progress':
+        return (Colors.blue.shade700, Colors.blue.shade50);
+      case 'pending':
+        return (Colors.orange.shade700, Colors.orange.shade50);
+      default:
+        return (Colors.grey.shade700, Colors.grey.shade50);
+    }
+  }
+}
+
+class _MetadataChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final bool fullWidth;
+
+  const _MetadataChip({
+    required this.icon,
+    required this.label,
+    required this.color,
+    this.fullWidth = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final widget = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
+      ),
+      child: Row(
+        mainAxisSize: fullWidth ? MainAxisSize.max : MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    return fullWidth ? widget : Flexible(child: widget);
   }
 }

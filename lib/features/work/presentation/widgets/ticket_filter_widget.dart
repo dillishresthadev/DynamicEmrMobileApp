@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class TicketFilterWidget extends StatefulWidget {
-    final void Function(TicketFilterData)? onApply;
+  final void Function(TicketFilterData)? onApply;
 
   final void Function()? onClear;
 
@@ -20,11 +20,10 @@ class _TicketFilterWidgetState extends State<TicketFilterWidget> {
   String? _selectedStatus = "Open";
   String? _selectedPriority;
   String? _selectedSeverity;
-  String? _selectedOrderBy = "Oldest";
+  String? _selectedOrderBy = "Newest";
 
   final TextEditingController _fromDateController = TextEditingController();
   final TextEditingController _toDateController = TextEditingController();
-
 
   final List<String> statuses = ['Open', 'Closed'];
   final List<String> priorities = ['Low', 'Medium', 'High'];
@@ -55,7 +54,7 @@ class _TicketFilterWidgetState extends State<TicketFilterWidget> {
       _selectedStatus = "Open";
       _selectedPriority = null;
       _selectedSeverity = null;
-      _selectedOrderBy = "Oldest";
+      _selectedOrderBy = "Newest";
       _fromDateController.text = DateFormat('yyyy-MM-dd').format(oneMonthAgo);
       _toDateController.text = DateFormat('yyyy-MM-dd').format(now);
     });
@@ -222,4 +221,3 @@ class TicketFilterData {
     required this.toDate,
   });
 }
-
