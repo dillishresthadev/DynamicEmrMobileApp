@@ -127,6 +127,11 @@ class _TodayAttendanceWidgetState extends State<TodayAttendanceWidget> {
                           lat: location["latitude"].toString(),
                         ),
                       );
+                      AppSnackBar.show(
+                        context,
+                        "Punched In success",
+                        SnackbarType.error,
+                      );
                     } else {
                       AppSnackBar.show(
                         context,

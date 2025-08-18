@@ -70,6 +70,9 @@ import 'package:dynamic_emr/features/work/data/repository/work_repository_impl.d
 import 'package:dynamic_emr/features/work/domain/repository/work_repository.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/comment_on_ticket_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/create_new_ticket_usecase.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/edit_assignto_usecase.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/edit_priority_usecase.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/edit_severity_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/filter_my_ticket_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/filter_ticket_assigned_to_me_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/ticket_assigned_to_me_summary_usecase.dart';
@@ -264,9 +267,21 @@ Future<void> initDependencies() async {
       ticketCloseUsecase: injection<TicketCloseUsecase>(),
       ticketReopenUsecase: injection<TicketReopenUsecase>(),
       commentOnTicketUsecase: injection<CommentOnTicketUsecase>(),
+      editAssigntoUsecase: injection<EditAssigntoUsecase>(),
+      editPriorityUsecase: injection<EditPriorityUsecase>(),
+      editSeverityUsecase: injection<EditSeverityUsecase>(),
     ),
   );
 
+  injection.registerLazySingleton<EditPriorityUsecase>(
+    () => EditPriorityUsecase(repository: injection<WorkRepository>()),
+  );
+  injection.registerLazySingleton<EditSeverityUsecase>(
+    () => EditSeverityUsecase(repository: injection<WorkRepository>()),
+  );
+  injection.registerLazySingleton<EditAssigntoUsecase>(
+    () => EditAssigntoUsecase(repository: injection<WorkRepository>()),
+  );
   injection.registerLazySingleton<CommentOnTicketUsecase>(
     () => CommentOnTicketUsecase(repository: injection<WorkRepository>()),
   );
