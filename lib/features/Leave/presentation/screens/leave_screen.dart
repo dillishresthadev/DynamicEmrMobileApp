@@ -115,11 +115,12 @@ class _LeaveScreenState extends State<LeaveScreen>
   Widget _buildAvailableLeavesSection() {
     return Padding(
       padding: const EdgeInsets.all(12.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 4),
-          const Text(
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          initiallyExpanded: true,
+          tilePadding: EdgeInsets.zero,
+          title: const Text(
             'Available Leaves',
             style: TextStyle(
               fontSize: 20,
@@ -127,70 +128,59 @@ class _LeaveScreenState extends State<LeaveScreen>
               color: Color(0xFF1E293B),
             ),
           ),
-          const SizedBox(height: 12),
-          BlocBuilder<LeaveBloc, LeaveState>(
-            builder: (context, state) {
-              // Loading state for leave history
-              if (state.status == LeaveStatus.loading &&
-                  state.leaveHistory.isEmpty) {
-                return const SizedBox(
-                  height: 120,
-                  child: Center(child: CircularProgressIndicator()),
-                );
-              }
+          children: [
+            const SizedBox(height: 12),
+            BlocBuilder<LeaveBloc, LeaveState>(
+              builder: (context, state) {
+                if (state.status == LeaveStatus.loading &&
+                    state.leaveHistory.isEmpty) {
+                  return const SizedBox(
+                    height: 120,
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
 
-              // Error state
-              if (state.status == LeaveStatus.leaveHistoryLoadError &&
-                  state.leaveHistory.isEmpty) {
-                return _buildErrorContainer(state.message);
-              }
+                if (state.status == LeaveStatus.leaveHistoryLoadError &&
+                    state.leaveHistory.isEmpty) {
+                  return _buildErrorContainer(state.message);
+                }
 
-              // Show grid
-              if (state.leaveHistory.isEmpty) {
-                return _buildEmptyContainer();
-              }
+                if (state.leaveHistory.isEmpty) {
+                  return _buildEmptyContainer();
+                }
 
-              return _buildLeaveHistoryGrid(state.leaveHistory);
-            },
-          ),
-        ],
+                return _buildLeaveHistoryGrid(state.leaveHistory);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildLeaveHistoryGrid(List<dynamic> leaveHistory) {
-    final itemCount = leaveHistory.length;
-    final crossAxisCount = 2;
-    final rowCount = (itemCount / crossAxisCount).ceil();
-    const itemHeight = 80.0;
-    const spacing = 8.0;
-    final gridHeight = (rowCount * itemHeight) + ((rowCount - 1) * spacing);
-
-    return SizedBox(
-      height: gridHeight,
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 8,
-          childAspectRatio: 2.3,
-        ),
-        itemCount: leaveHistory.length,
-        itemBuilder: (context, index) {
-          final leave = leaveHistory[index];
-          final config = _getLeaveCardConfig(leave.leaveType);
-
-          return LeaveCardWidget(
-            icon: config['icon'] as IconData,
-            color: config['color'] as Color,
-            bgColor: config['bgColor'] as Color,
-            count: leave.balance.toString(),
-            label: leave.leaveType,
-          );
-        },
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        childAspectRatio: 2.3,
       ),
+      itemCount: leaveHistory.length,
+      itemBuilder: (context, index) {
+        final leave = leaveHistory[index];
+        final config = _getLeaveCardConfig(leave.leaveType);
+
+        return LeaveCardWidget(
+          icon: config['icon'] as IconData,
+          color: config['color'] as Color,
+          bgColor: config['bgColor'] as Color,
+          count: leave.balance.toString(),
+          label: leave.leaveType,
+        );
+      },
     );
   }
 

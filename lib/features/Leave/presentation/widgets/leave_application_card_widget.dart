@@ -173,7 +173,7 @@ class _LeaveApplicationCardWidgetState
           ),
 
           // Reason (if present and non-empty)
-          if (leave.reason != null && leave.reason!.trim().isNotEmpty) ...[
+          if (leave.reason.trim().isNotEmpty) ...[
             const SizedBox(height: 12),
             Text(
               'Reason: ${leave.reason}',

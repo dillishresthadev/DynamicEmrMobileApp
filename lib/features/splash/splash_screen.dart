@@ -15,7 +15,9 @@ class SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AuthBloc>().add(CheckAuthStatusEvent());
+      Future.delayed(Duration(seconds: 3), () async {
+        context.read<AuthBloc>().add(CheckAuthStatusEvent());
+      });
     });
   }
 

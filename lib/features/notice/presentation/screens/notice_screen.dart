@@ -80,7 +80,9 @@ class _NoticeScreenState extends State<NoticeScreen> {
                   if (state.status == NoticeStatus.loading) {
                     return Center(child: CircularProgressIndicator());
                   } else if (state.status == NoticeStatus.success) {
-                    final notices = state.notices;
+                    final notices = state.notices
+                        .where((e) => e.isPublished == true)
+                        .toList();
 
                     return ListView.builder(
                       padding: const EdgeInsets.all(16),
