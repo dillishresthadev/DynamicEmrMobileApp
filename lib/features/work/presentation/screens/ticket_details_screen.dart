@@ -49,7 +49,8 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
               if (state.workStatus == WorkStatus.loading) {
                 return Center(child: CircularProgressIndicator());
               } else if (state.workStatus ==
-                  WorkStatus.ticketDetailsLoadSuccess) {
+                      WorkStatus.ticketDetailsLoadSuccess ||
+                  state.workStatus == WorkStatus.success) {
                 final ticket = state.ticketDetails;
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 24.0),

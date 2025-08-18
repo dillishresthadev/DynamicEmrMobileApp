@@ -8,6 +8,9 @@ import 'package:dynamic_emr/features/work/domain/entities/ticket_summary_entity.
 import 'package:dynamic_emr/features/work/domain/entities/work_user_entity.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/comment_on_ticket_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/create_new_ticket_usecase.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/edit_assignto_usecase.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/edit_priority_usecase.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/edit_severity_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/filter_my_ticket_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/filter_ticket_assigned_to_me_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/ticket_assigned_to_me_summary_usecase.dart';
@@ -35,6 +38,9 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
   final TicketCloseUsecase ticketCloseUsecase;
   final TicketReopenUsecase ticketReopenUsecase;
   final CommentOnTicketUsecase commentOnTicketUsecase;
+  final EditPriorityUsecase editPriorityUsecase;
+  final EditAssigntoUsecase editAssigntoUsecase;
+  final EditSeverityUsecase editSeverityUsecase;
   WorkBloc({
     required this.ticketSummaryUsecase,
     required this.ticketAssignedToMeSummaryUsecase,
@@ -47,6 +53,9 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
     required this.ticketCloseUsecase,
     required this.ticketReopenUsecase,
     required this.commentOnTicketUsecase,
+    required this.editPriorityUsecase,
+    required this.editAssigntoUsecase,
+    required this.editSeverityUsecase,
   }) : super(WorkState()) {
     on<MyTicketSummaryEvent>(_onMyTicketSummary);
     on<TicketAssignedToMeSummaryEvent>(_onTicketAssignedToMeSummary);
@@ -59,6 +68,9 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
     on<TicketReopenEvent>(_onTicketReOpen);
     on<TicketClosedEvent>(_onTicketClosed);
     on<CommentOnTicketEvent>(_onCommentOnTicket);
+    on<EditPriorityEvent>(_onEditPriority);
+    on<EditAssignToEvent>(_onEditAssignedTo);
+    on<EditSeverityEvent>(_onEditSeverity);
   }
 
   Future<void> _onMyTicketSummary(
@@ -319,13 +331,19 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
     }
   }
 
-  Future<void> _onCommentOnTicket(CommentOnTicketEvent event, Emitter<WorkState> emit) async{
-      emit(state.copyWith(workStatus: WorkStatus.loading));
+  Future<void> _onCommentOnTicket(
+    CommentOnTicketEvent event,
+    Emitter<WorkState> emit,
+  ) async {
+    emit(state.copyWith(workStatus: WorkStatus.loading));
     try {
-      final isComment = await commentOnTicketUsecase.call(event.ticketId,event.message);
+      final isComment = await commentOnTicketUsecase.call(
+        event.ticketId,
+        event.message,
+      );
       emit(
         state.copyWith(
-          closeTicket: isComment,
+          commentOnTicket: isComment,
           workStatus: WorkStatus.commentOnTicketSuccess,
         ),
       );
@@ -337,6 +355,60 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
           message: e.toString(),
         ),
       );
+    }
+  }
+
+  Future<void> _onEditPriority(
+    EditPriorityEvent event,
+    Emitter<WorkState> emit,
+  ) async {
+    emit(state.copyWith(workStatus: WorkStatus.loading));
+    try {
+      await editPriorityUsecase.call(event.ticketId, event.status);
+      final ticket = await ticketDetailsByIdUsecase.call(event.ticketId);
+
+      emit(
+        state.copyWith(workStatus: WorkStatus.success, ticketDetails: ticket),
+      );
+    } catch (e) {
+      log("Error Bloc _onEditPriority $e");
+      emit(state.copyWith(workStatus: WorkStatus.error, message: e.toString()));
+    }
+  }
+
+  Future<void> _onEditAssignedTo(
+    EditAssignToEvent event,
+    Emitter<WorkState> emit,
+  ) async {
+    emit(state.copyWith(workStatus: WorkStatus.loading));
+    try {
+      await editAssigntoUsecase.call(event.ticketId, event.assignedUserId);
+      final ticket = await ticketDetailsByIdUsecase.call(event.ticketId);
+
+      emit(
+        state.copyWith(workStatus: WorkStatus.success, ticketDetails: ticket),
+      );
+    } catch (e) {
+      log("Error Bloc _onEditAssignedTo $e");
+      emit(state.copyWith(workStatus: WorkStatus.error, message: e.toString()));
+    }
+  }
+
+  Future<void> _onEditSeverity(
+    EditSeverityEvent event,
+    Emitter<WorkState> emit,
+  ) async {
+    emit(state.copyWith(workStatus: WorkStatus.loading));
+    try {
+      await editSeverityUsecase.call(event.ticketId, event.status);
+      final ticket = await ticketDetailsByIdUsecase.call(event.ticketId);
+
+      emit(
+        state.copyWith(workStatus: WorkStatus.success, ticketDetails: ticket),
+      );
+    } catch (e) {
+      log("Error Bloc _onEditSeverity $e");
+      emit(state.copyWith(workStatus: WorkStatus.error, message: e.toString()));
     }
   }
 }

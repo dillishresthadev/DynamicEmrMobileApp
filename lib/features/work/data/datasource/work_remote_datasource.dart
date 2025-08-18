@@ -53,6 +53,9 @@ abstract class WorkRemoteDatasource {
     String toDate,
     String orderBy,
   );
+  Future<bool> editPriority(int ticketId, String status);
+  Future<bool> editSeverity(int ticketId, String status);
+  Future<bool> editAssignTo(int ticketId, int assignedUserId);
 }
 
 class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
@@ -474,6 +477,102 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
       throw Exception("Unexpected response format");
     } catch (e) {
       log("Error while reopening ticket : $e");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool> editAssignTo(int ticketId, int assignedUserId) async {
+    try {
+      final accessToken = await injection<TokenSecureStorage>()
+          .getAccessToken();
+      final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
+      final workingBranchId = await injection<BranchSecureStorage>()
+          .getWorkingBranchId();
+      final workingFinancialId = await injection<BranchSecureStorage>()
+          .getSelectedFiscalYearId();
+
+      final rawResponse = await client.post(
+        "$baseUrl/${ApiConstants.editAssignedTo}",
+        token: accessToken,
+        body: {"Id": ticketId, "AssignToId": assignedUserId},
+
+        headers: {
+          "workingBranchId": workingBranchId.toString(),
+          "workingFinancialId": workingFinancialId.toString(),
+        },
+      );
+
+      if (rawResponse['data'] is bool) {
+        return rawResponse['data'];
+      }
+      throw Exception("Unexpected response format");
+    } catch (e) {
+      log("Error while editing assigned to : $e");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool> editPriority(int ticketId, String status) async {
+    try {
+      final accessToken = await injection<TokenSecureStorage>()
+          .getAccessToken();
+      final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
+      final workingBranchId = await injection<BranchSecureStorage>()
+          .getWorkingBranchId();
+      final workingFinancialId = await injection<BranchSecureStorage>()
+          .getSelectedFiscalYearId();
+
+      final rawResponse = await client.post(
+        "$baseUrl/${ApiConstants.editPriority}",
+        token: accessToken,
+        body: {"Id": ticketId, "StatusValue": status},
+
+        headers: {
+          "workingBranchId": workingBranchId.toString(),
+          "workingFinancialId": workingFinancialId.toString(),
+        },
+      );
+
+      if (rawResponse['data'] is bool) {
+        return rawResponse['data'];
+      }
+      throw Exception("Unexpected response format");
+    } catch (e) {
+      log("Error while editing priority : $e");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool> editSeverity(int ticketId, String status) async {
+    try {
+      final accessToken = await injection<TokenSecureStorage>()
+          .getAccessToken();
+      final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
+      final workingBranchId = await injection<BranchSecureStorage>()
+          .getWorkingBranchId();
+      final workingFinancialId = await injection<BranchSecureStorage>()
+          .getSelectedFiscalYearId();
+
+      final rawResponse = await client.post(
+        "$baseUrl/${ApiConstants.editSeverity}",
+        token: accessToken,
+        body: {"Id": ticketId, "StatusValue": status},
+
+        headers: {
+          "workingBranchId": workingBranchId.toString(),
+          "workingFinancialId": workingFinancialId.toString(),
+        },
+      );
+
+      if (rawResponse['data'] is bool) {
+        return rawResponse['data'];
+      }
+      throw Exception("Unexpected response format");
+    } catch (e) {
+      log("Error while editing severity : $e");
       rethrow;
     }
   }

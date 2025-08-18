@@ -118,4 +118,19 @@ class WorkRepositoryImpl extends WorkRepository {
   Future<bool> commentOnTicket(int ticketId, String message) async {
     return await remoteDatasource.commentOnTicket(ticketId, message);
   }
+
+  @override
+  Future<bool> editAssignTo(int ticketId, int assignedUserId) async {
+    return await remoteDatasource.editAssignTo(ticketId, assignedUserId);
+  }
+
+  @override
+  Future<bool> editPriority(int ticketId, String status) async {
+    return await remoteDatasource.editPriority(ticketId, status);
+  }
+
+  @override
+  Future<bool> editSeverity(int ticketId, String status) async {
+    return await remoteDatasource.editSeverity(ticketId, status);
+  }
 }

@@ -143,3 +143,33 @@ final class FilterTicketAssignedToMeEvent extends WorkEvent {
     orderBy,
   ];
 }
+
+final class EditPriorityEvent extends WorkEvent {
+  final int ticketId;
+  final String status;
+
+  const EditPriorityEvent({required this.ticketId, required this.status});
+  @override
+  List<Object> get props => [ticketId, status];
+}
+
+final class EditSeverityEvent extends WorkEvent {
+  final int ticketId;
+  final String status;
+
+  const EditSeverityEvent({required this.ticketId, required this.status});
+  @override
+  List<Object> get props => [ticketId, status];
+}
+
+final class EditAssignToEvent extends WorkEvent {
+  final int ticketId;
+  final int assignedUserId;
+
+  const EditAssignToEvent({
+    required this.ticketId,
+    required this.assignedUserId,
+  });
+  @override
+  List<Object> get props => [ticketId, assignedUserId];
+}

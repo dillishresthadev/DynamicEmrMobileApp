@@ -43,4 +43,8 @@ abstract class WorkRepository {
     String toDate,
     String orderBy,
   );
+
+  Future<bool> editPriority(int ticketId, String status);
+  Future<bool> editSeverity(int ticketId, String status);
+  Future<bool> editAssignTo(int ticketId, int assignedUserId);
 }
