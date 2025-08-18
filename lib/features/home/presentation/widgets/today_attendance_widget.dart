@@ -130,7 +130,7 @@ class _TodayAttendanceWidgetState extends State<TodayAttendanceWidget> {
                       AppSnackBar.show(
                         context,
                         "Punched In success",
-                        SnackbarType.error,
+                        SnackbarType.success,
                       );
                     } else {
                       AppSnackBar.show(
@@ -178,130 +178,135 @@ class _TodayAttendanceWidgetState extends State<TodayAttendanceWidget> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (_) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          child: Column(
-            children: [
-              Container(
-                height: 4,
-                width: 50,
-                margin: const EdgeInsets.only(bottom: 16),
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(2),
+        final screenHeight = MediaQuery.sizeOf(context).height;
+
+        return SizedBox(
+          height: screenHeight * 0.5,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Column(
+              children: [
+                Container(
+                  height: 4,
+                  width: 50,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
-              ),
-              const Text(
-                "Today's Punch History",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 12),
-              Expanded(
-                child: BlocBuilder<PunchBloc, PunchState>(
-                  builder: (context, state) {
-                    if (state.status == PunchStatus.loading) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
+                const Text(
+                  "Today's Punch History",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 12),
+                Expanded(
+                  child: BlocBuilder<PunchBloc, PunchState>(
+                    builder: (context, state) {
+                      if (state.status == PunchStatus.loading) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
 
-                    if (state.status == PunchStatus.error) {
-                      return Center(
-                        child: Text(
-                          state.message,
-                          style: const TextStyle(color: Colors.red),
-                        ),
-                      );
-                    }
-
-                    if (state.punchList.isEmpty) {
-                      return const Center(
-                        child: Text(
-                          "No punch history for today",
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      );
-                    }
-
-                    return ListView.separated(
-                      itemCount: state.punchList.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 8),
-                      itemBuilder: (context, index) {
-                        final punch = state.punchList[index];
-                        final punchTime = DateTime.parse(
-                          punch.punchTime.toString(),
-                        ).toLocal();
-
-                        return Card(
-                          elevation: 2,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue[50],
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: const Icon(
-                                    Icons.fingerprint,
-                                    color: Colors.blue,
-                                    size: 28,
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "${punchTime.toLocal().hour.toString().padLeft(2, '0')}:${punchTime.toLocal().minute.toString().padLeft(2, '0')} - ${punchTime.toLocal().day.toString().padLeft(2, '0')}/${punchTime.toLocal().month.toString().padLeft(2, '0')}/${punchTime.toLocal().year}",
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        punch.systemDtl,
-                                        style: TextStyle(
-                                          color: Colors.grey[600],
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.green[100],
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Text(
-                                    punch.logType ?? "Manual",
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.green,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                      if (state.status == PunchStatus.error) {
+                        return Center(
+                          child: Text(
+                            state.message,
+                            style: const TextStyle(color: Colors.red),
                           ),
                         );
-                      },
-                    );
-                  },
+                      }
+
+                      if (state.punchList.isEmpty) {
+                        return const Center(
+                          child: Text(
+                            "No punch history for today",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        );
+                      }
+
+                      return ListView.separated(
+                        itemCount: state.punchList.length,
+                        separatorBuilder: (_, __) => const SizedBox(height: 8),
+                        itemBuilder: (context, index) {
+                          final punch = state.punchList[index];
+                          final punchTime = DateTime.parse(
+                            punch.punchTime.toString(),
+                          ).toLocal();
+
+                          return Card(
+                            elevation: 2,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                      color: Colors.blue[50],
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: const Icon(
+                                      Icons.fingerprint,
+                                      color: Colors.blue,
+                                      size: 28,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "${punchTime.hour.toString().padLeft(2, '0')}:${punchTime.minute.toString().padLeft(2, '0')} - ${punchTime.day.toString().padLeft(2, '0')}/${punchTime.month.toString().padLeft(2, '0')}/${punchTime.year}",
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          punch.systemDtl,
+                                          style: TextStyle(
+                                            color: Colors.grey[600],
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 10,
+                                      vertical: 4,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.green[100],
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      punch.logType ?? "Manual",
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
