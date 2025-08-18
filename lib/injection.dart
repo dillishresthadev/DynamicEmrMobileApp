@@ -59,6 +59,12 @@ import 'package:dynamic_emr/features/profile/data/repository/employee_repository
 import 'package:dynamic_emr/features/profile/domain/repository/employee_repository.dart';
 import 'package:dynamic_emr/features/profile/domain/usecases/employee_details_usecase.dart';
 import 'package:dynamic_emr/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:dynamic_emr/features/punch/data/datasource/punch_remote_datasource.dart';
+import 'package:dynamic_emr/features/punch/data/repository/punch_repository_impl.dart';
+import 'package:dynamic_emr/features/punch/domain/repository/punch_repository.dart';
+import 'package:dynamic_emr/features/punch/domain/usecases/employee_punch_usecase.dart';
+import 'package:dynamic_emr/features/punch/domain/usecases/get_employee_punch_list_usecase.dart';
+import 'package:dynamic_emr/features/punch/presentation/bloc/punch_bloc.dart';
 import 'package:dynamic_emr/features/work/data/datasource/work_remote_datasource.dart';
 import 'package:dynamic_emr/features/work/data/repository/work_repository_impl.dart';
 import 'package:dynamic_emr/features/work/domain/repository/work_repository.dart';
@@ -383,5 +389,27 @@ Future<void> initDependencies() async {
   );
   injection.registerLazySingleton<HolidayRemoteDatasource>(
     () => HolidayRemoteDatasourceImpl(client: injection<DioHttpClient>()),
+  );
+
+  // punch
+  injection.registerLazySingleton<PunchBloc>(
+    () => PunchBloc(
+      employeePunchListUsecase: injection<GetEmployeePunchListUsecase>(),
+      employeePunchUsecase: injection<EmployeePunchUsecase>(),
+    ),
+  );
+  injection.registerLazySingleton<EmployeePunchUsecase>(
+    () => EmployeePunchUsecase(repository: injection<PunchRepository>()),
+  );
+  injection.registerLazySingleton<GetEmployeePunchListUsecase>(
+    () => GetEmployeePunchListUsecase(repository: injection<PunchRepository>()),
+  );
+  injection.registerLazySingleton<PunchRepository>(
+    () => PunchRepositoryImpl(
+      remoteDatasource: injection<PunchRemoteDatasource>(),
+    ),
+  );
+  injection.registerLazySingleton<PunchRemoteDatasource>(
+    () => PunchRemoteDatasourceImpl(client: injection<DioHttpClient>()),
   );
 }
