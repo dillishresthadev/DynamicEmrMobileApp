@@ -53,6 +53,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
             },
             icon: Icon(Icons.settings_outlined, color: Colors.white),
           ),
+          IconButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog.adaptive(
+                    title: Text("Are you sure?"),
+                    content: Text(
+                      "This action will log you out from Dynamic EMR.",
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text("Cancel"),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          context.read<AuthBloc>().add(LogoutEvent());
+                          // After Logout Event is call navigate to Hospital Code Screen
+                          Navigator.pushReplacementNamed(
+                            context,
+                            RouteNames.hospitalCodeScreen,
+                          );
+                        },
+                        child: Text(
+                          "Logout",
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            icon: Icon(Icons.logout_outlined, color: Colors.white),
+          ),
         ],
       ),
 
@@ -197,7 +233,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return AlertDialog(
+                                  return AlertDialog.adaptive(
                                     title: Text("Are you sure?"),
                                     content: Text(
                                       "This action will log you out from Dynamic EMR.",

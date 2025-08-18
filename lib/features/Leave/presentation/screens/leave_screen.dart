@@ -90,12 +90,15 @@ class _LeaveScreenState extends State<LeaveScreen>
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: DynamicEMRAppBar(title: "Leaves"),
-      body: Column(
-        children: [
-          _buildAvailableLeavesSection(),
-          _buildTabBarSection(),
-          _buildTabViewSection(),
-        ],
+      body: RefreshIndicator(
+        onRefresh: () async => _loadLeaveData,
+        child: Column(
+          children: [
+            _buildAvailableLeavesSection(),
+            _buildTabBarSection(),
+            _buildTabViewSection(),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Navigator.push(
