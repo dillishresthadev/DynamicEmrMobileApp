@@ -66,4 +66,38 @@ class LeaveRepositoryImpl extends LeaveRepository {
   Future<List<LeaveTypeEntity>> getSubstitutionLeaveEmployee() async {
     return await remoteDatasource.getSubstitutionLeaveEmployee();
   }
+
+  @override
+  Future<List<LeaveTypeEntity>> getContractList() async {
+    return await remoteDatasource.getContractList();
+  }
+
+  @override
+  Future<List<LeaveTypeEntity>> getFiscalYearByContractId(
+    int contractId,
+  ) async {
+    return await remoteDatasource.getFiscalYearByContractId(contractId);
+  }
+
+  @override
+  Future<List<LeaveHistoryEntity>> getLeaveHistoryByContractIdAndFiscalYearId(
+    int contractId,
+    int fiscalYearId,
+  ) async {
+    return await remoteDatasource.getLeaveHistoryByContractIdAndFiscalYearId(
+      contractId,
+      fiscalYearId,
+    );
+  }
+
+  @override
+  Future<List<LeaveApplicationEntity>> getLeavesByContractIdAndFiscalYearId(
+    int contractId,
+    int fiscalYearId,
+  ) async {
+    return await remoteDatasource.getLeavesByContractIdAndFiscalYearId(
+      contractId,
+      fiscalYearId,
+    );
+  }
 }

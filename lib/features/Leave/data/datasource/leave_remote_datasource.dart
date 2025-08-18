@@ -21,6 +21,17 @@ abstract class LeaveRemoteDatasource {
   Future<List<LeaveTypeModel>> getLeaveType();
   Future<List<LeaveTypeModel>> getExtendedLeaveType();
   Future<List<LeaveTypeModel>> getSubstitutionLeaveEmployee();
+
+  Future<List<LeaveTypeModel>> getContractList();
+  Future<List<LeaveTypeModel>> getFiscalYearByContractId(int contractId);
+  Future<List<LeaveHistoryModel>> getLeaveHistoryByContractIdAndFiscalYearId(
+    int contractId,
+    int fiscalYearId,
+  );
+  Future<List<LeaveApplicationModel>> getLeavesByContractIdAndFiscalYearId(
+    int contractId,
+    int fiscalYearId,
+  );
 }
 
 class LeaveRemoteDatasourceImpl implements LeaveRemoteDatasource {
@@ -323,6 +334,162 @@ class LeaveRemoteDatasourceImpl implements LeaveRemoteDatasource {
       return jsonList.map((json) => LeaveTypeModel.fromJson(json)).toList();
     } catch (e) {
       log("Error getting substitute employee: $e");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<LeaveTypeModel>> getContractList() async {
+    try {
+      final accessToken = await injection<TokenSecureStorage>()
+          .getAccessToken();
+      final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
+      final workingBranchId = await injection<BranchSecureStorage>()
+          .getWorkingBranchId();
+      final workingFinancialId = await injection<BranchSecureStorage>()
+          .getSelectedFiscalYearId();
+      final dynamic response = await client.get(
+        "$baseUrl/${ApiConstants.getContracts}",
+        token: accessToken,
+        headers: {
+          "workingBranchId": workingBranchId.toString(),
+          "workingFinancialId": workingFinancialId.toString(),
+        },
+      );
+
+      List<dynamic> jsonList;
+
+      if (response is List) {
+        jsonList = response;
+      } else if (response is Map<String, dynamic>) {
+        jsonList = response['data'];
+      } else {
+        jsonList = [];
+        log('Unexpected response format: $response');
+      }
+
+      return jsonList.map((json) => LeaveTypeModel.fromJson(json)).toList();
+    } catch (e) {
+      log("Error getting contracts list: $e");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<LeaveTypeModel>> getFiscalYearByContractId(int contractId) async {
+    try {
+      final accessToken = await injection<TokenSecureStorage>()
+          .getAccessToken();
+      final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
+      final workingBranchId = await injection<BranchSecureStorage>()
+          .getWorkingBranchId();
+      final workingFinancialId = await injection<BranchSecureStorage>()
+          .getSelectedFiscalYearId();
+      final dynamic response = await client.get(
+        "$baseUrl/${ApiConstants.getContractFiscalYearByContctId}/$contractId",
+        token: accessToken,
+        headers: {
+          "workingBranchId": workingBranchId.toString(),
+          "workingFinancialId": workingFinancialId.toString(),
+        },
+      );
+
+      List<dynamic> jsonList;
+
+      if (response is List) {
+        jsonList = response;
+      } else if (response is Map<String, dynamic>) {
+        jsonList = response['data'];
+      } else {
+        jsonList = [];
+        log('Unexpected response format: $response');
+      }
+
+      return jsonList.map((json) => LeaveTypeModel.fromJson(json)).toList();
+    } catch (e) {
+      log("Error getting contracts list: $e");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<LeaveHistoryModel>> getLeaveHistoryByContractIdAndFiscalYearId(
+    int contractId,
+    int fiscalYearId,
+  ) async {
+    try {
+      final accessToken = await injection<TokenSecureStorage>()
+          .getAccessToken();
+      final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
+      final workingBranchId = await injection<BranchSecureStorage>()
+          .getWorkingBranchId();
+      final workingFinancialId = await injection<BranchSecureStorage>()
+          .getSelectedFiscalYearId();
+      final dynamic response = await client.get(
+        "$baseUrl/${ApiConstants.employeeLeaveHistoryByContractIdAndFiscalYearId}/$contractId/$fiscalYearId",
+        token: accessToken,
+        headers: {
+          "workingBranchId": workingBranchId.toString(),
+          "workingFinancialId": workingFinancialId.toString(),
+        },
+      );
+
+      List<dynamic> jsonList;
+
+      if (response is List) {
+        jsonList = response;
+      } else if (response is Map<String, dynamic>) {
+        jsonList = response['data'];
+      } else {
+        jsonList = [];
+        log('Unexpected response format: $response');
+      }
+
+      return jsonList.map((json) => LeaveHistoryModel.fromJson(json)).toList();
+    } catch (e) {
+      log("Error getting leave history contractId fiscalYear Id list: $e");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<LeaveApplicationModel>> getLeavesByContractIdAndFiscalYearId(
+    int contractId,
+    int fiscalYearId,
+  ) async {
+    try {
+      final accessToken = await injection<TokenSecureStorage>()
+          .getAccessToken();
+      final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
+      final workingBranchId = await injection<BranchSecureStorage>()
+          .getWorkingBranchId();
+      final workingFinancialId = await injection<BranchSecureStorage>()
+          .getSelectedFiscalYearId();
+      final dynamic response = await client.get(
+        "$baseUrl/${ApiConstants.employeeLeavesByContractIdAndFiscalYearId}/$contractId/$fiscalYearId",
+        token: accessToken,
+        headers: {
+          "workingBranchId": workingBranchId.toString(),
+          "workingFinancialId": workingFinancialId.toString(),
+        },
+      );
+
+      List<dynamic> jsonList;
+
+      if (response is List) {
+        jsonList = response;
+      } else if (response is Map<String, dynamic>) {
+        jsonList = response['data'];
+      } else {
+        jsonList = [];
+        log('Unexpected response format: $response');
+      }
+
+      return jsonList
+          .map((json) => LeaveApplicationModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      log("Error getting contracts list: $e");
       rethrow;
     }
   }
