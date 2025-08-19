@@ -40,6 +40,7 @@ class LeaveRepositoryImpl extends LeaveRepository {
       toDateNp: leaveRequest.toDateNp,
       halfDayStatus: leaveRequest.halfDayStatus,
       totalLeaveDays: leaveRequest.totalLeaveDays,
+      extendedTotalLeaveDays: leaveRequest.extendedTotalLeaveDays,
       reason: leaveRequest.reason,
       extendedFromDate: leaveRequest.extendedFromDate,
       extendedToDate: leaveRequest.extendedToDate,

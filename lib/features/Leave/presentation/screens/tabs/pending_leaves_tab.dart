@@ -35,6 +35,12 @@ class _PendingLeavesTabState extends State<PendingLeavesTab> {
               } else if (state.pendingLeaveStatus ==
                   LeaveStatus.pendingLeaveLoadSuccess) {
                 final pendingLeave = state.pendingLeave;
+
+                pendingLeave.sort(
+                  (a, b) => b.applicationDate.compareTo(
+                    a.applicationDate,
+                  ), // Recent first according to applicationDate
+                );
                 return ListView.builder(
                   itemCount: pendingLeave.length,
                   itemBuilder: (context, index) {

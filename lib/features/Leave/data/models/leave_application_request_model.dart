@@ -9,6 +9,7 @@ class LeaveApplicationRequestModel extends LeaveApplicationRequestEntity {
     super.toDateNp,
     super.halfDayStatus,
     super.totalLeaveDays,
+    super.extendedTotalLeaveDays,
     super.reason,
     super.extendedFromDate,
     super.extendedToDate,
@@ -28,6 +29,7 @@ class LeaveApplicationRequestModel extends LeaveApplicationRequestEntity {
       toDateNp: json['toDateNp'] as String?,
       halfDayStatus: json['halfDayStatus'] as String?,
       totalLeaveDays: json['totalLeaveDays'] as int?,
+      extendedTotalLeaveDays: json['extendedTotalLeaveDays'] as int?,
       reason: json['reason'] as String?,
       extendedFromDate: json['extendedFromDate'] as String?,
       extendedToDate: json['extendedToDate'] as String?,
@@ -40,7 +42,7 @@ class LeaveApplicationRequestModel extends LeaveApplicationRequestEntity {
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    final Map<String, dynamic> rawData = {
       'leaveTypeId': leaveTypeId,
       'fromDate': fromDate,
       'fromDateNp': fromDateNp,
@@ -48,6 +50,7 @@ class LeaveApplicationRequestModel extends LeaveApplicationRequestEntity {
       'toDateNp': toDateNp,
       'halfDayStatus': halfDayStatus,
       'totalLeaveDays': totalLeaveDays,
+      'extendedTotalLeaveDays': extendedTotalLeaveDays,
       'reason': reason,
       'extendedFromDate': extendedFromDate,
       'extendedToDate': extendedToDate,
@@ -57,5 +60,10 @@ class LeaveApplicationRequestModel extends LeaveApplicationRequestEntity {
       'substituteEmployeeId': substituteEmployeeId,
       'isHalfDay': isHalfDay,
     };
+
+    // Remove all null values dynamically
+    return Map.fromEntries(
+      rawData.entries.where((entry) => entry.value != null),
+    );
   }
 }
