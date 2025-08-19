@@ -111,26 +111,33 @@ class _LoginScreenState extends State<LoginScreen> {
                               ],
                             ),
                             const SizedBox(height: 20),
-                            ElevatedButton(
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  _formKey.currentState!.save();
-                                  context.read<AuthBloc>().add(
-                                    LoginEvent(
-                                      _usernameController.text.trim(),
-                                      _passwordController.text.trim(),
-                                    ),
-                                  );
+                            BlocBuilder<AuthBloc, AuthState>(
+                              builder: (context, state) {
+                                if (state is AuthLoadingState) {
+                                  return CircularProgressIndicator();
                                 }
+                                return ElevatedButton(
+                                  onPressed: () {
+                                    if (_formKey.currentState!.validate()) {
+                                      _formKey.currentState!.save();
+                                      context.read<AuthBloc>().add(
+                                        LoginEvent(
+                                          _usernameController.text.trim(),
+                                          _passwordController.text.trim(),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    elevation: 0,
+                                    backgroundColor: AppColors.primary,
+                                    foregroundColor: Colors.white,
+                                    minimumSize: const Size(200, 48),
+                                    shape: const StadiumBorder(),
+                                  ),
+                                  child: Text("LOGIN"),
+                                );
                               },
-                              style: ElevatedButton.styleFrom(
-                                elevation: 0,
-                                backgroundColor: AppColors.primary,
-                                foregroundColor: Colors.white,
-                                minimumSize: const Size(200, 48),
-                                shape: const StadiumBorder(),
-                              ),
-                              child: Text("LOGIN"),
                             ),
                           ],
                         ),

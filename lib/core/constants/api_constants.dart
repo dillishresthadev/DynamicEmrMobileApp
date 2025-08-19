@@ -39,12 +39,12 @@ class ApiConstants {
   static const String getLeaveTypes = "/api/LeaveApplication/GetLeaveTypes";
   static const String getContracts = "/api/LeaveApplication/GetContracts";
   static const String getContractFiscalYearByContctId =
-      "/api/LeaveApplication/GetContractFiscalYearByContctId/18";
+      "/api/LeaveApplication/GetContractFiscalYearByContctId";
   static const String employeeLeaveHistoryByContractIdAndFiscalYearId =
-      "/api/LeaveApplication/EmployeeLeaveHistoryByContractIdAndFiscalYearId/4/75";
+      "/api/LeaveApplication/EmployeeLeaveHistoryByContractIdAndFiscalYearId";
 
   static const String employeeLeavesByContractIdAndFiscalYearId =
-      "/api/LeaveApplication/EmployeeLeavesByContractIdAndFiscalYearId/4/75";
+      "/api/LeaveApplication/EmployeeLeavesByContractIdAndFiscalYearId";
   static const String getExtendedLeaveTypes =
       "/api/LeaveApplication/GetExtendedLeaveTypes";
   static const String getSubstitutionEmployee =

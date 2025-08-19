@@ -1,9 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-  <!-- location -->
+         <!-- Internet permission -->
+        <uses-permission android:name="android.permission.INTERNET"/>
+        <!-- Optional: If you need to check network state (WiFi/Cellular) -->
+         <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+        <!-- location -->
         <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
         <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
         <!-- Android 14 -->
-        <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION">
+        <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION"/>
     <application
         android:label="dynamic_emr"
         android:name="${applicationName}"

@@ -12,4 +12,14 @@ abstract class LeaveRepository {
   Future<List<LeaveTypeEntity>> getLeaveType();
   Future<List<LeaveTypeEntity>> getExtendedLeaveType();
   Future<List<LeaveTypeEntity>> getSubstitutionLeaveEmployee();
+  Future<List<LeaveTypeEntity>> getContractList();
+  Future<List<LeaveTypeEntity>> getFiscalYearByContractId(int contractId);
+  Future<List<LeaveHistoryEntity>> getLeaveHistoryByContractIdAndFiscalYearId(
+    int contractId,
+    int fiscalYearId,
+  );
+  Future<List<LeaveApplicationEntity>> getLeavesByContractIdAndFiscalYearId(
+    int contractId,
+    int fiscalYearId,
+  );
 }

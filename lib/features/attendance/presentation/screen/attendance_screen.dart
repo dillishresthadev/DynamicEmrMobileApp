@@ -64,7 +64,10 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: DynamicEMRAppBar(title: "Attendance"),
+      appBar: DynamicEMRAppBar(
+        title: "Attendance",
+        automaticallyImplyLeading: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12.0),
         child: BlocBuilder<AttendanceBloc, AttendanceState>(

@@ -102,21 +102,21 @@ class LeaveBloc extends Bloc<LeaveEvent, LeaveState> {
     ApprovedLeaveListEvent event,
     Emitter<LeaveState> emit,
   ) async {
-    emit(state.copyWith(status: LeaveStatus.loading));
+    emit(state.copyWith(approvedLeaveStatus: LeaveStatus.loading));
     try {
       final approvedLeave = await approvedLeaveListUsecase.call();
       emit(
         state.copyWith(
           approvedLeave: approvedLeave,
-          status: LeaveStatus.approvedLeaveLoadSuccess,
+          approvedLeaveStatus: LeaveStatus.approvedLeaveLoadSuccess,
         ),
       );
     } catch (e) {
       log("Error on Bloc [ApprovedLeave] $e");
       emit(
         state.copyWith(
-          status: LeaveStatus.approvedLeaveLoadError,
-          message: e.toString(),
+          approvedLeaveStatus: LeaveStatus.approvedLeaveLoadError,
+          approvedLeaveMessage: e.toString(),
         ),
       );
     }
@@ -126,21 +126,21 @@ class LeaveBloc extends Bloc<LeaveEvent, LeaveState> {
     PendingLeaveListEvent event,
     Emitter<LeaveState> emit,
   ) async {
-    emit(state.copyWith(status: LeaveStatus.loading));
+    emit(state.copyWith(pendingLeaveStatus: LeaveStatus.loading));
     try {
       final pendingLeave = await pendingLeaveListUsecase.call();
       emit(
         state.copyWith(
           pendingLeave: pendingLeave,
-          status: LeaveStatus.pendingLeaveLoadSuccess,
+          pendingLeaveStatus: LeaveStatus.pendingLeaveLoadSuccess,
         ),
       );
     } catch (e) {
       log("Error on Bloc [PendingLeave] $e");
       emit(
         state.copyWith(
-          status: LeaveStatus.pendingLeaveLoadError,
-          message: e.toString(),
+          pendingLeaveStatus: LeaveStatus.pendingLeaveLoadError,
+          pendingLeaveMessage: e.toString(),
         ),
       );
     }

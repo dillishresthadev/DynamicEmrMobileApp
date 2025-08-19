@@ -266,9 +266,12 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
     emit(state.copyWith(workStatus: WorkStatus.loading));
     try {
       final ticket = await ticketDetailsByIdUsecase.call(event.ticketId);
+      final workUserList = await workUserListUsecase.call();
+
       emit(
         state.copyWith(
           ticketDetails: ticket,
+          workUser: workUserList,
           workStatus: WorkStatus.ticketDetailsLoadSuccess,
         ),
       );
@@ -290,20 +293,18 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
     emit(state.copyWith(workStatus: WorkStatus.loading));
     try {
       final isTicketReOpen = await ticketReopenUsecase.call(event.ticketId);
+      final ticket = await ticketDetailsByIdUsecase.call(event.ticketId);
+
       emit(
         state.copyWith(
           reOpenTicket: isTicketReOpen,
-          workStatus: WorkStatus.ticketReOpenSuccess,
+          ticketDetails: ticket,
+          workStatus: WorkStatus.success,
         ),
       );
     } catch (e) {
       log("Error Bloc ticket reopen $e");
-      emit(
-        state.copyWith(
-          workStatus: WorkStatus.ticketReOpenError,
-          message: e.toString(),
-        ),
-      );
+      emit(state.copyWith(workStatus: WorkStatus.error, message: e.toString()));
     }
   }
 
@@ -314,20 +315,18 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
     emit(state.copyWith(workStatus: WorkStatus.loading));
     try {
       final isTicketClosed = await ticketCloseUsecase.call(event.ticketId);
+      final ticket = await ticketDetailsByIdUsecase.call(event.ticketId);
+
       emit(
         state.copyWith(
           closeTicket: isTicketClosed,
-          workStatus: WorkStatus.ticketClosedSuccess,
+          ticketDetails: ticket,
+          workStatus: WorkStatus.success,
         ),
       );
     } catch (e) {
       log("Error Bloc ticket closed $e");
-      emit(
-        state.copyWith(
-          workStatus: WorkStatus.ticketClosedError,
-          message: e.toString(),
-        ),
-      );
+      emit(state.copyWith(workStatus: WorkStatus.error, message: e.toString()));
     }
   }
 
@@ -341,20 +340,18 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
         event.ticketId,
         event.message,
       );
+      final ticket = await ticketDetailsByIdUsecase.call(event.ticketId);
+
       emit(
         state.copyWith(
           commentOnTicket: isComment,
-          workStatus: WorkStatus.commentOnTicketSuccess,
+          ticketDetails: ticket,
+          workStatus: WorkStatus.success,
         ),
       );
     } catch (e) {
       log("Error Bloc comment on ticket $e");
-      emit(
-        state.copyWith(
-          workStatus: WorkStatus.commentOnTicketError,
-          message: e.toString(),
-        ),
-      );
+      emit(state.copyWith(workStatus: WorkStatus.error, message: e.toString()));
     }
   }
 

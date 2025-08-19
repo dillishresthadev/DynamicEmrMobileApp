@@ -173,7 +173,7 @@ class _TicketScreenState extends State<TicketScreen>
               },
             );
           }
-          return Center(child: Text("Error: ${state.filterMyTicketStatus}"));
+          return Center(child: CircularProgressIndicator());
         },
       ),
     );
@@ -204,9 +204,7 @@ class _TicketScreenState extends State<TicketScreen>
               },
             );
           }
-          return Center(
-            child: Text("Error: ${state.filterAssignedTicketStatus}"),
-          );
+          return Center(child: CircularProgressIndicator());
         },
       ),
     );
