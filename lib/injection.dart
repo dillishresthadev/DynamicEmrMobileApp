@@ -57,6 +57,7 @@ import 'package:dynamic_emr/features/payrolls/presentation/bloc/payroll_bloc.dar
 import 'package:dynamic_emr/features/profile/data/datasources/employee_remote_datasource.dart';
 import 'package:dynamic_emr/features/profile/data/repository/employee_repository_impl.dart';
 import 'package:dynamic_emr/features/profile/domain/repository/employee_repository.dart';
+import 'package:dynamic_emr/features/profile/domain/usecases/employee_contract_usecase.dart';
 import 'package:dynamic_emr/features/profile/domain/usecases/employee_details_usecase.dart';
 import 'package:dynamic_emr/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:dynamic_emr/features/punch/data/datasource/punch_remote_datasource.dart';
@@ -154,7 +155,12 @@ Future<void> initDependencies() async {
   injection.registerLazySingleton<ProfileBloc>(
     () => ProfileBloc(
       employeeDetailsUsecase: injection<EmployeeDetailsUsecase>(),
+      employeeContractUsecase: injection<EmployeeContractUsecase>(),
     ),
+  );
+
+  injection.registerLazySingleton<EmployeeContractUsecase>(
+    () => EmployeeContractUsecase(repository: injection<EmployeeRepository>()),
   );
   injection.registerLazySingleton<EmployeeDetailsUsecase>(
     () => EmployeeDetailsUsecase(repository: injection<EmployeeRepository>()),

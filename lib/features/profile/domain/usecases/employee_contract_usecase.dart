@@ -6,7 +6,7 @@ class EmployeeContractUsecase {
   final EmployeeRepository repository;
 
   EmployeeContractUsecase({required this.repository});
-  Future<EmployeeContractEntity> call() async {
+  Future<List<EmployeeContractEntity>> call() async {
     return await repository.getEmployeeContract();
   }
 }

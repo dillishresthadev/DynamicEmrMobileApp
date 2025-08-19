@@ -3,5 +3,5 @@ import 'package:dynamic_emr/features/profile/domain/entities/employee_entity.dar
 
 abstract class EmployeeRepository {
   Future<EmployeeEntity> getEmployeeDetails();
-  Future<EmployeeContractEntity> getEmployeeContract();
+  Future<List<EmployeeContractEntity>> getEmployeeContract();
 }

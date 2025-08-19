@@ -14,9 +14,7 @@ class EmployeeRepositoryImpl extends EmployeeRepository {
   }
 
   @override
-  Future<EmployeeContractEntity> getEmployeeContract() {
-    // TODO: implement getEmployeeContract
-    throw UnimplementedError();
+  Future<List<EmployeeContractEntity>> getEmployeeContract() async {
+    return await remoteDatasource.getEmployeeContract();
   }
-
 }

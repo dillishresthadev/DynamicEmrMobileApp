@@ -11,7 +11,7 @@ import 'package:dynamic_emr/injection.dart';
 
 abstract class EmployeeRemoteDatasource {
   Future<EmployeeModel> getEmployeeDetails();
-  Future<EmployeeContractModel> getEmployeeContract();
+  Future<List<EmployeeContractModel>> getEmployeeContract();
 }
 
 class EmployeeRemoteDatasourceImpl implements EmployeeRemoteDatasource {
@@ -46,8 +46,40 @@ class EmployeeRemoteDatasourceImpl implements EmployeeRemoteDatasource {
   }
 
   @override
-  Future<EmployeeContractModel> getEmployeeContract() {
-    // TODO: implement getEmployeeContract
-    throw UnimplementedError();
+  Future<List<EmployeeContractModel>> getEmployeeContract() async {
+    try {
+      final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
+      final accessToken = await injection<TokenSecureStorage>()
+          .getAccessToken();
+      final workingBranchId = await injection<BranchSecureStorage>()
+          .getWorkingBranchId();
+      final workingFinancialYearId = await injection<BranchSecureStorage>()
+          .getSelectedFiscalYearId();
+      final dynamic response = await client.get(
+        "$baseUrl/${ApiConstants.getEmployeeContracts}",
+        token: accessToken,
+        headers: {
+          "workingBranchId": workingBranchId.toString(),
+          "workingFinancialId": workingFinancialYearId.toString(),
+        },
+      );
+
+      List<dynamic> jsonList;
+
+      if (response is List) {
+        jsonList = response;
+      } else if (response is Map<String, dynamic>) {
+        jsonList = response['data'];
+      } else {
+        jsonList = [];
+        log('Unexpected response format: $response');
+      }
+      return jsonList
+          .map((json) => EmployeeContractModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      log("Error getting employee contract list $e");
+      rethrow;
+    }
   }
 }
