@@ -1,3 +1,4 @@
+import 'package:dynamic_emr/core/utils/app_snack_bar.dart';
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/core/widgets/form/custom_input_field.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_activity_entity.dart';
@@ -47,6 +48,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
           child: BlocBuilder<WorkBloc, WorkState>(
             builder: (context, state) {
               if (state.workStatus == WorkStatus.loading) {
+                _commentController.clear();
                 return Center(child: CircularProgressIndicator());
               } else if (state.workStatus ==
                       WorkStatus.ticketDetailsLoadSuccess ||
@@ -99,8 +101,6 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                                 ticketId: ticket.id,
                                               ),
                                             );
-
-                                      Navigator.pop(context);
                                     },
                                     icon: Icon(
                                       ticket.ticket.status == "Open"
@@ -146,12 +146,20 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                               ),
                               TextButton(
                                 onPressed: () {
-                                  context.read<WorkBloc>().add(
-                                    CommentOnTicketEvent(
-                                      ticketId: ticket.id,
-                                      message: _commentController.text,
-                                    ),
-                                  );
+                                  if (_commentController.text.trim().isEmpty) {
+                                    AppSnackBar.show(
+                                      context,
+                                      "Your comment is empty",
+                                      SnackbarType.error,
+                                    );
+                                  } else {
+                                    context.read<WorkBloc>().add(
+                                      CommentOnTicketEvent(
+                                        ticketId: ticket.id,
+                                        message: _commentController.text,
+                                      ),
+                                    );
+                                  }
                                 },
                                 child: Text("Comment"),
                               ),

@@ -240,7 +240,13 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
       List<MultipartFile>? files;
       if (attachmentPaths != null && attachmentPaths.isNotEmpty) {
         files = attachmentPaths
-            .map((path) => MultipartFile.fromFileSync(path))
+            .map(
+              (path) => MultipartFile.fromFileSync(
+                path,
+                filename: "test-files-image",
+                contentType: DioMediaType('application', 'octet-stream'),
+              ),
+            )
             .toList();
       }
 

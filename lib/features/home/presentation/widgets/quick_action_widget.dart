@@ -26,19 +26,38 @@ class QuickActionsWidget extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 1.8,
-            ),
-            itemCount: actions.length,
-            itemBuilder: (_, index) {
-              final action = actions[index];
-              return _ActionCard(action: action);
+
+          /// Responsive Grid
+          LayoutBuilder(
+            builder: (context, constraints) {
+              double width = constraints.maxWidth;
+
+              // Dynamically set columns
+              int crossAxisCount = 2;
+              if (width > 900) {
+                crossAxisCount = 4; // Desktop
+              } else if (width > 600) {
+                crossAxisCount = 3; // Tablet
+              }
+
+              // Adjust child aspect ratio based on width
+              double aspectRatio = (width / crossAxisCount) / 120;
+
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: aspectRatio,
+                ),
+                itemCount: actions.length,
+                itemBuilder: (_, index) {
+                  final action = actions[index];
+                  return _ActionCard(action: action);
+                },
+              );
             },
           ),
         ],
@@ -60,7 +79,7 @@ class _ActionCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: action.color.withOpacity(0.1),
+          color: action.color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(

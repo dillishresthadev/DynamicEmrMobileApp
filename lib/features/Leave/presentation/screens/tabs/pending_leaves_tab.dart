@@ -14,45 +14,47 @@ class _PendingLeavesTabState extends State<PendingLeavesTab> {
   @override
   void initState() {
     super.initState();
-    // Only call Pending API for this tab
+    context.read<LeaveBloc>().add(PendingLeaveListEvent());
+  }
+
+  Future<void> _refreshData() async {
     context.read<LeaveBloc>().add(PendingLeaveListEvent());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12),
-        child: BlocBuilder<LeaveBloc, LeaveState>(
-          // buildWhen: (previous, current) {
-          //   // Only rebuild UI if approved leaves list changes
-          //   return previous.pendingLeave != current.pendingLeave ||
-          //       (previous.status == LeaveStatus.loading) !=
-          //           (current.status == LeaveStatus.loading);
-          // },
-          builder: (context, state) {
-            if (state.status == LeaveStatus.loading) {
-              return Center(child: CircularProgressIndicator());
-            } else if (state.status == LeaveStatus.pendingLeaveLoadSuccess) {
-              final pendingLeave = state.pendingLeave;
-              return ListView.builder(
-                itemCount: pendingLeave.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: EdgeInsets.only(
-                      bottom: index < pendingLeave.length - 1 ? 8.0 : 0,
-                    ),
-                    child: LeaveApplicationCardWidget(
-                      leave: pendingLeave[index],
-                    ),
-                  );
-                },
-              );
-            } else if (state.status == LeaveStatus.pendingLeaveLoadError) {
-              return Center(child: Text(state.message));
-            }
-            return const Center(child: Text("No pending leaves found"));
-          },
+      body: RefreshIndicator(
+        onRefresh: _refreshData,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: BlocBuilder<LeaveBloc, LeaveState>(
+            builder: (context, state) {
+              if (state.pendingLeaveStatus == LeaveStatus.loading) {
+                return Center(child: CircularProgressIndicator());
+              } else if (state.pendingLeaveStatus ==
+                  LeaveStatus.pendingLeaveLoadSuccess) {
+                final pendingLeave = state.pendingLeave;
+                return ListView.builder(
+                  itemCount: pendingLeave.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: EdgeInsets.only(
+                        bottom: index < pendingLeave.length - 1 ? 8.0 : 0,
+                      ),
+                      child: LeaveApplicationCardWidget(
+                        leave: pendingLeave[index],
+                      ),
+                    );
+                  },
+                );
+              } else if (state.pendingLeaveStatus ==
+                  LeaveStatus.pendingLeaveLoadError) {
+                return Center(child: Text(state.message));
+              }
+              return const Center(child: Text("No pending leaves found"));
+            },
+          ),
         ),
       ),
     );

@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:dynamic_emr/core/constants/app_colors.dart';
-import 'package:dynamic_emr/core/utils/file_picker_utils.dart';
+import 'package:dynamic_emr/core/utils/app_snack_bar.dart';
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/core/widgets/dropdown/custom_dropdown.dart';
 import 'package:dynamic_emr/core/widgets/form/custom_input_field.dart';
@@ -130,6 +130,14 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
             categoriesList = state.ticketCategories ?? [];
           });
         }
+        if (state.workStatus == WorkStatus.createTicketSuccess) {
+          AppSnackBar.show(
+            context,
+            "Ticket Created Successfully",
+            SnackbarType.success,
+          );
+          Navigator.pop(context);
+        }
       },
       child: Scaffold(
         appBar: DynamicEMRAppBar(
@@ -214,40 +222,39 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
                               ? 'Description is required'
                               : null,
                         ),
-                        buildSectionTitle("Files/Images"),
 
-                        Row(
-                          children: [
-                            ElevatedButton.icon(
-                              onPressed: () async {
-                                final file = await FilePickerUtils.pickImage(
-                                  fromCamera: true,
-                                );
-                                if (file != null) {
-                                  setState(() {
-                                    attachments.add(file);
-                                  });
-                                }
-                              },
-                              icon: const Icon(Icons.camera_alt),
-                              label: const Text('Camera'),
-                            ),
+                        // buildSectionTitle("Files/Images"),
+                        // Row(
+                        //   children: [
+                        //     ElevatedButton.icon(
+                        //       onPressed: () async {
+                        //         final file = await FilePickerUtils.pickImage(
+                        //           fromCamera: true,
+                        //         );
+                        //         if (file != null) {
+                        //           setState(() {
+                        //             attachments.add(file);
+                        //           });
+                        //         }
+                        //       },
+                        //       icon: const Icon(Icons.camera_alt),
+                        //       label: const Text('Camera'),
+                        //     ),
 
-                            ElevatedButton.icon(
-                              onPressed: () async {
-                                final file = await FilePickerUtils.pickFile();
-                                if (file != null) {
-                                  setState(() {
-                                    attachments.add(file);
-                                  });
-                                }
-                              },
-                              icon: const Icon(Icons.upload_file),
-                              label: const Text('Gallery / File'),
-                            ),
-                          ],
-                        ),
-
+                        //     ElevatedButton.icon(
+                        //       onPressed: () async {
+                        //         final file = await FilePickerUtils.pickFile();
+                        //         if (file != null) {
+                        //           setState(() {
+                        //             attachments.add(file);
+                        //           });
+                        //         }
+                        //       },
+                        //       icon: const Icon(Icons.upload_file),
+                        //       label: const Text('Gallery / File'),
+                        //     ),
+                        //   ],
+                        // ),
                         buildSectionTitle("Severity"),
                         CustomDropdown(
                           value: _selectedSeverityType,

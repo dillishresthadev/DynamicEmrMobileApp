@@ -233,11 +233,11 @@ class _TimeRow extends StatelessWidget {
           color: Colors.white70,
         ),
       ),
-      const SizedBox(height: 4),
+      const SizedBox(height: 2),
       Text(
         "${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}",
         style: const TextStyle(
-          fontSize: 20,
+          fontSize: 18,
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),

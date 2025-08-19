@@ -14,42 +14,42 @@ class _ApprovedLeavesTabState extends State<ApprovedLeavesTab> {
   @override
   void initState() {
     super.initState();
-    // Only call Approved API for this tab
+    context.read<LeaveBloc>().add(ApprovedLeaveListEvent());
+  }
+
+  Future<void> _refreshData() async {
     context.read<LeaveBloc>().add(ApprovedLeaveListEvent());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<LeaveBloc, LeaveState>(
-        buildWhen: (previous, current) {
-          // Only rebuild UI if approved leaves list changes
-          return previous.approvedLeave != current.approvedLeave ||
-              (previous.status == LeaveStatus.loading) !=
-                  (current.status == LeaveStatus.loading);
-        },
-        builder: (context, state) {
-          if ((state.status == LeaveStatus.loading) &&
-              (state.approvedLeave.isEmpty)) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state.approvedLeave.isNotEmpty) {
-            final approvedLeave = state.approvedLeave;
-            return ListView.builder(
-              itemCount: approvedLeave.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsets.only(
-                    bottom: index < approvedLeave.length - 1 ? 8.0 : 0,
-                  ),
-                  child: LeaveApplicationCardWidget(
-                    leave: approvedLeave[index],
-                  ),
-                );
-              },
-            );
-          }
-          return const Center(child: Text("No approved leaves found"));
-        },
+      body: RefreshIndicator(
+        onRefresh: _refreshData,
+        child: BlocBuilder<LeaveBloc, LeaveState>(
+          builder: (context, state) {
+            if (state.approvedLeaveStatus == LeaveStatus.loading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state.approvedLeaveStatus ==
+                LeaveStatus.approvedLeaveLoadSuccess) {
+              final approvedLeave = state.approvedLeave;
+              return ListView.builder(
+                itemCount: approvedLeave.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      bottom: index < approvedLeave.length - 1 ? 8.0 : 0,
+                    ),
+                    child: LeaveApplicationCardWidget(
+                      leave: approvedLeave[index],
+                    ),
+                  );
+                },
+              );
+            }
+            return const Center(child: Text("No approved leaves found"));
+          },
+        ),
       ),
     );
   }

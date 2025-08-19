@@ -121,7 +121,7 @@ final class WorkState extends Equatable {
       message: message ?? this.message,
       reOpenTicket: reOpenTicket ?? this.reOpenTicket,
       closeTicket: closeTicket ?? this.closeTicket,
-      commentOnTicket: commentOnTicket?? this.commentOnTicket,
+      commentOnTicket: commentOnTicket ?? this.commentOnTicket,
     );
   }
 
