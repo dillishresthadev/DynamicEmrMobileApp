@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dynamic_emr/core/utils/app_snack_bar.dart';
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/core/widgets/form/custom_input_field.dart';
@@ -54,13 +56,19 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                       WorkStatus.ticketDetailsLoadSuccess ||
                   state.workStatus == WorkStatus.success) {
                 final ticket = state.ticketDetails;
+                final users = state.workUser;
+
+                log("Users : ${users?.map((e) => log(e.text))}");
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 24.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Ticket Info
-                      TicketInfoWidget(ticket: ticket!.ticket),
+                      TicketInfoWidget(
+                        ticket: ticket!.ticket,
+                        user: users ?? [],
+                      ),
                       // Ticket Timeline Card
                       Card(
                         elevation: 0,
