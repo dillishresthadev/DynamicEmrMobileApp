@@ -6,6 +6,7 @@ import 'package:dynamic_emr/core/widgets/curved_divider_painter.dart';
 import 'package:dynamic_emr/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dynamic_emr/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:dynamic_emr/features/profile/presentation/screens/employee_details/employee_contract_screen.dart';
+import 'package:dynamic_emr/features/profile/presentation/screens/employee_details/employee_emergency_contact_screen.dart';
 import 'package:dynamic_emr/features/profile/presentation/screens/employee_details/employee_insurance_details_screen.dart';
 import 'package:dynamic_emr/features/profile/presentation/screens/employee_details/personal_details_screen.dart';
 import 'package:dynamic_emr/features/profile/presentation/screens/employee_details/qualification_experience_screen.dart';
@@ -32,20 +33,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text("Profile", style: TextStyle(color: Colors.white)),
-      //   centerTitle: false,
-      //   backgroundColor: AppColors.primary,
-      //   automaticallyImplyLeading: false,
-      //   actions: [
-      //     IconButton(
-      //       onPressed: () {
-      //         Navigator.pushNamed(context, RouteNames.settingScreen);
-      //       },
-      //       icon: Icon(Icons.settings_outlined, color: Colors.white),
-      //     ),
-      //   ],
-      // ),
       appBar: DynamicEMRAppBar(
         title: "Profile",
         actions: [
@@ -171,38 +158,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ),
                             ),
-                            ProfileMenuCard(
-                              icon: Icons.person,
-                              title: "Qualifications and Working Experience",
-                              subTitle:
-                                  "View your Qualifications and Working Experience",
-                              press: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      QualificationExperienceScreen(
-                                        employee: employee,
-                                      ),
-                                ),
-                              ),
-                            ),
-                            ProfileMenuCard(
-                              icon: Icons.model_training_rounded,
-                              title: "Tranings and Certifications",
-                              subTitle: "View your tranings and certifications",
-                              press: () {},
-                            ),
-                            ProfileMenuCard(
-                              icon: Icons.work_outline,
-                              title: "Working Experience",
-                              subTitle: "View your work experiences",
-                              press: () {},
-                            ),
+                            // ProfileMenuCard(
+                            //   icon: Icons.person,
+                            //   title: "Qualifications and Working Experience",
+                            //   subTitle:
+                            //       "View your Qualifications and Working Experience",
+                            //   press: () => Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //       builder: (context) =>
+                            //           QualificationExperienceScreen(
+                            //             employee: employee,
+                            //           ),
+                            //     ),
+                            //   ),
+                            // ),
+                            // ProfileMenuCard(
+                            //   icon: Icons.model_training_rounded,
+                            //   title: "Tranings and Certifications",
+                            //   subTitle: "View your tranings and certifications",
+                            //   press: () {},
+                            // ),
+                            // ProfileMenuCard(
+                            //   icon: Icons.work_outline,
+                            //   title: "Working Experience",
+                            //   subTitle: "View your work experiences",
+                            //   press: () {},
+                            // ),
                             ProfileMenuCard(
                               icon: Icons.contact_emergency,
                               title: "Emergency Contact",
                               subTitle: "View your emergency contact details",
-                              press: () {},
+                              press: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        EmployeeEmergencyContactScreen(
+                                          contacts: employee
+                                              .employeeEmergencyContacts,
+                                        ),
+                                  ),
+                                );
+                              },
                             ),
                             ProfileMenuCard(
                               icon: Icons.business_center,
