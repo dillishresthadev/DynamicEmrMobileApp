@@ -6,10 +6,10 @@ import 'package:dynamic_emr/core/widgets/curved_divider_painter.dart';
 import 'package:dynamic_emr/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dynamic_emr/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:dynamic_emr/features/profile/presentation/screens/employee_details/employee_contract_screen.dart';
+import 'package:dynamic_emr/features/profile/presentation/screens/employee_details/employee_document_screen.dart';
 import 'package:dynamic_emr/features/profile/presentation/screens/employee_details/employee_emergency_contact_screen.dart';
 import 'package:dynamic_emr/features/profile/presentation/screens/employee_details/employee_insurance_details_screen.dart';
 import 'package:dynamic_emr/features/profile/presentation/screens/employee_details/personal_details_screen.dart';
-import 'package:dynamic_emr/features/profile/presentation/screens/employee_details/qualification_experience_screen.dart';
 import 'package:dynamic_emr/features/profile/presentation/screens/employee_details/work_and_shift_details_screen.dart';
 import 'package:dynamic_emr/features/profile/presentation/widgets/profile_menu_card.dart';
 import 'package:dynamic_emr/features/profile/presentation/widgets/profile_picture_widget.dart';
@@ -220,7 +220,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               icon: Icons.file_copy_sharp,
                               title: "Documents",
                               subTitle: "View your attached Documnets",
-                              press: () {},
+                              press: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        EmployeeDocumentScreen(),
+                                  ),
+                                );
+                              },
                             ),
                             ProfileMenuCard(
                               icon: Icons.verified_user,

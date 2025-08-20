@@ -36,7 +36,7 @@ class _AssignToBottomSheetWidgetState extends State<AssignToBottomSheetWidget> {
         List<WorkUserEntity> filteredUsers = List.from(widget.users);
 
         return FractionallySizedBox(
-          heightFactor: 0.7,
+          heightFactor: 0.55,
           child: StatefulBuilder(
             builder: (context, setModalState) {
               return Padding(
