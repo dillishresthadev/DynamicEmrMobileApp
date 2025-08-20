@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dynamic_emr/core/constants/app_colors.dart';
 import 'package:dynamic_emr/core/utils/app_snack_bar.dart';
+import 'package:dynamic_emr/core/utils/file_picker_utils.dart';
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/core/widgets/dropdown/custom_dropdown.dart';
 import 'package:dynamic_emr/core/widgets/form/custom_input_field.dart';
@@ -95,6 +96,75 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
       ),
     );
     _resetForm();
+  }
+
+  Widget buildAttachmentButtons() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+      child: Row(
+        children: [
+          _buildAttachmentButton(
+            icon: Icons.camera_alt,
+            label: "Camera",
+            color: Colors.blue,
+            onTap: () async {
+              final file = await FilePickerUtils.pickImage(fromCamera: true);
+              if (file != null) {
+                setState(() => attachments.add(file));
+              }
+            },
+          ),
+          _buildAttachmentButton(
+            icon: Icons.upload_file,
+            label: "Gallery / File",
+            color: Colors.green,
+            onTap: () async {
+              final file = await FilePickerUtils.pickFile();
+              if (file != null) {
+                setState(() => attachments.add(file));
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAttachmentButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Expanded(
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          backgroundColor: color,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 3,
+        ),
+        onPressed: onTap,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 28, color: Colors.white),
+            const SizedBox(height: 6),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -223,7 +293,10 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
                               : null,
                         ),
 
-                        // buildSectionTitle("Files/Images"),
+                        buildSectionTitle("Files/Images"),
+
+                        buildAttachmentButtons(),
+
                         // Row(
                         //   children: [
                         //     ElevatedButton.icon(

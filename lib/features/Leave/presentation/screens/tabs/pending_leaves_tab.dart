@@ -27,8 +27,12 @@ class _PendingLeavesTabState extends State<PendingLeavesTab> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => LeaveDetailsBottomSheet(leave: leave),
+      builder: (context) => FractionallySizedBox(
+        heightFactor: 0.7, // 70% of screen height
+        child: LeaveDetailsBottomSheet(leave: leave),
+      ),
     );
   }
 
@@ -73,7 +77,15 @@ class _PendingLeavesTabState extends State<PendingLeavesTab> {
                   LeaveStatus.pendingLeaveLoadError) {
                 return Center(child: Text(state.message));
               }
-              return const Center(child: Text("No pending leaves found"));
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("No pending leaves found ${state.status}"),
+                    TextButton(onPressed: _refreshData, child: Text("Re-try")),
+                  ],
+                ),
+              );
             },
           ),
         ),

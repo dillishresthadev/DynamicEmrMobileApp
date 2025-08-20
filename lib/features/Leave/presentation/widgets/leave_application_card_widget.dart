@@ -128,14 +128,24 @@ class _LeaveApplicationCardWidgetState
             const SizedBox(height: 8),
             _buildDateRow(
               'Extended',
-              DateTime.parse(leave.extendedFromDate).toDMMMYYYY(),
-              DateTime.parse(leave.extendedToDate).toDMMMYYYY(),
+              leave.extendedFromDate != null
+                  ? DateTime.tryParse(leave.extendedFromDate!)?.toDMMMYYYY() ??
+                        ''
+                  : '',
+              leave.extendedToDate != null
+                  ? DateTime.tryParse(leave.extendedToDate!)?.toDMMMYYYY() ?? ''
+                  : '',
             ),
           ] else if (hasExtended) ...[
             _buildDateRow(
               'Extended',
-              DateTime.parse(leave.extendedFromDate).toDMMMYYYY(),
-              DateTime.parse(leave.extendedToDate).toDMMMYYYY(),
+              leave.extendedFromDate != null
+                  ? DateTime.tryParse(leave.extendedFromDate!)?.toDMMMYYYY() ??
+                        ''
+                  : '',
+              leave.extendedToDate != null
+                  ? DateTime.tryParse(leave.extendedToDate!)?.toDMMMYYYY() ?? ''
+                  : '',
             ),
           ] else if (hasPrimary) ...[
             _buildDateRow(

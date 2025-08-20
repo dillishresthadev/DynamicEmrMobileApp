@@ -5,6 +5,7 @@ import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/core/widgets/curved_divider_painter.dart';
 import 'package:dynamic_emr/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dynamic_emr/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:dynamic_emr/features/profile/presentation/screens/employee_details/employee_contract_screen.dart';
 import 'package:dynamic_emr/features/profile/presentation/screens/employee_details/personal_details_screen.dart';
 import 'package:dynamic_emr/features/profile/presentation/screens/employee_details/qualification_experience_screen.dart';
 import 'package:dynamic_emr/features/profile/presentation/screens/employee_details/work_and_shift_details_screen.dart';
@@ -223,7 +224,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ProfileMenuCard(
                             icon: Icons.handshake,
                             title: "Employment Contracts",
-                            press: () {},
+                            press: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      EmployeeContractListScreen(),
+                                ),
+                              );
+                            },
                           ),
                           ProfileMenuCard(
                             icon: Icons.logout_rounded,

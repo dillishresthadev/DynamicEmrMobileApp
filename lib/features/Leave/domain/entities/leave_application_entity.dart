@@ -8,13 +8,13 @@ class LeaveApplicationEntity {
   final String fromDateNp;
   final String toDate;
   final String toDateNp;
-  final String? halfDayStatus;
+  final dynamic halfDayStatus;
   final double totalLeaveDays;
-  final String extendedFromDate;
-  final String extendedToDate;
-  final String extendedFromDateNp;
-  final String extendedToDateNp;
-  final int extendedLeaveTypeId;
+  final dynamic extendedFromDate;
+  final dynamic extendedToDate;
+  final dynamic extendedFromDateNp;
+  final dynamic extendedToDateNp;
+  final dynamic extendedLeaveTypeId;
   final dynamic extendedHalfDayStatus;
   final double extendedTotalLeaveDays;
   final String reason;
@@ -54,11 +54,11 @@ class LeaveApplicationEntity {
     required this.toDateNp,
     this.halfDayStatus,
     required this.totalLeaveDays,
-    required this.extendedFromDate,
-    required this.extendedToDate,
-    required this.extendedFromDateNp,
-    required this.extendedToDateNp,
-    required this.extendedLeaveTypeId,
+    this.extendedFromDate,
+    this.extendedToDate,
+    this.extendedFromDateNp,
+    this.extendedToDateNp,
+    this.extendedLeaveTypeId,
     this.extendedHalfDayStatus,
     required this.extendedTotalLeaveDays,
     required this.reason,

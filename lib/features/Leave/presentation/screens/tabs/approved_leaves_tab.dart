@@ -27,8 +27,12 @@ class _ApprovedLeavesTabState extends State<ApprovedLeavesTab> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      useSafeArea: true,
       backgroundColor: Colors.transparent,
-      builder: (context) => LeaveDetailsBottomSheet(leave: leave),
+      builder: (context) => FractionallySizedBox(
+        heightFactor: 0.7, // 70% of screen height
+        child: LeaveDetailsBottomSheet(leave: leave),
+      ),
     );
   }
 
