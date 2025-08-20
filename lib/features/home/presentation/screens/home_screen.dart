@@ -9,6 +9,7 @@ import 'package:dynamic_emr/features/home/presentation/widgets/quick_action_widg
 import 'package:dynamic_emr/features/home/presentation/widgets/today_attendance_widget.dart';
 import 'package:dynamic_emr/features/notice/presentation/screens/notice_screen.dart';
 import 'package:dynamic_emr/features/profile/presentation/bloc/profile_bloc.dart';
+import 'package:dynamic_emr/features/profile/presentation/widgets/profile_picture_widget.dart';
 import 'package:dynamic_emr/features/work/presentation/screens/create_ticket_form_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -149,63 +150,23 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildModernHeader() {
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      decoration: const BoxDecoration(
-        color: AppColors.primary,
-        // gradient: LinearGradient(
-        //   begin: Alignment.topLeft,
-        //   end: Alignment.bottomRight,
-        //   colors: [AppColors.primary, Color(0xFF5C92F6)],
-        // ),
-      ),
+      decoration: const BoxDecoration(color: AppColors.primary),
       child: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, state) {
           return Row(
             children: [
-              _buildProfileAvatar(state),
+              ProfilePictureWidget(
+                profileUrl:
+                    "${state.employee?.employeeImageBaseUrl}/${state.employee?.imagePath}",
+                firstName: state.employee?.firstName ?? 'Dynamic',
+                lastName: state.employee?.lastName ?? 'EMR',
+                avatarRadius: 20,
+              ),
               const SizedBox(width: 16),
               Expanded(child: _buildUserInfo(state)),
-              // _buildNotificationButton(),
             ],
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildProfileAvatar(ProfileState state) {
-    String initials = 'D';
-
-    if (state.employeeStatus == ProfileStatus.loaded) {
-      final firstName = state.employee?.firstName.trim() ?? '';
-
-      if (firstName.isNotEmpty) {
-        final nameParts = firstName.split(' ');
-        initials = nameParts.length > 1
-            ? '${nameParts.first[0]}${nameParts.last[0]}'.toUpperCase()
-            : nameParts.first[0].toUpperCase();
-      }
-    }
-
-    return Container(
-      width: 60,
-      height: 60,
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.2),
-        shape: BoxShape.circle,
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.3),
-          width: 2,
-        ),
-      ),
-      child: Center(
-        child: Text(
-          initials,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
       ),
     );
   }

@@ -112,7 +112,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: Column(
                           children: [
                             ProfilePictureWidget(
-                              profileUrl: "",
+                              profileUrl:
+                                  "${employee.employeeImageBaseUrl}/${employee.imagePath}",
                               firstName: employee.firstName,
                               lastName: employee.lastName,
                               avatarRadius: 70,

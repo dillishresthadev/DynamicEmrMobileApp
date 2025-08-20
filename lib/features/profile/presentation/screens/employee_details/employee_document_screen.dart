@@ -1,5 +1,5 @@
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
-import 'package:dynamic_emr/features/profile/presentation/screens/employee_details/document_viewer_dialog_widget.dart';
+import 'package:dynamic_emr/features/profile/presentation/screens/document_viewer_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dynamic_emr/features/profile/presentation/bloc/profile_bloc.dart';
@@ -237,14 +237,6 @@ class EnhancedDocumentCard extends StatelessWidget {
     }
   }
 
-  void _showDocumentViewer(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) =>
-          DocumentViewerDialogWidget(document: document, url: documentBaseUrl),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final documentTypeColor = getDocumentTypeColor();
@@ -255,7 +247,13 @@ class EnhancedDocumentCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       shadowColor: Colors.black26,
       child: InkWell(
-        onTap: () => _showDocumentViewer(context),
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) =>
+                DocumentViewerScreen(document: document, url: documentBaseUrl),
+          ),
+        ),
         borderRadius: BorderRadius.circular(16),
         child: Container(
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
