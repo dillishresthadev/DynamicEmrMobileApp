@@ -40,8 +40,8 @@ class _EmployeeContractListScreenState
 
       // Second priority: Sort by start date (most recent first)
       try {
-        final dateA = DateTime.parse(a.contractStartDate as String);
-        final dateB = DateTime.parse(b.contractStartDate as String);
+        final dateA = (a.contractStartDate);
+        final dateB = (b.contractStartDate);
         return dateB.compareTo(dateA);
       } catch (e) {
         return 0;
@@ -290,6 +290,7 @@ class EnhancedContractCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: isCurrentContract ? 8 : 3,
+      color: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: isCurrentContract
@@ -297,19 +298,10 @@ class EnhancedContractCard extends StatelessWidget {
             : BorderSide.none,
       ),
       shadowColor: isCurrentContract
-          ? Colors.green.withValues(alpha: 0.3)
+          ? Colors.black.withValues(alpha: 0.1)
           : Colors.black26,
       child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: isCurrentContract
-              ? LinearGradient(
-                  colors: [Colors.green.withValues(alpha: 0.05), Colors.white],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                )
-              : null,
-        ),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
         child: Padding(
           padding: const EdgeInsets.all(18),
           child: Column(

@@ -17,7 +17,7 @@ class _WorkAndShiftDetailsScreenState extends State<WorkAndShiftDetailsScreen> {
   Widget build(BuildContext context) {
     final employee = widget.employee;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[50],
       appBar: DynamicEMRAppBar(
         title: "Work and Shift Information",
         automaticallyImplyLeading: true,
@@ -28,126 +28,286 @@ class _WorkAndShiftDetailsScreenState extends State<WorkAndShiftDetailsScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Shift Information
-              Padding(
-                padding: EdgeInsets.only(left: 16.0),
-                child: Text(
-                  "Shift Information",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ),
-              SizedBox(height: 15),
-              // Work Details Card
-              Padding(
-                padding: EdgeInsets.only(left: 16.0, right: 16.0),
-                child: Card(
-                  elevation: 4.0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  color: Colors.white,
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildInfoRow(
-                          "Primary ShiftName",
-                          employee.employeeCurrentShift.primaryShiftName ??
-                              "N/A",
-                        ),
-                        _buildInfoRow(
-                          "Primary Shift Time",
-                          "${_formatTime(employee.employeeCurrentShift.primaryShiftStart)} - ${_formatTime(employee.employeeCurrentShift.primaryShiftEnd)}",
-                        ),
-                        if (employee.employeeCurrentShift.hasMultiShift ==
-                            true) ...[
-                          _buildInfoRow(
-                            "ExtendedShift Name",
-                            employee.employeeCurrentShift.extendedShiftName ??
-                                "N/A",
-                          ),
-                          _buildInfoRow(
-                            "ExtendedShift Time",
-                            "${_formatTime(employee.employeeCurrentShift.extendedShiftStart)} - ${_formatTime(employee.employeeCurrentShift.extendedShiftEnd)}",
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+              // Shift Information Section
+              _buildShiftDetailsCard(employee),
 
-              SizedBox(height: 15),
-              Padding(
-                padding: EdgeInsets.only(left: 16.0),
-                child: Text(
-                  "Work Details",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ),
-              SizedBox(height: 15),
-              // Work Details Card
-              Padding(
-                padding: EdgeInsets.only(left: 16.0, right: 16.0),
-                child: Card(
-                  elevation: 4.0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+              SizedBox(height: 12),
+              // Work Details Section
+              _buildWorkDetailsCard(employee),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildShiftDetailsCard(EmployeeEntity employee) {
+    return Container(
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                  color: Colors.white,
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildInfoRow("Branch", employee.workBranchTitle),
-                        _buildInfoRow("Department", "employee"),
-                        _buildInfoRow("Designation", employee.designationTitle),
-                        _buildInfoRow(
-                          "Date of Joining",
-                          employee.joiningDate.toString(),
+                  child: Icon(
+                    Icons.access_time,
+                    color: Colors.blue[700],
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  "Shift Information",
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.green.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.access_time,
+                        color: Colors.purple[700],
+                        size: 18,
+                      ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'Primary Shift',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
                         ),
-                        _buildInfoRow("Phone Number", employee.mobileNumber),
-                        _buildInfoRow("Email", employee.homeEmail),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ),
-              ),
-              SizedBox(height: 15),
-              Padding(
-                padding: EdgeInsets.only(left: 16.0),
-                child: Text(
-                  "Authorities",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ),
-              SizedBox(height: 15),
-              Padding(
-                padding: EdgeInsets.only(left: 16.0, right: 16.0),
-                child: Card(
-                  elevation: 4.0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+                  const SizedBox(height: 12),
+                  _buildEnhancedInfoRow(
+                    "Shift Name",
+                    employee.employeeCurrentShift.primaryShiftName ?? "N/A",
+                    Icons.label,
                   ),
-                  color: Colors.white,
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                  _buildEnhancedInfoRow(
+                    "Shift Time",
+                    "${_formatTime(employee.employeeCurrentShift.primaryShiftStart)} - ${_formatTime(employee.employeeCurrentShift.primaryShiftEnd)}",
+                    Icons.schedule,
+                  ),
+                ],
+              ),
+            ),
+
+            // Extended Shift Section (if applicable)
+            if (employee.employeeCurrentShift.hasMultiShift == true) ...[
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
                       children: [
-                        _buildInfoRow("Supervisor", "employee"),
-                        _buildInfoRow("Expense Approver", "employee"),
-                        _buildInfoRow("Time off Approver", "employee"),
-                        _buildInfoRow("Coach", "employee"),
+                        Icon(Icons.update, color: Colors.orange[700], size: 18),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Extended Shift',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.orange,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: const Text(
+                            'MULTI-SHIFT',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
-                  ),
+                    const SizedBox(height: 12),
+                    _buildEnhancedInfoRow(
+                      "Shift Name",
+                      employee.employeeCurrentShift.extendedShiftName ?? "N/A",
+                      Icons.label,
+                    ),
+                    _buildEnhancedInfoRow(
+                      "Shift Time",
+                      "${_formatTime(employee.employeeCurrentShift.extendedShiftStart)} - ${_formatTime(employee.employeeCurrentShift.extendedShiftEnd)}",
+                      Icons.schedule,
+                    ),
+                  ],
                 ),
               ),
             ],
-          ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWorkDetailsCard(EmployeeEntity employee) {
+    return Container(
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.access_time,
+                    color: Colors.blue[700],
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  "Work Details",
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.teal.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.business, color: Colors.green[700], size: 18),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'Organization Details',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  _buildEnhancedInfoRow(
+                    "Branch",
+                    employee.workBranchTitle,
+                    Icons.location_on,
+                  ),
+                  _buildEnhancedInfoRow(
+                    "Department",
+                    "Employee Department",
+                    Icons.group,
+                  ),
+                  _buildEnhancedInfoRow(
+                    "Designation",
+                    employee.designationTitle,
+                    Icons.work_outline,
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            // Contact and Join Information
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.blue.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.contact_page,
+                        color: Colors.blue[700],
+                        size: 18,
+                      ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'Contact Information',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  _buildEnhancedInfoRow(
+                    "Joining Date",
+                    _formatDate(employee.joiningDate),
+                    Icons.event,
+                  ),
+                  _buildEnhancedInfoRow(
+                    "Phone",
+                    employee.mobileNumber,
+                    Icons.phone,
+                  ),
+                  _buildEnhancedInfoRow(
+                    "Email",
+                    employee.homeEmail,
+                    Icons.email,
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -158,35 +318,41 @@ class _WorkAndShiftDetailsScreenState extends State<WorkAndShiftDetailsScreen> {
 
     try {
       final parsedTime = DateTime.parse(time);
-      return DateFormat("HH:mm").format(parsedTime); // Formats to hh:mm
+      return DateFormat("HH:mm").format(parsedTime);
     } catch (e) {
-      return "N/A"; // In case of parsing errors, return N/A
+      return "N/A";
     }
   }
 
-  /// **Reusable method for displaying key-value pairs inside a card**
-  Widget _buildInfoRow(String label, String value) {
+  String _formatDate(DateTime? date) {
+    if (date == null) return "N/A";
+    return DateFormat("MMM dd, yyyy").format(date);
+  }
+
+  Widget _buildEnhancedInfoRow(String label, String value, IconData icon) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5.0),
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          Icon(icon, size: 16, color: Colors.grey[600]),
+          const SizedBox(width: 8),
           Text(
-            label,
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            '$label: ',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey[700],
+              fontWeight: FontWeight.w500,
+            ),
           ),
-          SizedBox(width: 30),
-          Flexible(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 15.0, right: 8.0),
-              child: Text(
-                value,
-                style: TextStyle(fontSize: 14),
-                softWrap: true,
-                // overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.end,
-                // Aligns text to the right
+          Expanded(
+            child: Text(
+              value,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.black87,
+                fontWeight: FontWeight.w600,
               ),
+              textAlign: TextAlign.end,
             ),
           ),
         ],
