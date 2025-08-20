@@ -14,10 +14,11 @@ part 'profile_state.dart';
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final EmployeeDetailsUsecase employeeDetailsUsecase;
   final EmployeeContractUsecase employeeContractUsecase;
+
   ProfileBloc({
     required this.employeeDetailsUsecase,
     required this.employeeContractUsecase,
-  }) : super(ProfileInitialState()) {
+  }) : super(const ProfileState()) {
     on<GetEmployeeDetailsEvent>(_onGetEmployeeDetailsEvent);
     on<GetEmployeeContractEvent>(_onGetEmployeeContracts);
   }
@@ -27,12 +28,23 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     try {
-      emit(ProfileLoadingState());
+      emit(state.copyWith(employeeStatus: ProfileStatus.loading));
       final employeeDetails = await employeeDetailsUsecase.call();
-      emit(ProfileLoadedState(employee: employeeDetails));
+      emit(
+        state.copyWith(
+          employee: employeeDetails,
+
+          employeeStatus: ProfileStatus.loaded,
+        ),
+      );
     } catch (e) {
       log("Error while getting employee details (profile) : $e");
-      emit(ProfileErrorState(errorMessage: e.toString()));
+      emit(
+        state.copyWith(
+          employeeStatus: ProfileStatus.error,
+          employeeMessage: e.toString(),
+        ),
+      );
     }
   }
 
@@ -41,12 +53,22 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     try {
-      emit(EmployeeContractLoadingState());
+      emit(state.copyWith(contractStatus: ProfileStatus.loading));
       final employeeContract = await employeeContractUsecase.call();
-      emit(EmployeeContractLoadedState(contracts: employeeContract));
+      emit(
+        state.copyWith(
+          contracts: employeeContract,
+          contractStatus: ProfileStatus.loaded,
+        ),
+      );
     } catch (e) {
       log("Error while getting employee contract : $e");
-      emit(EmployeeContractError(message: e.toString()));
+      emit(
+        state.copyWith(
+          contractStatus: ProfileStatus.error,
+          contractMessage: e.toString(),
+        ),
+      );
     }
   }
 }

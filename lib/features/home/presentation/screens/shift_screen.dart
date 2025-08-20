@@ -32,10 +32,13 @@ class _ShiftScreenState extends State<ShiftScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
-        if (state is ProfileLoadingState) {
+        if (state.employeeStatus == ProfileStatus.loading) {
           return const Center(child: CircularProgressIndicator());
-        } else if (state is ProfileLoadedState) {
-          final shiftList = _mapShiftData(state.employee.employeeCurrentShift);
+        } else if (state.employeeStatus == ProfileStatus.loaded) {
+          final shiftList = _mapShiftData(
+            state.employee?.employeeCurrentShift ??
+                EmployeeCurrentShiftEntity(),
+          );
           return Column(
             children: [
               SizedBox(

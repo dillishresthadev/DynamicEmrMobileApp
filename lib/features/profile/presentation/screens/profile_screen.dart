@@ -95,7 +95,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       body: BlocListener<ProfileBloc, ProfileState>(
         listener: (context, state) {
-          if (state is ProfileErrorState) {
+          if (state.employeeStatus == ProfileStatus.error) {
             AppSnackBar.show(
               context,
               "Failed to load profile",
@@ -105,182 +105,194 @@ class _ProfileScreenState extends State<ProfileScreen> {
         },
         child: BlocBuilder<ProfileBloc, ProfileState>(
           builder: (context, state) {
-            if (state is ProfileLoadingState) {
+            if (state.employeeStatus == ProfileStatus.loading) {
               return Center(child: CircularProgressIndicator());
             }
 
-            if (state is ProfileLoadedState) {
+            if (state.employeeStatus == ProfileStatus.loaded) {
               final employee = state.employee;
 
-              return SingleChildScrollView(
-                physics: AlwaysScrollableScrollPhysics(),
-                child: Column(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      color: AppColors.primary,
-                      padding: EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Column(
-                        children: [
-                          ProfilePictureWidget(
-                            profileUrl: "",
-                            firstName: employee.firstName,
-                            lastName: employee.lastName,
-                            avatarRadius: 70,
-                          ),
-                          SizedBox(height: 10),
-                          Text(
-                            '${employee.firstName} ${employee.lastName}',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
+              if (employee != null) {
+                return SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Column(
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        color: AppColors.primary,
+                        padding: EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Column(
+                          children: [
+                            ProfilePictureWidget(
+                              profileUrl: "",
+                              firstName: employee.firstName,
+                              lastName: employee.lastName,
+                              avatarRadius: 70,
                             ),
-                          ),
-                          Text(
-                            employee.employeeCode,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
+                            SizedBox(height: 10),
+                            Text(
+                              '${employee.firstName} ${employee.lastName}',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
                             ),
-                          ),
-                        ],
+                            Text(
+                              employee.employeeCode,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    CustomPaint(
-                      painter: CurvedDividerPainter(color: AppColors.primary),
-                      child: SizedBox(height: 25, width: double.infinity),
-                    ),
-                    SizedBox(height: 5),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Column(
-                        children: [
-                          ProfileMenuCard(
-                            icon: Icons.person,
-                            title: "Profile Information",
-                            subTitle: "Change your account information",
-                            press: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    PersonalDetailsScreen(employee: employee),
-                              ),
-                            ),
-                          ),
-                          ProfileMenuCard(
-                            icon: Icons.person,
-                            title: "Qualifications and Working Experience",
-                            subTitle:
-                                "Change your Qualifications and Working Experience",
-                            press: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    QualificationExperienceScreen(
-                                      employee: employee,
-                                    ),
-                              ),
-                            ),
-                          ),
-                          ProfileMenuCard(
-                            icon: Icons.model_training_rounded,
-                            title: "Tranings and Certifications",
-                            press: () {},
-                          ),
-                          ProfileMenuCard(
-                            icon: Icons.work_outline,
-                            title: "Working Experience",
-                            press: () {},
-                          ),
-                          ProfileMenuCard(
-                            icon: Icons.contact_emergency,
-                            title: "Emergency Contact",
-                            press: () {},
-                          ),
-                          ProfileMenuCard(
-                            icon: Icons.business_center,
-                            title: "Work and Shift Information",
-                            press: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => WorkAndShiftDetailsScreen(
-                                  employee: employee,
-                                ),
-                              ),
-                            ),
-                          ),
-                          ProfileMenuCard(
-                            icon: Icons.file_copy_sharp,
-                            title: "Documents",
-                            press: () {},
-                          ),
-                          ProfileMenuCard(
-                            icon: Icons.verified_user,
-                            title: "Insurance Details",
-                            press: () {},
-                          ),
-                          ProfileMenuCard(
-                            icon: Icons.handshake,
-                            title: "Employment Contracts",
-                            press: () {
-                              Navigator.push(
+                      CustomPaint(
+                        painter: CurvedDividerPainter(color: AppColors.primary),
+                        child: SizedBox(height: 25, width: double.infinity),
+                      ),
+                      SizedBox(height: 5),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Column(
+                          children: [
+                            ProfileMenuCard(
+                              icon: Icons.person,
+                              title: "Profile Information",
+                              subTitle: "View your account information",
+                              press: () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      EmployeeContractListScreen(),
+                                      PersonalDetailsScreen(employee: employee),
                                 ),
-                              );
-                            },
-                          ),
-                          ProfileMenuCard(
-                            icon: Icons.logout_rounded,
-                            title: "Logout",
-                            subTitle: "Logging out from Dynamic ERM",
-                            press: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog.adaptive(
-                                    title: Text("Are you sure?"),
-                                    content: Text(
-                                      "This action will log you out from Dynamic EMR.",
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () =>
-                                            Navigator.of(context).pop(),
-                                        child: Text("Cancel"),
+                              ),
+                            ),
+                            ProfileMenuCard(
+                              icon: Icons.person,
+                              title: "Qualifications and Working Experience",
+                              subTitle:
+                                  "View your Qualifications and Working Experience",
+                              press: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      QualificationExperienceScreen(
+                                        employee: employee,
                                       ),
-                                      TextButton(
-                                        onPressed: () {
-                                          context.read<AuthBloc>().add(
-                                            LogoutEvent(),
-                                          );
-                                          // After Logout Event is call navigate to Hospital Code Screen
-                                          Navigator.pushReplacementNamed(
-                                            context,
-                                            RouteNames.hospitalCodeScreen,
-                                          );
-                                        },
-                                        child: Text(
-                                          "Logout",
-                                          style: TextStyle(color: Colors.red),
+                                ),
+                              ),
+                            ),
+                            ProfileMenuCard(
+                              icon: Icons.model_training_rounded,
+                              title: "Tranings and Certifications",
+                              subTitle: "View your tranings and certifications",
+                              press: () {},
+                            ),
+                            ProfileMenuCard(
+                              icon: Icons.work_outline,
+                              title: "Working Experience",
+                              subTitle: "View your work experiences",
+                              press: () {},
+                            ),
+                            ProfileMenuCard(
+                              icon: Icons.contact_emergency,
+                              title: "Emergency Contact",
+                              subTitle: "View your emergency contact details",
+                              press: () {},
+                            ),
+                            ProfileMenuCard(
+                              icon: Icons.business_center,
+                              title: "Work and Shift Information",
+                              subTitle: "View your work and shift information",
+                              press: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      WorkAndShiftDetailsScreen(
+                                        employee: employee,
+                                      ),
+                                ),
+                              ),
+                            ),
+                            ProfileMenuCard(
+                              icon: Icons.file_copy_sharp,
+                              title: "Documents",
+                              subTitle: "View your attached Documnets",
+                              press: () {},
+                            ),
+                            ProfileMenuCard(
+                              icon: Icons.verified_user,
+                              title: "Insurance Details",
+                              subTitle: "View your insurance details",
+                              press: () {},
+                            ),
+                            ProfileMenuCard(
+                              icon: Icons.handshake,
+                              title: "Employment Contracts",
+                              subTitle: "View your contracts details",
+                              press: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        EmployeeContractListScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                            ProfileMenuCard(
+                              icon: Icons.logout_rounded,
+                              title: "Logout",
+                              subTitle: "Logging out from Dynamic ERM",
+                              press: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog.adaptive(
+                                      title: Text("Are you sure?"),
+                                      content: Text(
+                                        "This action will log you out from Dynamic EMR.",
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(context).pop(),
+                                          child: Text("Cancel"),
                                         ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                        ],
+                                        TextButton(
+                                          onPressed: () {
+                                            context.read<AuthBloc>().add(
+                                              LogoutEvent(),
+                                            );
+                                            // After Logout Event is call navigate to Hospital Code Screen
+                                            Navigator.pushReplacementNamed(
+                                              context,
+                                              RouteNames.hospitalCodeScreen,
+                                            );
+                                          },
+                                          child: Text(
+                                            "Logout",
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              );
+                    ],
+                  ),
+                );
+              } else {
+                return Center(child: Text("Null data [PROFILE]"));
+              }
             }
 
             // Default state

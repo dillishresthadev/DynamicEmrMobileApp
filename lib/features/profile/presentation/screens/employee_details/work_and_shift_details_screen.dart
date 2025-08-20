@@ -172,7 +172,7 @@ class _WorkAndShiftDetailsScreenState extends State<WorkAndShiftDetailsScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            "$label",
+            label,
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),
           SizedBox(width: 30),

@@ -83,7 +83,7 @@ class TokenStorage implements TokenSecureStorage {
         return DateTime.parse(response);
       }
     } catch (e) {
-      print("Error reading expiration time: $e");
+      log("Error reading expiration time: $e");
     }
     return null;
   }

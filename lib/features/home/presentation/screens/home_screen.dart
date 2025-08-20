@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: DynamicEMRAppBar(title: _getGreeting()),
       body: BlocListener<ProfileBloc, ProfileState>(
         listener: (context, state) {
-          if (state is ProfileErrorState) {
+          if (state.employeeStatus == ProfileStatus.error) {
             AppSnackBar.show(
               context,
               "Failed to load employee details",
@@ -148,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildModernHeader() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20,20),
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       decoration: const BoxDecoration(
         color: AppColors.primary,
         // gradient: LinearGradient(
@@ -174,9 +174,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildProfileAvatar(ProfileState state) {
     String initials = 'D';
-    if (state is ProfileLoadedState) {
-      final nameParts = state.employee.firstName.split(' ');
-      if (nameParts.isNotEmpty) {
+
+    if (state.employeeStatus == ProfileStatus.loaded) {
+      final firstName = state.employee?.firstName.trim() ?? '';
+
+      if (firstName.isNotEmpty) {
+        final nameParts = firstName.split(' ');
         initials = nameParts.length > 1
             ? '${nameParts.first[0]}${nameParts.last[0]}'.toUpperCase()
             : nameParts.first[0].toUpperCase();
@@ -211,9 +214,9 @@ class _HomeScreenState extends State<HomeScreen> {
     String name = 'Dynamic EMR';
     String position = '';
 
-    if (state is ProfileLoadedState) {
-      name = state.employee.employeeFullName;
-      position = state.employee.designationTitle;
+    if (state.employeeStatus == ProfileStatus.loaded) {
+      name = state.employee?.employeeFullName ?? '';
+      position = state.employee?.designationTitle ?? '';
     }
 
     return Column(
@@ -221,7 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         FittedBox(
           child: Text(
-             name,
+            name,
             style: TextStyle(
               color: Colors.white,
               fontSize: 18,

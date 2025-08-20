@@ -144,9 +144,9 @@ class _LeaveApplicationHistoryScreenState
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: _getStatusColor(status).withOpacity(0.1),
+        color: _getStatusColor(status).withValues(alpha:0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _getStatusColor(status).withOpacity(0.3)),
+        border: Border.all(color: _getStatusColor(status).withValues(alpha:0.3)),
       ),
       child: Text(
         status,
@@ -167,12 +167,12 @@ class _LeaveApplicationHistoryScreenState
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha:0.05),
             blurRadius: 10,
             offset: Offset(0, 2),
           ),
         ],
-        border: Border.all(color: Colors.grey.withOpacity(0.1)),
+        border: Border.all(color: Colors.grey.withValues(alpha:0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

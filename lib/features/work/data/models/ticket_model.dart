@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dynamic_emr/features/work/domain/entities/ticket_entity.dart';
 
 class TicketModel extends TicketEntity {
@@ -124,7 +126,7 @@ class TicketModel extends TicketEntity {
       try {
         return DateTime.parse(value);
       } catch (e) {
-        print("⚠️ Invalid date format: $value");
+        log("⚠️ Invalid date format: $value");
       }
     }
     return DateTime.now();
@@ -136,7 +138,7 @@ class TicketModel extends TicketEntity {
       try {
         return DateTime.parse(value);
       } catch (e) {
-        print("⚠️ Invalid nullable date format: $value");
+        log("⚠️ Invalid nullable date format: $value");
       }
     }
     return null;
