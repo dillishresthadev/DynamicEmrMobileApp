@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:dynamic_emr/core/constants/app_colors.dart';
 import 'package:dynamic_emr/core/extension/date_extension.dart';
+import 'package:dynamic_emr/core/utils/app_snack_bar.dart';
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/core/widgets/dropdown/custom_dropdown.dart';
 import 'package:dynamic_emr/core/widgets/form/custom_date_time_field.dart';
@@ -247,6 +248,11 @@ class _ApplyLeaveFormScreenState extends State<ApplyLeaveFormScreen> {
                       firstDate: DateTime.now(),
                       lastDate: DateTime(2100),
                       hintText: "Start Date *",
+                      onChanged: (date) {
+                        setState(() {
+                          _startDatePrimary = DateTime.parse(date);
+                        });
+                      },
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -256,6 +262,11 @@ class _ApplyLeaveFormScreenState extends State<ApplyLeaveFormScreen> {
                       firstDate: DateTime.now(),
                       lastDate: DateTime(2100),
                       hintText: "End Date *",
+                      onChanged: (date) {
+                        setState(() {
+                          _endDatePrimary = DateTime.parse(date);
+                        });
+                      },
                     ),
                   ),
                 ],
@@ -277,18 +288,17 @@ class _ApplyLeaveFormScreenState extends State<ApplyLeaveFormScreen> {
                 onChanged: (val) => setState(() => _selectedHalfDay = val),
               ),
               const SizedBox(height: 10),
-              Text("Total leave Days"),
-              SizedBox(height: 10),
-              (_startDatePrimary != null && _endDatePrimary != null)
-                  ? Text(
-                      int.parse(
-                        _calculateDays(
-                          _startDatePrimary!,
-                          _endDatePrimary!,
-                        ).toString(),
-                      ).toString(),
-                    )
-                  : Text("0"),
+              Text("Total Leave Days"),
+              const SizedBox(height: 6),
+              Text(
+                (_startDatePrimary != null && _endDatePrimary != null)
+                    ? _calculateDays(
+                        _startDatePrimary!,
+                        _endDatePrimary!,
+                      ).toString()
+                    : "0",
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
             ],
           ),
         ),
@@ -315,6 +325,11 @@ class _ApplyLeaveFormScreenState extends State<ApplyLeaveFormScreen> {
                       firstDate: DateTime.now(),
                       lastDate: DateTime(2100),
                       hintText: "Start Date *",
+                      onChanged: (date) {
+                        setState(() {
+                          _startDateExtended = DateTime.parse(date);
+                        });
+                      },
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -324,6 +339,11 @@ class _ApplyLeaveFormScreenState extends State<ApplyLeaveFormScreen> {
                       firstDate: DateTime.now(),
                       lastDate: DateTime(2100),
                       hintText: "End Date *",
+                      onChanged: (date) {
+                        setState(() {
+                          _endDateExtended = DateTime.parse(date);
+                        });
+                      },
                     ),
                   ),
                 ],
@@ -337,6 +357,18 @@ class _ApplyLeaveFormScreenState extends State<ApplyLeaveFormScreen> {
                   _selectedExtendedLeaveType = val;
                 }),
               ),
+              const SizedBox(height: 10),
+              Text("Total Leave Days"),
+              const SizedBox(height: 6),
+              Text(
+                (_startDateExtended != null && _endDateExtended != null)
+                    ? _calculateDays(
+                        _startDateExtended!,
+                        _endDateExtended!,
+                      ).toString()
+                    : "0",
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
             ],
           ),
         ),
@@ -346,6 +378,19 @@ class _ApplyLeaveFormScreenState extends State<ApplyLeaveFormScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<LeaveBloc, LeaveState>(
       listener: (context, state) {
+        if (state.status == LeaveStatus.applyLeaveSuccess) {
+          AppSnackBar.show(
+            context,
+            "Leave successfully applied",
+            SnackbarType.success,
+          );
+        } else if (state.status == LeaveStatus.applyLeaveError) {
+          AppSnackBar.show(
+            context,
+            "Leave application failed",
+            SnackbarType.error,
+          );
+        }
         if (state.status == LeaveStatus.leaveTypeSuccess) {
           primaryLeaveTypeList = state.leaveType;
         }
@@ -400,6 +445,22 @@ class _ApplyLeaveFormScreenState extends State<ApplyLeaveFormScreen> {
                           .toList(),
                       hintText: 'Select Leave Option *',
                       onChanged: (val) => setState(() {
+                        // reset other field on every selection of leave option
+                        _selectedPrimaryLeaveType = null;
+                        _selectedExtendedLeaveType = null;
+                        _selectedSubstituteEmployee = null;
+                        _selectedHalfDay = null;
+
+                        _startPrimaryDateController.clear();
+                        _endPrimaryDateController.clear();
+                        _startExtendedDateController.clear();
+                        _endExtendedDateController.clear();
+                        _reasonController.clear();
+
+                        _startDatePrimary = null;
+                        _endDatePrimary = null;
+                        _startDateExtended = null;
+                        _endDateExtended = null;
                         _selectedLeaveOption = LeaveOption.values.firstWhere(
                           (e) => e.name.capitalize() == val,
                         );

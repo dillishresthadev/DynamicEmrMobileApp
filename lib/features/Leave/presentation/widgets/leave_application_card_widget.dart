@@ -17,6 +17,17 @@ class _LeaveApplicationCardWidgetState
   Widget build(BuildContext context) {
     final leave = widget.leave;
 
+    final hasPrimary = leave.fromDate != null && leave.toDate != null;
+    final hasExtended =
+        leave.extendedFromDate != null && leave.extendedToDate != null;
+
+    String leaveType = "Primary";
+    if (hasPrimary && hasExtended) {
+      leaveType = "Both";
+    } else if (hasExtended) {
+      leaveType = "Extended";
+    }
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -34,7 +45,7 @@ class _LeaveApplicationCardWidgetState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Top Row: Status Icon + Leave Type + Status Badge
+          /// --- Top Row: Status Icon + Leave Type + Status Badge
           Row(
             children: [
               Container(
@@ -57,7 +68,11 @@ class _LeaveApplicationCardWidgetState
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      leave.leaveTypeName,
+                      hasPrimary && hasExtended
+                          ? '${leave.leaveTypeName} / ${leave.extendedLeaveTypeName}'
+                          : hasExtended
+                          ? leave.extendedLeaveTypeName ?? ''
+                          : leave.leaveTypeName ?? '',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -65,7 +80,12 @@ class _LeaveApplicationCardWidgetState
                       ),
                     ),
                     Text(
-                      'Duration: ${leave.totalLeaveDays} day${leave.totalLeaveDays > 1 ? "s" : ""}',
+                      hasPrimary && hasExtended
+                          ? 'Primary: ${leave.totalLeaveDays} day${leave.totalLeaveDays > 1 ? "s" : ""} + '
+                                'Extended: ${leave.extendedTotalLeaveDays} day${leave.extendedTotalLeaveDays > 1 ? "s" : ""}'
+                          : hasExtended
+                          ? 'Duration: ${leave.extendedTotalLeaveDays} day${leave.extendedTotalLeaveDays > 1 ? "s" : ""}'
+                          : 'Duration: ${leave.totalLeaveDays} day${leave.totalLeaveDays > 1 ? "s" : ""}',
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey.shade600,
@@ -98,28 +118,36 @@ class _LeaveApplicationCardWidgetState
 
           const SizedBox(height: 12),
 
-          // Dates Row: From - To
-          Row(
-            children: [
-              Icon(Icons.date_range, size: 16, color: Colors.grey.shade600),
-              const SizedBox(width: 4),
-              Text(
-                'From: ${DateTime.parse(leave.fromDate).toDMMMYYYY()}',
-                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
-              ),
-              const SizedBox(width: 16),
-              Icon(Icons.date_range, size: 16, color: Colors.grey.shade600),
-              const SizedBox(width: 4),
-              Text(
-                'To: ${DateTime.parse(leave.toDate).toDMMMYYYY()}',
-                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
-              ),
-            ],
-          ),
+          /// --- Dates Section
+          if (hasPrimary && hasExtended) ...[
+            _buildDateRow(
+              'Primary',
+              DateTime.parse(leave.fromDate).toDMMMYYYY(),
+              DateTime.parse(leave.toDate).toDMMMYYYY(),
+            ),
+            const SizedBox(height: 8),
+            _buildDateRow(
+              'Extended',
+              DateTime.parse(leave.extendedFromDate).toDMMMYYYY(),
+              DateTime.parse(leave.extendedToDate).toDMMMYYYY(),
+            ),
+          ] else if (hasExtended) ...[
+            _buildDateRow(
+              'Extended',
+              DateTime.parse(leave.extendedFromDate).toDMMMYYYY(),
+              DateTime.parse(leave.extendedToDate).toDMMMYYYY(),
+            ),
+          ] else if (hasPrimary) ...[
+            _buildDateRow(
+              'Primary',
+              DateTime.parse(leave.fromDate).toDMMMYYYY(),
+              DateTime.parse(leave.toDate).toDMMMYYYY(),
+            ),
+          ],
 
           const SizedBox(height: 12),
 
-          // Application Date & Leave Number Row
+          /// --- Application Date & Leave Number
           Row(
             children: [
               Icon(Icons.event_note, size: 16, color: Colors.grey.shade600),
@@ -144,7 +172,7 @@ class _LeaveApplicationCardWidgetState
 
           const SizedBox(height: 12),
 
-          // Status Details: Substitute and Recommendation
+          /// --- Status Chips
           Row(
             children: [
               _StatusChip(
@@ -161,18 +189,30 @@ class _LeaveApplicationCardWidgetState
                     : Colors.orange.shade800,
               ),
               const SizedBox(width: 8),
-              _StatusChip(
-                label: 'Approved By: ${leave.leaveApprovedBy}',
-                color: leave.leaveApprovedBy != null
-                    ? Colors.green.shade100
-                    : Colors.green.shade100,
+              if (leave.leaveApprovedBy != null)
+                _StatusChip(
+                  label: 'Approved By: ${leave.leaveApprovedBy}',
+                  color: Colors.green.shade100,
+                  textColor: Colors.green.shade800,
+                ),
 
-                textColor: Colors.green.shade800,
+              if (leave.rejectedBy != null)
+                _StatusChip(
+                  label: 'Rejected By: ${leave.rejectedBy}',
+                  color: Colors.red.shade100,
+                  textColor: Colors.red.shade800,
+                ),
+
+              const SizedBox(width: 8),
+              _StatusChip(
+                label: leaveType,
+                color: Colors.blue.shade100,
+                textColor: Colors.blue.shade800,
               ),
             ],
           ),
 
-          // Reason (if present and non-empty)
+          /// --- Reason
           if (leave.reason.trim().isNotEmpty) ...[
             const SizedBox(height: 12),
             Text(
@@ -184,6 +224,26 @@ class _LeaveApplicationCardWidgetState
           ],
         ],
       ),
+    );
+  }
+
+  Widget _buildDateRow(String type, String from, String to) {
+    return Row(
+      children: [
+        Icon(Icons.date_range, size: 16, color: Colors.grey.shade600),
+        const SizedBox(width: 4),
+        Text(
+          '$type From: $from',
+          style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+        ),
+        const SizedBox(width: 16),
+        Icon(Icons.date_range, size: 16, color: Colors.grey.shade600),
+        const SizedBox(width: 4),
+        Text(
+          'To: $to',
+          style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+        ),
+      ],
     );
   }
 }
