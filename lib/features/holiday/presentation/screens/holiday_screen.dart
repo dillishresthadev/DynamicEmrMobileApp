@@ -151,7 +151,7 @@ class _HolidayScreenState extends State<HolidayScreen> {
             lastDate: DateTime(2040),
             todayDecoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
-              color: AppColors.primary.withOpacity(0.2),
+              color: AppColors.primary.withValues(alpha:0.2),
               border: Border.all(color: AppColors.primary, width: 1.5),
             ),
             selectedDayDecoration: BoxDecoration(
@@ -159,7 +159,7 @@ class _HolidayScreenState extends State<HolidayScreen> {
               color: AppColors.primary,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primary.withOpacity(0.3),
+                  color: AppColors.primary.withValues(alpha:0.3),
                   blurRadius: 6,
                   offset: const Offset(0, 3),
                 ),

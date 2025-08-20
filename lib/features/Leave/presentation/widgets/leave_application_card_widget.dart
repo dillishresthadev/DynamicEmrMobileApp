@@ -166,17 +166,6 @@ class _LeaveApplicationCardWidgetState
                 'Applied: ${DateTime.parse(leave.applicationDate).toDMMMYYYY()}',
                 style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
               ),
-              const SizedBox(width: 16),
-              Icon(
-                Icons.confirmation_num,
-                size: 16,
-                color: Colors.grey.shade600,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                'Leave No: ${leave.leaveNo}',
-                style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
-              ),
             ],
           ),
 
@@ -221,17 +210,6 @@ class _LeaveApplicationCardWidgetState
               ),
             ],
           ),
-
-          /// --- Reason
-          if (leave.reason.trim().isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Text(
-              'Reason: ${leave.reason}',
-              style: TextStyle(fontSize: 14, color: Colors.grey.shade700),
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
         ],
       ),
     );
