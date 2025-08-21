@@ -40,8 +40,8 @@ class TicketActivityModel extends TicketActivityEntity {
         isActive: json["isActive"] ?? false,
         attachmentFiles: json["attachmentFiles"],
         attachedDocuments: json["attachedDocuments"] != null
-            ? List<dynamic>.from(json["attachedDocuments"].map((x) => x))
-            : <dynamic>[],
+            ? List<String>.from(json["attachedDocuments"].map((x) => x))
+            : <String>[],
         insertUser: json["insertUser"] ?? "",
         insertTime: json["insertTime"] != null
             ? DateTime.parse(json["insertTime"])
@@ -62,7 +62,7 @@ class TicketActivityModel extends TicketActivityEntity {
     "applicationUserId": applicationUserId,
     "isActive": isActive,
     "attachmentFiles": attachmentFiles,
-    "attachedDocuments": List<dynamic>.from(attachedDocuments.map((x) => x)),
+    "attachedDocuments": List<String>.from(attachedDocuments.map((x) => x)),
     "insertUser": insertUser,
     "insertTime": insertTime.toIso8601String(),
     "updateUser": updateUser,

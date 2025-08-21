@@ -5,6 +5,7 @@ import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/core/widgets/form/custom_input_field.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_activity_entity.dart';
 import 'package:dynamic_emr/features/work/presentation/bloc/work_bloc.dart';
+import 'package:dynamic_emr/features/work/presentation/widgets/ticket_image_widget.dart';
 import 'package:dynamic_emr/features/work/presentation/widgets/ticket_info_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -142,6 +143,11 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                   ),
                                 ],
                               ),
+                              const SizedBox(height: 16),
+                              TicketImagesWidget(
+                                attachedDocuments:
+                                    ticket.ticket.attachedDocuments,
+                              ),
                               const SizedBox(height: 20),
                               _buildTimeline(
                                 ticketActivity: ticket.ticketActivity,
@@ -149,27 +155,33 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                               const SizedBox(height: 20),
                               // comment on ticket
                               CustomInputField(
-                                hintText: "Comments",
+                                hintText: "Comments message",
                                 controller: _commentController,
                               ),
-                              TextButton(
-                                onPressed: () {
-                                  if (_commentController.text.trim().isEmpty) {
-                                    AppSnackBar.show(
-                                      context,
-                                      "Your comment is empty",
-                                      SnackbarType.error,
-                                    );
-                                  } else {
-                                    context.read<WorkBloc>().add(
-                                      CommentOnTicketEvent(
-                                        ticketId: ticket.id,
-                                        message: _commentController.text,
-                                      ),
-                                    );
-                                  }
-                                },
-                                child: Text("Comment"),
+                              
+                              Row(
+                                children: [
+                                  TextButton(
+                                    onPressed: () {
+                                      if (_commentController.text.trim().isEmpty) {
+                                        AppSnackBar.show(
+                                          context,
+                                          "Your comment message is empty",
+                                          SnackbarType.error,
+                                        );
+                                      } else {
+                                        context.read<WorkBloc>().add(
+                                          CommentOnTicketEvent(
+                                            ticketId: ticket.id,
+                                            message: _commentController.text,
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    child: Text("Comment"),
+                                  ),
+                                  
+                                ],
                               ),
                             ],
                           ),
@@ -245,6 +257,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
             time: DateFormat('M/d/yyyy h:mm:ss a').format(activity.replyOn),
             isFirst: index == 0,
             isLast: index == ticketActivity.length - 1,
+            attachedDocs: activity.attachedDocuments,
           );
         }),
       ],
@@ -257,6 +270,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
     required String title,
     required String subtitle,
     required String time,
+    required List<String> attachedDocs,
     bool isFirst = false,
     bool isLast = false,
   }) {
@@ -348,6 +362,11 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                         style: TextStyle(fontSize: 13, color: Colors.grey[700]),
                       ),
                     ),
+                  ],
+                  const SizedBox(height: 4),
+                  // show attachments in ticket activity with preview options
+                  if (attachedDocs.isNotEmpty) ...[
+                    TicketImagesWidget(attachedDocuments: attachedDocs),
                   ],
                 ],
               ),
