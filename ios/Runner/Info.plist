@@ -45,6 +45,9 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- camera access -->
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs access to your camera for photo click</string>
 	<!-- location -->
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app needs access to location when open.</string>
