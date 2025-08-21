@@ -39,7 +39,7 @@ class _TicketScreenState extends State<TicketScreen>
         status: "",
         priority: "",
         severity: "",
-        orderBy: "",
+        orderBy: "Newest",
         fromDate: "",
         toDate: "",
       ),

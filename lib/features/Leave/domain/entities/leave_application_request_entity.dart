@@ -10,6 +10,7 @@ class LeaveApplicationRequestEntity {
   String? toDateNp;
   String? halfDayStatus;
   int? totalLeaveDays;
+  int? extendedTotalLeaveDays;
   String? reason;
   String? extendedFromDate;
   String? extendedToDate;
@@ -27,6 +28,7 @@ class LeaveApplicationRequestEntity {
     this.toDateNp,
     this.halfDayStatus,
     this.totalLeaveDays,
+    this.extendedTotalLeaveDays,
     this.reason,
     this.extendedFromDate,
     this.extendedToDate,

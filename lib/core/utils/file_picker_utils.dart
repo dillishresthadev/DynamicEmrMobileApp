@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:developer';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
@@ -7,50 +6,34 @@ import 'package:image_picker/image_picker.dart';
 class FilePickerUtils {
   static final ImagePicker _picker = ImagePicker();
 
-  /// Pick an image from camera or gallery
-  /// fromCamera: true = camera, false = gallery
-  /// maxSizeInMB: file size limit
-  static Future<File?> pickImage({
+  static Future<FileResult> pickImage({
     required bool fromCamera,
     double maxSizeInMB = 2,
   }) async {
     try {
-      XFile? pickedFile;
-      if (fromCamera) {
-        pickedFile = await _picker.pickImage(
-          source: ImageSource.camera,
-          maxHeight: 2000,
-          maxWidth: 2000,
-          imageQuality: 85,
-        );
-      } else {
-        pickedFile = await _picker.pickImage(
-          source: ImageSource.gallery,
-          maxHeight: 2000,
-          maxWidth: 2000,
-          imageQuality: 85,
-        );
-      }
+      XFile? pickedFile = await _picker.pickImage(
+        source: fromCamera ? ImageSource.camera : ImageSource.gallery,
+        maxHeight: 2000,
+        maxWidth: 2000,
+        imageQuality: 85,
+      );
 
-      if (pickedFile == null) return null;
+      if (pickedFile == null) {
+        return FileResult(error: "No image selected");
+      }
 
       final file = File(pickedFile.path);
 
-      if (!_validateFile(file, ['jpg', 'jpeg', 'png'], maxSizeInMB)) {
-        return null;
-      }
+      final error = _validateFile(file, ['jpg', 'jpeg', 'png'], maxSizeInMB);
+      if (error != null) return FileResult(error: error);
 
-      return file;
+      return FileResult(file: file);
     } catch (e) {
-      log('Image pick error: $e');
-      return null;
+      return FileResult(error: "Image pick error: $e");
     }
   }
 
-  /// Pick any file
-  /// allowedExtensions: list of allowed file types
-  /// maxSizeInMB: file size limit
-  static Future<File?> pickFile({
+  static Future<FileResult> pickFile({
     List<String> allowedExtensions = const ['jpg', 'jpeg', 'png', 'pdf'],
     double maxSizeInMB = 2,
   }) async {
@@ -60,21 +43,23 @@ class FilePickerUtils {
         allowedExtensions: allowedExtensions,
       );
 
-      if (result == null || result.files.isEmpty) return null;
+      if (result == null || result.files.isEmpty) {
+        return FileResult(error: "No file selected");
+      }
 
       final file = File(result.files.first.path!);
 
-      if (!_validateFile(file, allowedExtensions, maxSizeInMB)) return null;
+      final error = _validateFile(file, allowedExtensions, maxSizeInMB);
+      if (error != null) return FileResult(error: error);
 
-      return file;
+      return FileResult(file: file);
     } catch (e) {
-      log('File pick error: $e');
-      return null;
+      return FileResult(error: "File pick error: $e");
     }
   }
 
-  /// Validate file extension and size
-  static bool _validateFile(
+  /// return `null` if valid, else error message
+  static String? _validateFile(
     File file,
     List<String> allowedExtensions,
     double maxSizeInMB,
@@ -83,15 +68,20 @@ class FilePickerUtils {
     final fileExtension = file.path.split('.').last.toLowerCase();
 
     if (!allowedExtensions.contains(fileExtension)) {
-      log('Unsupported file type: $fileExtension');
-      return false;
+      return 'Unsupported file type: $fileExtension';
     }
 
     if (fileSize > maxSizeInMB * 1024 * 1024) {
-      log('File size exceeds $maxSizeInMB MB');
-      return false;
+      return 'File size exceeds $maxSizeInMB MB';
     }
 
-    return true;
+    return null;
   }
+}
+
+class FileResult {
+  final File? file;
+  final String? error;
+
+  FileResult({this.file, this.error});
 }

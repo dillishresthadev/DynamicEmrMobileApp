@@ -1,4 +1,3 @@
-
 import 'package:dynamic_emr/features/profile/domain/entities/employee_current_shift_entity.dart';
 import 'package:dynamic_emr/features/profile/domain/entities/employee_document_entity.dart';
 import 'package:dynamic_emr/features/profile/domain/entities/employee_education_entity.dart';
@@ -51,6 +50,8 @@ class EmployeeEntity {
   final List<EmployeeInsuranceDetailsEntity> employeeInsuranceDetails;
   final List<EmployeeDocumentEntity> employeeDocuments;
   final EmployeeCurrentShiftEntity employeeCurrentShift;
+  final String documentBaseUrl;
+  final String employeeImageBaseUrl;
 
   EmployeeEntity({
     required this.id,
@@ -96,5 +97,7 @@ class EmployeeEntity {
     required this.employeeDocuments,
     required this.employeeCurrentShift,
     required List<dynamic> employeeWorkExperienceContacts,
+    required this.employeeImageBaseUrl,
+    required this.documentBaseUrl,
   });
 }

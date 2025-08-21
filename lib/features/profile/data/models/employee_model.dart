@@ -54,6 +54,8 @@ class EmployeeModel extends EmployeeEntity {
     required super.employeeDocuments,
     required super.employeeCurrentShift,
     required super.employeeWorkExperienceContacts,
+    required super.employeeImageBaseUrl,
+    required super.documentBaseUrl,
   });
 
   // Method to create an instance from JSON
@@ -152,6 +154,8 @@ class EmployeeModel extends EmployeeEntity {
       employeeCurrentShift: json['employeeCurrentShift'] != null
           ? EmployeeCurrentShiftModel.fromJson(json['employeeCurrentShift'])
           : EmployeeCurrentShiftModel(),
+      documentBaseUrl: json['documentBaseUrl'] ?? '',
+      employeeImageBaseUrl: json['employeeImageBaseUrl'] ?? '',
     );
   }
 }

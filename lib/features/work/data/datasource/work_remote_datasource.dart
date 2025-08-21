@@ -21,7 +21,11 @@ abstract class WorkRemoteDatasource {
   Future<List<WorkUserModel>> getWorkUserList();
   Future<bool> closeTicket(int ticketId);
   Future<bool> reOpenTicket(int ticketId);
-  Future<bool> commentOnTicket(int ticketId, String message);
+  Future<bool> commentOnTicket(
+    int ticketId,
+    String message,
+    List<String>? attachmentPaths,
+  );
   Future<List<TicketCategoriesModel>> getTicketCategories();
   Future<bool> createNewTicket(
     int ticketCategoryId,
@@ -258,7 +262,7 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
         "Severity": severity,
         "Priority": priority,
         "AssignToEmployeeId": assignToEmployeeId,
-        "Attachments": files,
+        "AttachmentFiles": files?.first,
       });
 
       final rawResponse = await client.post(
@@ -451,7 +455,11 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
   }
 
   @override
-  Future<bool> commentOnTicket(int ticketId, String message) async {
+  Future<bool> commentOnTicket(
+    int ticketId,
+    String message,
+    List<String>? attachmentPaths,
+  ) async {
     try {
       final accessToken = await injection<TokenSecureStorage>()
           .getAccessToken();
@@ -460,10 +468,24 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
           .getWorkingBranchId();
       final workingFinancialId = await injection<BranchSecureStorage>()
           .getSelectedFiscalYearId();
+
+      // Convert file paths to MultipartFile
+      List<MultipartFile>? files;
+      if (attachmentPaths != null && attachmentPaths.isNotEmpty) {
+        files = attachmentPaths
+            .map(
+              (path) => MultipartFile.fromFileSync(
+                path,
+                filename: "test-files-image",
+                contentType: DioMediaType('application', 'octet-stream'),
+              ),
+            )
+            .toList();
+      }
       final formData = FormData.fromMap({
         "TicketId": ticketId,
         "Comment": message,
-        "Attachments": [],
+        "AttachmentFiles": files,
       });
 
       final rawResponse = await client.post(

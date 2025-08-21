@@ -100,7 +100,7 @@ class _QualificationExperienceScreenState
             "$label ",
             style: TextStyle(
               fontSize: 16,
-              color: Colors.grey.withOpacity(0.7),
+              color: Colors.grey.withValues(alpha:0.7),
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -110,7 +110,7 @@ class _QualificationExperienceScreenState
               value,
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.grey.withOpacity(0.7),
+                color: Colors.grey.withValues(alpha:0.7),
               ),
               textAlign: TextAlign.end,
             ),

@@ -5,7 +5,11 @@ class CommentOnTicketUsecase {
 
   CommentOnTicketUsecase({required this.repository});
 
-  Future<bool> call(int ticketId,String message) async {
-    return repository.commentOnTicket(ticketId,message);
+  Future<bool> call(
+    int ticketId,
+    String message,
+    List<String>? attachmentPaths,
+  ) async {
+    return repository.commentOnTicket(ticketId, message, attachmentPaths);
   }
 }

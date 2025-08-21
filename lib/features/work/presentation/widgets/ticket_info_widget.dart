@@ -1,5 +1,6 @@
 import 'package:dynamic_emr/features/work/domain/entities/ticket_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/work_user_entity.dart';
+import 'package:dynamic_emr/features/work/presentation/widgets/assign_to_bottom_sheet_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -42,27 +43,7 @@ class TicketInfoWidget extends StatelessWidget {
                   valueColor: Colors.blue,
                 ),
 
-                // Editable Assigned To
-                _buildEditableItem(
-                  context,
-                  "Assigned To",
-                  ticket.assignedTo,
-                  onEdit: () {
-                    _showAssignedToDialog(
-                      context: context,
-                      title: "Assign To",
-                      users: user,
-                      onSelected: (val) {
-                        context.read<WorkBloc>().add(
-                          EditAssignToEvent(
-                            ticketId: ticket.id,
-                            assignedUserId: val,
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
+                AssignToBottomSheetWidget(users: user, ticket: ticket),
 
                 _buildInfoItem("Registration No", ticket.ticketNo2),
                 _buildInfoItem("Created By", ticket.issueBy),
@@ -204,34 +185,6 @@ class TicketInfoWidget extends StatelessWidget {
               ),
             )
             .toList(),
-      ),
-    );
-  }
-
-  // Assigned to dialog
-  void _showAssignedToDialog({
-    required BuildContext context,
-    required String title,
-    required List<WorkUserEntity> users,
-    required Function(int value) onSelected,
-  }) {
-    showDialog(
-      context: context,
-      builder: (_) => SimpleDialog(
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        children: users.map((user) {
-          return SimpleDialogOption(
-            onPressed: () {
-              onSelected(int.parse(user.value)); // 👈 sends "value" (id) only
-              Navigator.pop(context);
-            },
-            child: Text(
-              user.text, // 👈 shows "text" (label) only
-              style: TextStyle(color: Colors.black.withValues(alpha: 0.8)),
-            ),
-          );
-        }).toList(),
       ),
     );
   }

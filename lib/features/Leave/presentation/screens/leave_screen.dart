@@ -2,6 +2,7 @@ import 'package:dynamic_emr/core/constants/app_colors.dart';
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/features/Leave/presentation/bloc/leave_bloc.dart';
 import 'package:dynamic_emr/features/Leave/presentation/screens/apply_leave_form_screen.dart';
+import 'package:dynamic_emr/features/Leave/presentation/screens/leave_application_history_screen.dart';
 import 'package:dynamic_emr/features/Leave/presentation/screens/tabs/approved_leaves_tab.dart';
 import 'package:dynamic_emr/features/Leave/presentation/screens/tabs/pending_leaves_tab.dart';
 import 'package:dynamic_emr/features/Leave/presentation/widgets/leave_card_widget.dart';
@@ -89,7 +90,22 @@ class _LeaveScreenState extends State<LeaveScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: DynamicEMRAppBar(title: "Leaves"),
+      appBar: DynamicEMRAppBar(
+        title: "Leaves",
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => LeaveApplicationHistoryScreen(),
+                ),
+              );
+            },
+            icon: Icon(Icons.history),
+          ),
+        ],
+      ),
       body: RefreshIndicator(
         onRefresh: () async => _loadLeaveData,
         child: Column(
@@ -253,8 +269,8 @@ class _LeaveScreenState extends State<LeaveScreen>
           fontWeight: FontWeight.normal,
         ),
         tabs: const [
-          Tab(text: 'Approved'),
           Tab(text: 'Pending'),
+          Tab(text: 'Approved'),
         ],
       ),
     );
@@ -264,7 +280,7 @@ class _LeaveScreenState extends State<LeaveScreen>
     return Expanded(
       child: TabBarView(
         controller: _tabController,
-        children: const [ApprovedLeavesTab(), PendingLeavesTab()],
+        children: const [PendingLeavesTab(), ApprovedLeavesTab()],
       ),
     );
   }

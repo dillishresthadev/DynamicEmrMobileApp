@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:dynamic_emr/core/constants/app_colors.dart';
 import 'package:dynamic_emr/core/utils/app_snack_bar.dart';
+import 'package:dynamic_emr/core/utils/file_picker_utils.dart';
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/core/widgets/dropdown/custom_dropdown.dart';
 import 'package:dynamic_emr/core/widgets/form/custom_input_field.dart';
@@ -66,6 +67,11 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
 
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) {
+      AppSnackBar.show(
+        context,
+        "Please fill all required fields correctly",
+        SnackbarType.error,
+      );
       log("Please fill all required fields correctly");
       return;
     }
@@ -83,6 +89,8 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
         .map((file) => file.path)
         .toList();
 
+    log(attachmentPaths.toList().toString());
+
     context.read<WorkBloc>().add(
       CreateTicketEvent(
         ticketCategoryId: _selectedCategoriesType!,
@@ -95,6 +103,77 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
       ),
     );
     _resetForm();
+  }
+
+  Widget buildAttachmentButtons() {
+    return Row(
+      spacing: 20,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _buildAttachmentButton(
+          icon: Icons.camera_alt,
+          label: "Camera",
+          color: Colors.blue.withValues(alpha: 0.6),
+          onTap: () async {
+            final result = await FilePickerUtils.pickImage(fromCamera: true);
+            if (result.file != null) {
+              setState(() => attachments.add(result.file!));
+            } else if (result.error != null) {
+              AppSnackBar.show(context, result.error!, SnackbarType.error);
+            }
+          },
+        ),
+
+        _buildAttachmentButton(
+          icon: Icons.upload_file,
+          label: "Gallery / File",
+          color: Colors.green.withValues(alpha: 0.7),
+          onTap: () async {
+            final result = await FilePickerUtils.pickFile();
+            if (result.file != null) {
+              setState(() => attachments.add(result.file!));
+            } else if (result.error != null) {
+              AppSnackBar.show(context, result.error!, SnackbarType.error);
+            }
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAttachmentButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: 3,
+      ),
+      onPressed: onTap,
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 28, color: Colors.white),
+            const SizedBox(height: 6),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -223,7 +302,56 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
                               : null,
                         ),
 
-                        // buildSectionTitle("Files/Images"),
+                        buildSectionTitle("Files/Images"),
+
+                        buildAttachmentButtons(),
+
+                        //  attachments list
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 10),
+                            ...attachments.map(
+                              (file) => Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 4.0,
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.insert_drive_file,
+                                      color: Colors.grey,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        file.path.split('/').last,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.blue,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.close,
+                                        color: Colors.red,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          (attachments).remove(file);
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
                         // Row(
                         //   children: [
                         //     ElevatedButton.icon(

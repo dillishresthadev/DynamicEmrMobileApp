@@ -11,7 +11,7 @@ class TicketActivityEntity {
   final String applicationUserId;
   final bool isActive;
   final dynamic attachmentFiles;
-  final List<dynamic> attachedDocuments;
+  final List<String> attachedDocuments;
   final String insertUser;
   final DateTime insertTime;
   final dynamic updateUser;

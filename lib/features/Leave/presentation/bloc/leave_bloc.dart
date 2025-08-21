@@ -152,35 +152,43 @@ class LeaveBloc extends Bloc<LeaveEvent, LeaveState> {
   ) async {
     try {
       emit(state.copyWith(status: LeaveStatus.loading));
+
       final isLeaveApply = await applyLeaveUsecase.call(
         LeaveApplicationRequestEntity(
           leaveTypeId: event.leaveRequest.leaveTypeId,
-
           fromDate: event.leaveRequest.fromDate,
           fromDateNp: event.leaveRequest.fromDateNp,
           toDate: event.leaveRequest.toDate,
           toDateNp: event.leaveRequest.toDateNp,
-
           halfDayStatus: event.leaveRequest.halfDayStatus,
+          extendedTotalLeaveDays: event.leaveRequest.extendedTotalLeaveDays,
           totalLeaveDays: event.leaveRequest.totalLeaveDays,
           reason: event.leaveRequest.reason,
-
           extendedFromDate: event.leaveRequest.extendedFromDate,
           extendedToDate: event.leaveRequest.extendedToDate,
           extendedFromDateNp: event.leaveRequest.extendedFromDateNp,
-
           extendedToDateNp: event.leaveRequest.extendedToDateNp,
           extendedLeaveTypeId: event.leaveRequest.extendedLeaveTypeId,
           substituteEmployeeId: event.leaveRequest.substituteEmployeeId,
           isHalfDay: event.leaveRequest.isHalfDay,
         ),
       );
-      emit(
-        state.copyWith(
-          applyLeave: isLeaveApply,
-          status: LeaveStatus.applyLeaveSuccess,
-        ),
-      );
+
+      if (isLeaveApply) {
+        emit(
+          state.copyWith(
+            applyLeave: isLeaveApply,
+            status: LeaveStatus.applyLeaveSuccess,
+          ),
+        );
+      } else {
+        emit(
+          state.copyWith(
+            status: LeaveStatus.applyLeaveError,
+            message: "Failed to apply leave",
+          ),
+        );
+      }
     } catch (e) {
       log("Error on Bloc [ApplyLeave] $e");
       emit(
