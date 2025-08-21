@@ -35,77 +35,95 @@ class _AssignToBottomSheetWidgetState extends State<AssignToBottomSheetWidget> {
         TextEditingController searchController = TextEditingController();
         List<WorkUserEntity> filteredUsers = List.from(widget.users);
 
-        return FractionallySizedBox(
-          heightFactor: 0.55,
-          child: StatefulBuilder(
-            builder: (context, setModalState) {
-              return Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    const Text(
-                      "Assign To",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom, // handle keyboard
+          ),
+          child: DraggableScrollableSheet(
+            expand: false,
+            initialChildSize: 0.6,
+            minChildSize: 0.4,
+            maxChildSize: 0.9,
+            builder: (context, scrollController) {
+              return StatefulBuilder(
+                builder: (context, setModalState) {
+                  return SingleChildScrollView(
+                    controller: scrollController,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 16,
                       ),
-                    ),
-                    const SizedBox(height: 12),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            "Assign To",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
 
-                    // 🔍 Search field
-                    TextField(
-                      controller: searchController,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.search),
-                        hintText: "Search user...",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
-                        ),
-                      ),
-                      onChanged: (value) {
-                        setModalState(() {
-                          filteredUsers = widget.users
-                              .where(
-                                (u) => u.text.toLowerCase().contains(
-                                  value.toLowerCase(),
+                          // 🔍 Search field
+                          TextField(
+                            controller: searchController,
+                            decoration: const InputDecoration(
+                              prefixIcon: Icon(Icons.search),
+                              hintText: "Search user...",
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(12),
                                 ),
-                              )
-                              .toList();
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 16),
-
-                    // 📃 User List
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: filteredUsers.length,
-                        itemBuilder: (context, index) {
-                          final user = filteredUsers[index];
-                          return ListTile(
-                            title: Text(user.text),
-                            onTap: () {
-                              // Update UI
-                              setState(() {
-                                _selectedUserText = user.text;
+                              ),
+                            ),
+                            onChanged: (value) {
+                              setModalState(() {
+                                filteredUsers = widget.users
+                                    .where(
+                                      (u) => u.text.toLowerCase().contains(
+                                        value.toLowerCase(),
+                                      ),
+                                    )
+                                    .toList();
                               });
-
-                              // Fire Bloc Event (send value to API)
-                              context.read<WorkBloc>().add(
-                                EditAssignToEvent(
-                                  ticketId: widget.ticket.id,
-                                  assignedUserId: int.parse(user.value),
-                                ),
-                              );
-
-                              Navigator.pop(context);
                             },
-                          );
-                        },
+                          ),
+                          const SizedBox(height: 16),
+
+                          // 📃 User List
+                          ListView.builder(
+                            controller: scrollController,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: filteredUsers.length,
+                            itemBuilder: (context, index) {
+                              final user = filteredUsers[index];
+                              return ListTile(
+                                title: Text(user.text),
+                                onTap: () {
+                                  setState(() {
+                                    _selectedUserText = user.text;
+                                  });
+
+                                  context.read<WorkBloc>().add(
+                                    EditAssignToEvent(
+                                      ticketId: widget.ticket.id,
+                                      assignedUserId: int.parse(user.value),
+                                    ),
+                                  );
+
+                                  Navigator.pop(context);
+                                },
+                              );
+                            },
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  );
+                },
               );
             },
           ),
