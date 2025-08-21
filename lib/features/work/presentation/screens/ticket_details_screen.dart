@@ -64,7 +64,6 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                 final ticket = state.ticketDetails;
                 final users = state.workUser;
 
-                log("Users : ${users?.map((e) => log(e.text))}");
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 24.0),
                   child: Column(
@@ -75,6 +74,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                         ticket: ticket!.ticket,
                         user: users ?? [],
                       ),
+
                       // Ticket Timeline Card
                       Card(
                         elevation: 0,
@@ -148,7 +148,30 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                   ),
                                 ],
                               ),
-                              const SizedBox(height: 16),
+                              SizedBox(height: 16),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    ticket.ticket.title,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Text(
+                                    ticket.ticket.description,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.black54,
+                                      height: 1.4,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
                               TicketImagesWidget(
                                 attachedDocuments:
                                     ticket.ticket.attachedDocuments,
@@ -246,7 +269,6 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                       CommentOnTicketEvent(
                                         ticketId: ticket.id,
                                         message: _commentController.text,
-                                        
                                       ),
                                     );
                                   }

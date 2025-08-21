@@ -9,29 +9,112 @@ class AttendanceDetailsCardWidget extends StatelessWidget {
     required this.attendanceDetails,
   });
 
-  Widget _buildActivityDetail(String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildInfoRow(
+    IconData icon,
+    String label,
+    String value, {
+    Color? iconColor,
+  }) {
+    return Row(
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey.shade600,
-            fontWeight: FontWeight.w500,
+        Container(
+          padding: const EdgeInsets.all(6),
+          decoration: BoxDecoration(
+            color: (iconColor ?? const Color(0xFF3B82F6)).withValues(
+              alpha: 0.1,
+            ),
+            borderRadius: BorderRadius.circular(6),
+          ),
+          child: Icon(
+            icon,
+            size: 14,
+            color: iconColor ?? const Color(0xFF3B82F6),
           ),
         ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: Color(0xFF1E293B),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: Colors.grey.shade500,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 1),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF1F2937),
+                ),
+              ),
+            ],
           ),
         ),
       ],
     );
+  }
+
+  Widget _buildTimeCard(String title, String time, Color color) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 10,
+                color: color,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.5,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              time,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: color,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String formatTime(DateTime? time) =>
+      time != null ? DateFormat('hh:mm a').format(time) : '--:--';
+
+  String calculateWorkedHours(DateTime? checkIn, DateTime? checkOut) {
+    if (checkIn == null || checkOut == null) return '-- --';
+    final duration = checkOut.difference(checkIn);
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes % 60;
+    return "${hours}h ${minutes}m";
+  }
+
+  Color _getStatusColor() {
+    if (attendanceDetails.statusColorCode.startsWith("#") &&
+        attendanceDetails.statusColorCode.length == 7) {
+      return Color(
+        int.parse(attendanceDetails.statusColorCode.replaceFirst("#", "0xFF")),
+      );
+    }
+    return const Color(0xFF10B981); // Default green
   }
 
   @override
@@ -39,97 +122,162 @@ class AttendanceDetailsCardWidget extends StatelessWidget {
     final date =
         DateTime.tryParse(attendanceDetails.attendanceDate.toString()) ??
         DateTime.now();
-
-    String formatTime(DateTime? time) =>
-        time != null ? DateFormat('hh:mm a').format(time) : '-';
+    final statusColor = _getStatusColor();
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200, width: 1),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+        border: Border.all(color: Colors.grey.shade100, width: 1),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          // Header Section
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade50,
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+              ),
+            ),
+            child: Row(
               children: [
-                // Date & Status
-                Text(
-                  attendanceDetails.shiftTitle,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF1E293B),
+                // Date Circle
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF3B82F6),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      DateFormat('MMM dd, yyyy').format(date),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF1E293B),
-                      ),
-                    ),
-
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color:
-                            attendanceDetails.statusColorCode.startsWith("#") &&
-                                attendanceDetails.statusColorCode.length == 7
-                            ? Color(
-                                int.parse(
-                                  attendanceDetails.statusColorCode
-                                      .replaceFirst("#", "0xFF"),
-                                ),
-                              )
-                            : null,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        attendanceDetails.statusFullName.toString(),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        DateFormat('dd').format(date),
                         style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
                           color: Colors.white,
                         ),
                       ),
+                      Text(
+                        DateFormat('MMM').format(date).toUpperCase(),
+                        style: const TextStyle(
+                          fontSize: 8,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // Date and Shift Info
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        DateFormat('EEEE, MMM dd, yyyy').format(date),
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF1F2937),
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        attendanceDetails.shiftTitle,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade600,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Status Badge
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
+                  decoration: BoxDecoration(
+                    color: statusColor,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    attendanceDetails.statusFullName.toString(),
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Time Cards Section
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                // Check In/Out Times
+                Row(
+                  children: [
+                    _buildTimeCard(
+                      'CHECK IN',
+                      formatTime(attendanceDetails.checkInTime),
+                      const Color(0xFF10B981),
+                    ),
+                    const SizedBox(width: 8),
+                    _buildTimeCard(
+                      'CHECK OUT',
+                      formatTime(attendanceDetails.checkOutTime),
+                      const Color(0xFFEF4444),
+                    ),
+                    const SizedBox(width: 8),
+                    _buildTimeCard(
+                      'WORKED',
+                      calculateWorkedHours(
+                        attendanceDetails.checkInTime,
+                        attendanceDetails.checkOutTime,
+                      ),
+                      const Color(0xFF8B5CF6),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
-                // Check In, Check Out, Duty/shift Type
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildActivityDetail(
-                        'Check In / Out',
-                        "${formatTime(attendanceDetails.checkInTime)} - ${formatTime(attendanceDetails.checkOutTime)}",
-                      ),
-                    ),
-                    Expanded(
-                      child: _buildActivityDetail(
-                        'Shift Time',
-                        "${formatTime(attendanceDetails.shiftStartTime)} - ${formatTime(attendanceDetails.shiftEndTime)}",
-                      ),
-                    ),
-                    // Expanded(
-                    //   child: _buildActivityDetail(
-                    //     "Type",
-                    //     attendanceDetails.dutyType.toString(),
-                    //   ),
-                    // ),
-                  ],
+                const SizedBox(height: 16),
+
+                // Additional Info
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: _buildInfoRow(
+                    Icons.schedule_rounded,
+                    'Scheduled Shift',
+                    "${formatTime(attendanceDetails.shiftStartTime)} - ${formatTime(attendanceDetails.shiftEndTime)}",
+                    iconColor: const Color(0xFF6B7280),
+                  ),
                 ),
               ],
             ),
