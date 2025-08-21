@@ -1,6 +1,8 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:dynamic_emr/core/utils/app_snack_bar.dart';
+import 'package:dynamic_emr/core/utils/file_picker_utils.dart';
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/core/widgets/form/custom_input_field.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_activity_entity.dart';
@@ -21,6 +23,9 @@ class TicketDetailsScreen extends StatefulWidget {
 
 class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
   final TextEditingController _commentController = TextEditingController();
+
+  List<File> commentAttachments = [];
+
   @override
   void initState() {
     super.initState();
@@ -157,31 +162,96 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                               CustomInputField(
                                 hintText: "Comments message",
                                 controller: _commentController,
+                                suffixIcon: IconButton(
+                                  onPressed: () async {
+                                    final result =
+                                        await FilePickerUtils.pickImage(
+                                          fromCamera: true,
+                                        );
+                                    if (result.file != null) {
+                                      setState(
+                                        () => commentAttachments.add(
+                                          result.file!,
+                                        ),
+                                      );
+                                    } else if (result.error != null) {
+                                      AppSnackBar.show(
+                                        context,
+                                        result.error!,
+                                        SnackbarType.error,
+                                      );
+                                    }
+                                  },
+                                  icon: Icon(Icons.camera_alt_outlined),
+                                ),
                               ),
-                              
-                              Row(
+
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  TextButton(
-                                    onPressed: () {
-                                      if (_commentController.text.trim().isEmpty) {
-                                        AppSnackBar.show(
-                                          context,
-                                          "Your comment message is empty",
-                                          SnackbarType.error,
-                                        );
-                                      } else {
-                                        context.read<WorkBloc>().add(
-                                          CommentOnTicketEvent(
-                                            ticketId: ticket.id,
-                                            message: _commentController.text,
+                                  const SizedBox(height: 10),
+                                  ...commentAttachments.map(
+                                    (file) => Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 2.0,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.insert_drive_file,
+                                            color: Colors.grey,
                                           ),
-                                        );
-                                      }
-                                    },
-                                    child: Text("Comment"),
+                                          const SizedBox(width: 8),
+                                          Expanded(
+                                            child: Text(
+                                              file.path.split('_').last,
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.blue,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          IconButton(
+                                            icon: Icon(
+                                              Icons.close,
+                                              color: Colors.red,
+                                            ),
+                                            onPressed: () {
+                                              setState(() {
+                                                (commentAttachments).remove(
+                                                  file,
+                                                );
+                                              });
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                  
                                 ],
+                              ),
+
+                              TextButton(
+                                onPressed: () {
+                                  if (_commentController.text.trim().isEmpty) {
+                                    AppSnackBar.show(
+                                      context,
+                                      "Your comment message is empty",
+                                      SnackbarType.error,
+                                    );
+                                  } else {
+                                    context.read<WorkBloc>().add(
+                                      CommentOnTicketEvent(
+                                        ticketId: ticket.id,
+                                        message: _commentController.text,
+                                        
+                                      ),
+                                    );
+                                  }
+                                },
+                                child: Text("Comment"),
                               ),
                             ],
                           ),

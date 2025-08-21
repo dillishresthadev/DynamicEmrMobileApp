@@ -339,6 +339,7 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
       final isComment = await commentOnTicketUsecase.call(
         event.ticketId,
         event.message,
+        event.attachmentPaths,
       );
       final ticket = await ticketDetailsByIdUsecase.call(event.ticketId);
 

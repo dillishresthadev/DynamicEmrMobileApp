@@ -115,8 +115,16 @@ class WorkRepositoryImpl extends WorkRepository {
   }
 
   @override
-  Future<bool> commentOnTicket(int ticketId, String message) async {
-    return await remoteDatasource.commentOnTicket(ticketId, message);
+  Future<bool> commentOnTicket(
+    int ticketId,
+    String message,
+    List<String>? attachmentPaths,
+  ) async {
+    return await remoteDatasource.commentOnTicket(
+      ticketId,
+      message,
+      attachmentPaths,
+    );
   }
 
   @override
