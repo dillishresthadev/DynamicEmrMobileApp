@@ -5,7 +5,8 @@ abstract class NotificationRepository {
   Future<(int notificationCount, List<NotificationEntity> items)>
   getUserNotifications();
   Future<void> sendFcmDeviceToken(String token, String applicationId);
+
+  /// Sends the FCM device token anonymously (for unauthenticated users)
   Future<void> sendFcmDeviceTokenAnonymous(String token);
-// listening alltime so stream not future
   Stream<FirebaseNotificationEntity> listenNotification();
 }
