@@ -217,6 +217,13 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
           );
           Navigator.pop(context);
         }
+        if (state.workStatus == WorkStatus.createTicketError) {
+          AppSnackBar.show(
+            context,
+            "Ticket Created failed",
+            SnackbarType.error,
+          );
+        }
       },
       child: Scaffold(
         appBar: DynamicEMRAppBar(

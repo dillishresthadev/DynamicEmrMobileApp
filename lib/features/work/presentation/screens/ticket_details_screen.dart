@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:dynamic_emr/core/utils/app_snack_bar.dart';
@@ -7,7 +6,7 @@ import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/core/widgets/form/custom_input_field.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_activity_entity.dart';
 import 'package:dynamic_emr/features/work/presentation/bloc/work_bloc.dart';
-import 'package:dynamic_emr/features/work/presentation/widgets/ticket_image_widget.dart';
+import 'package:dynamic_emr/features/work/presentation/widgets/ticket_file_widget.dart';
 import 'package:dynamic_emr/features/work/presentation/widgets/ticket_info_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -150,6 +149,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                 ],
                               ),
                               SizedBox(height: 16),
+                              // ticket title and descriptions
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -173,13 +173,16 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                 ],
                               ),
                               const SizedBox(height: 12),
-                              TicketImagesWidget(
+                              // ticket initial file or images
+                              TicketFilesWidget(
                                 attachedDocuments:
                                     ticket.ticket.attachedDocuments,
+                                baseUrl: ticket.baseUrl ?? '',
                               ),
                               const SizedBox(height: 20),
                               _buildTimeline(
                                 ticketActivity: ticket.ticketActivity,
+                                baseUrl: ticket.baseUrl ?? '',
                               ),
                               const SizedBox(height: 20),
                               // comment on ticket
@@ -275,7 +278,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                       CommentOnTicketEvent(
                                         ticketId: ticket.id,
                                         message: _commentController.text,
-                                        attachmentPaths: attachmentPaths ?? [],
+                                        attachmentPaths: attachmentPaths,
                                       ),
                                     );
                                   }
@@ -298,7 +301,10 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
     );
   }
 
-  Widget _buildTimeline({required List<TicketActivityEntity> ticketActivity}) {
+  Widget _buildTimeline({
+    required List<TicketActivityEntity> ticketActivity,
+    required String baseUrl,
+  }) {
     if (ticketActivity.isEmpty) {
       return const Center(child: Text("No activity found"));
     }
@@ -357,6 +363,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
             isFirst: index == 0,
             isLast: index == ticketActivity.length - 1,
             attachedDocs: activity.attachedDocuments,
+            baseUrl: baseUrl,
           );
         }),
       ],
@@ -370,6 +377,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
     required String subtitle,
     required String time,
     required List<String> attachedDocs,
+    required String baseUrl,
     bool isFirst = false,
     bool isLast = false,
   }) {
@@ -465,7 +473,10 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                   const SizedBox(height: 4),
                   // show attachments in ticket activity with preview options
                   if (attachedDocs.isNotEmpty) ...[
-                    TicketImagesWidget(attachedDocuments: attachedDocs),
+                    TicketFilesWidget(
+                      attachedDocuments: attachedDocs,
+                      baseUrl: baseUrl,
+                    ),
                   ],
                 ],
               ),

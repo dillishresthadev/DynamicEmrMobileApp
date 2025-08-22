@@ -1,6 +1,6 @@
 class ApiConstants {
   static const String hospitalCodeURL =
-      "https://developmentapiconnector.dynamicemr.net/api/CodeUrl/";
+      "https://developmentapiconnector.dynamicemr.net/api/CodeUrl";
 
   // Account
   static const String getUserBranches = "/Account/GetUserBranches";

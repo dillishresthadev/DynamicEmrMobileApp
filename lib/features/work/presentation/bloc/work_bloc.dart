@@ -176,12 +176,21 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
         event.assignToEmployeeId,
         event.attachmentPaths,
       );
-      emit(
-        state.copyWith(
-          createTicket: ticket,
-          workStatus: WorkStatus.createTicketSuccess,
-        ),
-      );
+      if (ticket) {
+        emit(
+          state.copyWith(
+            createTicket: ticket,
+            workStatus: WorkStatus.createTicketSuccess,
+          ),
+        );
+      } else {
+        emit(
+          state.copyWith(
+            createTicket: ticket,
+            workStatus: WorkStatus.createTicketError,
+          ),
+        );
+      }
     } catch (e) {
       log("Error getting while ticket creating $e");
       emit(
