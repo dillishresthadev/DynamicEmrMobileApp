@@ -1,8 +1,11 @@
 import 'package:dynamic_emr/core/constants/app_colors.dart';
+import 'package:dynamic_emr/core/local_storage/hospital_code_storage.dart';
+import 'package:dynamic_emr/core/notification/notification_init.dart';
 import 'package:dynamic_emr/core/routes/route_names.dart';
 import 'package:dynamic_emr/core/utils/app_snack_bar.dart';
 import 'package:dynamic_emr/core/widgets/form/custom_input_field.dart';
 import 'package:dynamic_emr/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:dynamic_emr/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -32,8 +35,9 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
   @override
-  @override
   Widget build(BuildContext context) {
+    final notificationInitializer = NotificationInitializer(injection());
+
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is AuthLoginSuccessState) {
@@ -117,7 +121,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                   return CircularProgressIndicator();
                                 }
                                 return ElevatedButton(
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    // sending FCM token when user press login
+                                    final code =
+                                        await injection<ISecureStorage>()
+                                            .getHospitalCode();
+                                    await notificationInitializer.initFCM(
+                                      applicationId: code,
+                                    );
+
                                     if (_formKey.currentState!.validate()) {
                                       _formKey.currentState!.save();
                                       context.read<AuthBloc>().add(

@@ -19,7 +19,6 @@ class ApiConstants {
   // Work (Task)
   static const String getTicketCategories = "/api/Ticket/GetTicketCategories";
   static const String getUserList = "/api/Ticket/GetUserList";
-  // Default Id is passed as 102
   static const String getTicketDetailsById = "/api/Ticket/GetTicketDetailById";
   static const String getMyTicketSummary = "/api/Ticket/GetMyTicketSummary";
   static const String getTicketAssignedToMe =
@@ -91,6 +90,15 @@ class ApiConstants {
   static const String getMyLoanAndAdvances =
       "/api/Payroll/GetMyLoanAndAdvances";
   static const String getMyTaxes = "/api/Payroll/GetMyTaxes";
+
+  // Notification
+
+  static const String sendFcmDeviceToken =
+      "/api/FcmDeviceToken/DeviceTokenPost";
+  static const String sendFcmDeviceTokenAnonymous =
+      "/api/FcmDeviceToken/DeviceTokenPostAnonymous";
+
+  static const String getAllNotification = "/api/Notification/GetUserNotifications";
 
   // Machine Attendence
   static const String postMachineAttendance =
