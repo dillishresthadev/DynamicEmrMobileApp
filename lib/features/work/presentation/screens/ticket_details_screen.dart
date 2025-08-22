@@ -57,6 +57,7 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
             builder: (context, state) {
               if (state.workStatus == WorkStatus.loading) {
                 _commentController.clear();
+                commentAttachments = [];
                 return Center(child: CircularProgressIndicator());
               } else if (state.workStatus ==
                       WorkStatus.ticketDetailsLoadSuccess ||
@@ -265,10 +266,16 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                       SnackbarType.error,
                                     );
                                   } else {
+                                    // Convert File objects to paths
+                                    List<String> attachmentPaths =
+                                        commentAttachments
+                                            .map((file) => file.path)
+                                            .toList();
                                     context.read<WorkBloc>().add(
                                       CommentOnTicketEvent(
                                         ticketId: ticket.id,
                                         message: _commentController.text,
+                                        attachmentPaths: attachmentPaths ?? [],
                                       ),
                                     );
                                   }

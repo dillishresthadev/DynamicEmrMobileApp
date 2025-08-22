@@ -72,7 +72,7 @@ class _LeaveApplicationCardWidgetState
                           ? '${leave.leaveTypeName} / ${leave.extendedLeaveTypeName}'
                           : hasExtended
                           ? leave.extendedLeaveTypeName ?? ''
-                          : leave.leaveTypeName ?? '',
+                          : leave.leaveTypeName,
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,

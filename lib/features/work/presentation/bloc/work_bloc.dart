@@ -183,7 +183,7 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
         ),
       );
     } catch (e) {
-      log("Error getting work user list $e");
+      log("Error getting while ticket creating $e");
       emit(
         state.copyWith(
           workStatus: WorkStatus.createTicketError,

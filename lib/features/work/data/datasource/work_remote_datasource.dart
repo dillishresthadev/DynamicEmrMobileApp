@@ -247,7 +247,7 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
             .map(
               (path) => MultipartFile.fromFileSync(
                 path,
-                filename: "test-files-image",
+                filename: path.split('/').last,
                 contentType: DioMediaType('application', 'octet-stream'),
               ),
             )
@@ -476,7 +476,7 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
             .map(
               (path) => MultipartFile.fromFileSync(
                 path,
-                filename: "test-files-image",
+                filename: path.split('/').last,
                 contentType: DioMediaType('application', 'octet-stream'),
               ),
             )
