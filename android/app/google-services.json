@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "290156799129",
+    "project_id": "dynamicemrapp-f8641",
+    "storage_bucket": "dynamicemrapp-f8641.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:290156799129:android:e6948f3ccd443f5e74c408",
+        "android_client_info": {
+          "package_name": "com.example.dynamic_emr"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6Yw91xSXxPk_Ft3XV1LqiM-Ovp2an_s4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
