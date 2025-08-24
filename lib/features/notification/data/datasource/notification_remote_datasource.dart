@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dynamic_emr/core/constants/api_constants.dart';
 import 'package:dynamic_emr/core/local_storage/hospital_code_storage.dart';
+import 'package:dynamic_emr/core/local_storage/token_storage.dart';
 import 'package:dynamic_emr/core/network/dio_http_client.dart';
 import 'package:dynamic_emr/features/notification/data/models/notification_model.dart';
 import 'package:dynamic_emr/features/notification/domain/entities/firebase_notification_entity.dart';
@@ -11,7 +12,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'package:dynamic_emr/injection.dart';
 
-/// Background message handler for Firebase Messaging
+//  Background message handler for Firebase Messaging
+@pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   NotificationRemoteDatasourceImpl._showLocalNotification(message);
@@ -19,9 +21,9 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 abstract class NotificationRemoteDatasource {
   Future<(int notificationCount, List<NotificationModel> items)>
-      getUserNotifications();
+  getUserNotifications();
 
-  Future<void> sendFcmDeviceToken(String token, String applicationId);
+  // Future<void> sendFcmDeviceToken(String token, String applicationId);
   Future<void> sendFcmDeviceTokenAnonymous(String token);
 
   Stream<FirebaseNotificationEntity> listenNotification();
@@ -74,14 +76,15 @@ class NotificationRemoteDatasourceImpl implements NotificationRemoteDatasource {
       description: 'This channel is used for important notifications.',
       importance: Importance.high,
     );
-
     await _localNotifications
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+          AndroidFlutterLocalNotificationsPlugin
+        >()
         ?.createNotificationChannel(channel);
 
-    const androidInitSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidInitSettings = AndroidInitializationSettings(
+      '@mipmap/ic_launcher',
+    );
     final iosInitSettings = DarwinInitializationSettings();
 
     final initSettings = InitializationSettings(
@@ -101,13 +104,20 @@ class NotificationRemoteDatasourceImpl implements NotificationRemoteDatasource {
 
   static Future<void> _showLocalNotification(RemoteMessage message) async {
     final notification = message.notification;
-    final android = notification?.android;
+    // final android = notification?.android;
 
-    if (notification != null && android != null) {
+    String? title = notification?.title ?? message.data['title'];
+    String? body = notification?.body ?? message.data['body'];
+
+    log(
+      "Message received. Notification: ${message.notification}, Data: ${message.data}",
+    );
+
+    if (title != null && body != null) {
       await _localNotifications.show(
         notification.hashCode,
-        notification.title,
-        notification.body,
+        title,
+        body,
         NotificationDetails(
           android: AndroidNotificationDetails(
             'high_importance_channel',
@@ -133,9 +143,11 @@ class NotificationRemoteDatasourceImpl implements NotificationRemoteDatasource {
   Future<(int, List<NotificationModel>)> getUserNotifications() async {
     try {
       final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
-
+      final accessToken = await injection<TokenSecureStorage>()
+          .getAccessToken();
       final response = await client.get(
         "$baseUrl/${ApiConstants.getAllNotification}",
+        token: accessToken,
       );
 
       final data = response['data'] as Map<String, dynamic>?;
@@ -168,32 +180,37 @@ class NotificationRemoteDatasourceImpl implements NotificationRemoteDatasource {
     });
   }
 
-  @override
-  Future<void> sendFcmDeviceToken(String token, String applicationId) async {
-    try {
-      final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
+  // @override
+  // Future<void> sendFcmDeviceToken(String token, String applicationId) async {
+  //   try {
+  //     final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
+  //     final accessToken = await injection<TokenSecureStorage>()
+  //         .getAccessToken();
 
-      final response = await client.post(
-        "$baseUrl/${ApiConstants.sendFcmDeviceToken}",
-        body: {"Token": token, "ApplicationId": applicationId},
-      );
+  //     final response = await client.post(
+  //       "$baseUrl/${ApiConstants.sendFcmDeviceToken}",
+  //       token: accessToken,
+  //       body: {"Token": token, "ApplicationId": applicationId},
+  //     );
 
-      if (response['data'] is! bool) {
-        throw Exception("Unexpected response format");
-      }
-    } catch (e) {
-      log("Error sending FCM device token: $e");
-      rethrow;
-    }
-  }
+  //     if (response['data'] is! bool) {
+  //       throw Exception("Unexpected response format");
+  //     }
+  //   } catch (e) {
+  //     log("Error sending FCM device token: $e");
+  //     rethrow;
+  //   }
+  // }
 
   @override
   Future<void> sendFcmDeviceTokenAnonymous(String token) async {
     try {
       final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
-
+      final accessToken = await injection<TokenSecureStorage>()
+          .getAccessToken();
       final response = await client.post(
-        "$baseUrl/${ApiConstants.sendFcmDeviceToken}",
+        "$baseUrl/${ApiConstants.sendFcmDeviceTokenAnonymous}",
+        token: accessToken,
         body: {"Token": token},
       );
 

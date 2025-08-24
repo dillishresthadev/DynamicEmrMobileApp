@@ -16,22 +16,22 @@ class NotificationInitializer {
       log("FCM token :$token");
 
       if (token != null) {
-        if (applicationId != null && applicationId.isNotEmpty) {
-          // User is logged in → send with ApplicationId
-          await _datasource.sendFcmDeviceToken(token, applicationId);
-        } else {
-          // Anonymous device
-          await _datasource.sendFcmDeviceTokenAnonymous(token);
-        }
+        // if (applicationId != null && applicationId.isNotEmpty) {
+        //   // User is logged in → send with ApplicationId
+        //   await _datasource.sendFcmDeviceToken(token, applicationId);
+        // } else {
+        // Anonymous device
+        await _datasource.sendFcmDeviceTokenAnonymous(token);
+        // }
       }
 
       // Always listen for token refresh
       FirebaseMessaging.instance.onTokenRefresh.listen((newToken) async {
-        if (applicationId != null && applicationId.isNotEmpty) {
-          await _datasource.sendFcmDeviceToken(newToken, applicationId);
-        } else {
-          await _datasource.sendFcmDeviceTokenAnonymous(newToken);
-        }
+        // if (applicationId != null && applicationId.isNotEmpty) {
+        //   await _datasource.sendFcmDeviceToken(newToken, applicationId);
+        // } else {
+        await _datasource.sendFcmDeviceTokenAnonymous(newToken);
+        // }
       });
     } catch (e) {
       log("Error initializing FCM token: $e");
