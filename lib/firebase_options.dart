@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyC6Yw91xSXxPk_Ft3XV1LqiM-Ovp2an_s4',
-    appId: '1:290156799129:android:e6948f3ccd443f5e74c408',
+    appId: '1:290156799129:android:9799e4ee65f23ed674c408',
     messagingSenderId: '290156799129',
     projectId: 'dynamicemrapp-f8641',
     storageBucket: 'dynamicemrapp-f8641.firebasestorage.app',
@@ -59,10 +59,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyC0WYI8N2Mew8zb8Oshef_N5J5hhfjo3Iw',
-    appId: '1:290156799129:ios:ed68e9ab820edb2374c408',
+    appId: '1:290156799129:ios:f3021be46adf947874c408',
     messagingSenderId: '290156799129',
     projectId: 'dynamicemrapp-f8641',
     storageBucket: 'dynamicemrapp-f8641.firebasestorage.app',
     iosBundleId: 'com.paailatechnologies.dynamicemr',
   );
+
 }
