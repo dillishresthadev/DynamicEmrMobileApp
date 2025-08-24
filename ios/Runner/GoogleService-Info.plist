@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.dynamicEmr</string>
+	<string>com.paailatechnologies.dynamicemr</string>
 	<key>PROJECT_ID</key>
 	<string>dynamicemrapp-f8641</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:290156799129:ios:ed68e9ab820edb2374c408</string>
+	<string>1:290156799129:ios:f3021be46adf947874c408</string>
 </dict>
 </plist>
