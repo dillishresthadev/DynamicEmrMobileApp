@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.dynamic_emr"
+    namespace = "com.paaila_technologies.dynamicemr_android"
     compileSdk = 35
     ndkVersion = "27.0.12077973"
 
@@ -27,13 +27,14 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.dynamic_emr"
-        minSdk = 23
-        targetSdk = flutter.targetSdkVersion
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
-        multiDexEnabled = true
+    applicationId = "com.paaila_technologies.dynamicemr_android"
+    minSdk = flutter.minSdkVersion.toInt()
+    targetSdk = flutter.targetSdkVersion.toInt()
+    versionCode = flutter.versionCode.toInt()
+    versionName = flutter.versionName
+    multiDexEnabled = true
     }
+
 
     buildTypes {
         release {
