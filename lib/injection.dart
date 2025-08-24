@@ -51,8 +51,11 @@ import 'package:dynamic_emr/features/notification/data/repository/notification_r
 import 'package:dynamic_emr/features/notification/domain/repository/notification_repository.dart';
 import 'package:dynamic_emr/features/notification/domain/usecases/get_user_notification_usecase.dart';
 import 'package:dynamic_emr/features/notification/domain/usecases/listen_notification_usecase.dart';
+import 'package:dynamic_emr/features/notification/domain/usecases/mark_all_notification_as_read_usecase.dart';
+import 'package:dynamic_emr/features/notification/domain/usecases/mark_notification_as_read_usecase.dart';
 import 'package:dynamic_emr/features/notification/domain/usecases/send_fcm_device_token_anonymous_usecase.dart';
 import 'package:dynamic_emr/features/notification/domain/usecases/send_fcm_device_token_usecase.dart';
+import 'package:dynamic_emr/features/notification/presentation/bloc/notification_bloc.dart';
 import 'package:dynamic_emr/features/payrolls/data/datasource/payroll_remote_datasource.dart';
 import 'package:dynamic_emr/features/payrolls/data/repository/payroll_repository_impl.dart';
 import 'package:dynamic_emr/features/payrolls/domain/repository/payroll_repository.dart';
@@ -420,6 +423,25 @@ Future<void> initDependencies() async {
   );
   // Notification
 
+  injection.registerLazySingleton<NotificationBloc>(
+    () => NotificationBloc(
+      sendFcmDeviceTokenAnonymousUsecase:
+          injection<SendFcmDeviceTokenAnonymousUsecase>(),
+      markAllNotificationAsReadUsecase: injection<MarkAllNotificationAsReadUsecase>(),
+      markNotificationAsReadUsecase: injection<MarkNotificationAsReadUsecase>(),
+    ),
+  );
+
+  injection.registerLazySingleton<MarkNotificationAsReadUsecase>(
+    () => MarkNotificationAsReadUsecase(
+      repository: injection<NotificationRepository>(),
+    ),
+  );
+  injection.registerLazySingleton<MarkAllNotificationAsReadUsecase>(
+    () => MarkAllNotificationAsReadUsecase(
+      repository: injection<NotificationRepository>(),
+    ),
+  );
   injection.registerLazySingleton<SendFcmDeviceTokenUsecase>(
     () => SendFcmDeviceTokenUsecase(
       repository: injection<NotificationRepository>(),

@@ -5,6 +5,7 @@ import 'package:dynamic_emr/features/attendance/presentation/bloc/attendance_blo
 import 'package:dynamic_emr/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:dynamic_emr/features/holiday/presentation/bloc/holiday_bloc.dart';
 import 'package:dynamic_emr/features/notice/presentation/bloc/notice_bloc.dart';
+import 'package:dynamic_emr/features/notification/presentation/bloc/notification_bloc.dart';
 import 'package:dynamic_emr/features/payrolls/presentation/bloc/payroll_bloc.dart';
 import 'package:dynamic_emr/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:dynamic_emr/features/punch/presentation/bloc/punch_bloc.dart';
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => injection<NoticeBloc>()),
         BlocProvider(create: (context) => injection<HolidayBloc>()),
         BlocProvider(create: (context) => injection<PunchBloc>()),
+        BlocProvider(create: (context)=>injection<NotificationBloc>())
       ],
       child: MaterialApp(
         title: 'Dynamic EMR',

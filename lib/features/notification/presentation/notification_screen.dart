@@ -1,3 +1,4 @@
+import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:flutter/material.dart';
 
 class NotificationScreen extends StatefulWidget {
@@ -84,52 +85,22 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.grey[800],
-        title: Row(
-          children: [
-            const Text(
-              'Notifications',
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20),
-            ),
-            if (notificationData != null && notificationData!.unreadCount > 0)
-              Container(
-                margin: const EdgeInsets.only(left: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  '${notificationData!.unreadCount}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-          ],
-        ),
-        actions: [
+      backgroundColor: Colors.white,
+      appBar: DynamicEMRAppBar(title: "Notification",automaticallyImplyLeading: true,
+          actions: [
           if (notificationData != null && notificationData!.unreadCount > 0)
             TextButton(
-              onPressed: _markAllAsRead,
+              onPressed: (){
+                // mark all as read
+              },
               child: Text(
                 'Mark all read',
                 style: TextStyle(
-                  color: Theme.of(context).primaryColor,
+                  color: Colors.white,
                   fontWeight: FontWeight.w500,
                 ),
               ),
             ),
-          IconButton(
-            onPressed: _refreshNotifications,
-            icon: Icon(Icons.refresh, color: Colors.grey[600]),
-          ),
         ],
       ),
       body: RefreshIndicator(
@@ -188,163 +159,104 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   Widget _buildNotificationTile(NotificationItem notification) {
-    return Dismissible(
-      key: Key(notification.id.toString()),
-      direction: DismissDirection.endToStart,
-      background: Container(
-        color: Colors.red[400],
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
-        child: const Icon(Icons.delete_outline, color: Colors.white, size: 24),
-      ),
-      onDismissed: (direction) {
-        _deleteNotification(notification);
-      },
-      child: Container(
-        color: notification.viewed ? Colors.white : Colors.blue[25],
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 8,
-          ),
-          leading: Stack(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: _getNotificationColor(
-                    notification.title,
-                  ).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  _getNotificationIcon(notification.title),
-                  color: _getNotificationColor(notification.title),
-                  size: 24,
-                ),
-              ),
-              if (notification.hasAttachment)
-                Positioned(
-                  right: 0,
-                  top: 0,
-                  child: Container(
-                    width: 16,
-                    height: 16,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[600],
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.attach_file,
-                      size: 10,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-            ],
-          ),
-          title: Row(
-            children: [
-              Expanded(
-                child: Text(
+    return Container(
+      color: notification.viewed ? Colors.white : Colors.blue[25],
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 8,
+        ),
+        leading: Stack(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: _getNotificationColor(
                   notification.title,
-                  style: TextStyle(
-                    fontWeight: notification.viewed
-                        ? FontWeight.w500
-                        : FontWeight.w600,
-                    fontSize: 16,
-                    color: Colors.grey[800],
-                  ),
-                ),
+                ).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
               ),
-              if (notification.starred)
-                Icon(Icons.star, size: 16, color: Colors.amber[600]),
-            ],
-          ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 4),
-              Text(
-                'From: ${notification.from}',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[500],
-                  fontWeight: FontWeight.w500,
-                ),
+              child: Icon(
+                _getNotificationIcon(notification.title),
+                color: _getNotificationColor(notification.title),
+                size: 24,
               ),
-              const SizedBox(height: 2),
-              Text(
-                notification.content,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
-                  height: 1.4,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                notification.mailDate,
-                style: TextStyle(fontSize: 12, color: Colors.grey[500]),
-              ),
-            ],
-          ),
-          trailing: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              if (!notification.viewed)
-                Container(
-                  width: 8,
-                  height: 8,
+            ),
+            if (notification.hasAttachment)
+              Positioned(
+                right: 0,
+                top: 0,
+                child: Container(
+                  width: 16,
+                  height: 16,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
+                    color: Colors.grey[600],
                     shape: BoxShape.circle,
                   ),
+                  child: const Icon(
+                    Icons.attach_file,
+                    size: 10,
+                    color: Colors.white,
+                  ),
                 ),
-              const SizedBox(height: 4),
-              PopupMenuButton<String>(
-                icon: Icon(Icons.more_vert, size: 16, color: Colors.grey[400]),
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    value: 'mark_read',
-                    child: Text(
-                      notification.viewed ? 'Mark as unread' : 'Mark as read',
-                    ),
-                  ),
-                  PopupMenuItem(
-                    value: 'star',
-                    child: Text(
-                      notification.starred ? 'Remove star' : 'Add star',
-                    ),
-                  ),
-                  const PopupMenuItem(value: 'delete', child: Text('Delete')),
-                ],
-                onSelected: (value) {
-                  switch (value) {
-                    case 'mark_read':
-                      _toggleReadStatus(notification);
-                      break;
-                    case 'star':
-                      _toggleStarStatus(notification);
-                      break;
-                    case 'delete':
-                      _deleteNotification(notification);
-                      break;
-                  }
-                },
               ),
-            ],
-          ),
-          onTap: () {
-            if (!notification.viewed) {
-              _markAsRead(notification);
-            }
-            _showNotificationDetail(notification);
-          },
+          ],
         ),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                notification.title,
+                style: TextStyle(
+                  fontWeight: notification.viewed
+                      ? FontWeight.w500
+                      : FontWeight.w600,
+                  fontSize: 16,
+                  color: Colors.grey[800],
+                ),
+              ),
+            ),
+            if (notification.starred)
+              Icon(Icons.star, size: 16, color: Colors.amber[600]),
+          ],
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 4),
+            Text(
+              'From: ${notification.from}',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[500],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              notification.content,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey[600],
+                height: 1.4,
+              ),
+              maxLines: 4,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              notification.mailDate,
+              style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+            ),
+          ],
+        ),
+        onTap: () {
+          if (!notification.viewed) {
+            // marked as read
+          }
+          _showNotificationDetail(notification);
+        },
       ),
     );
   }
@@ -416,81 +328,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
     }
   }
 
-  void _markAsRead(NotificationItem notification) {
-    setState(() {
-      notification.viewed = true;
-      if (notificationData != null) {
-        notificationData!.notificationCount = notificationData!
-            .recentNotifications
-            .where((n) => !n.viewed)
-            .length;
-      }
-    });
-    // TODO: Call API to mark as read
-  }
 
-  void _toggleReadStatus(NotificationItem notification) {
-    setState(() {
-      notification.viewed = !notification.viewed;
-      if (notificationData != null) {
-        notificationData!.notificationCount = notificationData!
-            .recentNotifications
-            .where((n) => !n.viewed)
-            .length;
-      }
-    });
-    // TODO: Call API to update read status
-  }
 
-  void _toggleStarStatus(NotificationItem notification) {
-    setState(() {
-      notification.starred = !notification.starred;
-    });
-    // TODO: Call API to update star status
-  }
 
-  void _deleteNotification(NotificationItem notification) {
-    setState(() {
-      notificationData?.recentNotifications.removeWhere(
-        (n) => n.id == notification.id,
-      );
-      if (notificationData != null) {
-        notificationData!.notificationCount = notificationData!
-            .recentNotifications
-            .where((n) => !n.viewed)
-            .length;
-      }
-    });
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Notification deleted'),
-        action: SnackBarAction(
-          label: 'Undo',
-          onPressed: () {
-            // TODO: Implement undo functionality
-          },
-        ),
-      ),
-    );
-    // TODO: Call API to delete notification
-  }
 
-  void _markAllAsRead() {
-    setState(() {
-      if (notificationData != null) {
-        for (var notification in notificationData!.recentNotifications) {
-          notification.viewed = true;
-        }
-        notificationData!.notificationCount = 0;
-      }
-    });
-    // TODO: Call API to mark all as read
-  }
-
-  void _refreshNotifications() {
-    _loadNotifications();
-  }
 
   void _showNotificationDetail(NotificationItem notification) {
     showDialog(
@@ -568,7 +410,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 }
 
-// Data models based on your API response
 class NotificationResponse {
   int notificationCount;
   List<NotificationItem> recentNotifications;

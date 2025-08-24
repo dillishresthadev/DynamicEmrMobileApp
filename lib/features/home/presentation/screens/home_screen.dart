@@ -246,7 +246,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   );
                 },
-                icon: Icon(Icons.notifications),
+                icon: Icon(Icons.notifications_outlined,color: Colors.white,),
               ),
             ],
           );

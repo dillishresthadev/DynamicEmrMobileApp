@@ -63,6 +63,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '290156799129',
     projectId: 'dynamicemrapp-f8641',
     storageBucket: 'dynamicemrapp-f8641.firebasestorage.app',
-    iosBundleId: 'com.example.dynamicEmr',
+    iosBundleId: 'com.paailatechnologies.dynamicemr',
   );
 }
