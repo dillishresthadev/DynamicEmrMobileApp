@@ -5,6 +5,6 @@ class SendFcmDeviceTokenUsecase {
   SendFcmDeviceTokenUsecase({required this.repository});
 
   Future<void> call(String token, String applicationId) async {
-    return await repository.sendFcmDeviceToken(token, applicationId);
+    // return await repository.sendFcmDeviceToken(token, applicationId);
   }
 }

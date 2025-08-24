@@ -27,6 +27,8 @@ abstract class NotificationRemoteDatasource {
   Future<void> sendFcmDeviceTokenAnonymous(String token);
 
   Stream<FirebaseNotificationEntity> listenNotification();
+  Future<void> markNotificationAsRead(String notificationId);
+  Future<void> markAllNotificationAsRead();
 }
 
 class NotificationRemoteDatasourceImpl implements NotificationRemoteDatasource {
@@ -45,6 +47,7 @@ class NotificationRemoteDatasourceImpl implements NotificationRemoteDatasource {
     // Request permissions
     await FirebaseMessaging.instance.requestPermission(
       alert: true,
+      announcement: true,
       badge: true,
       sound: true,
     );
@@ -221,5 +224,17 @@ class NotificationRemoteDatasourceImpl implements NotificationRemoteDatasource {
       log("Error sending anonymous FCM device token: $e");
       rethrow;
     }
+  }
+
+  @override
+  Future<void> markAllNotificationAsRead() {
+    // TODO: implement markAllNotificationAsRead
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> markNotificationAsRead(String notificationId) {
+    // TODO: implement markNotificationAsRead
+    throw UnimplementedError();
   }
 }

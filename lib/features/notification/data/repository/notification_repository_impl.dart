@@ -38,15 +38,15 @@ class NotificationRepositoryImpl extends NotificationRepository {
     }
   }
 
-  @override
-  Future<void> sendFcmDeviceToken(String token, String applicationId) async {
-    try {
-      await remoteDatasource.sendFcmDeviceToken(token, applicationId);
-    } catch (e) {
-      log("Error in sendFcmDeviceToken repository: $e");
-      rethrow;
-    }
-  }
+  // @override
+  // Future<void> sendFcmDeviceToken(String token, String applicationId) async {
+  //   try {
+  //     await remoteDatasource.sendFcmDeviceToken(token, applicationId);
+  //   } catch (e) {
+  //     log("Error in sendFcmDeviceToken repository: $e");
+  //     rethrow;
+  //   }
+  // }
 
   @override
   Future<void> sendFcmDeviceTokenAnonymous(String token) async {
@@ -56,5 +56,23 @@ class NotificationRepositoryImpl extends NotificationRepository {
       log("Error in sendFcmDeviceTokenAnonymous repository: $e");
       rethrow;
     }
+  }
+  
+  @override
+  Future<void> markAllNotificationAsRead() {
+    // TODO: implement markAllNotificationAsRead
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future<void> markNotificationAsRead(String notificationId) {
+    // TODO: implement markNotificationAsRead
+    throw UnimplementedError();
+  }
+  
+  @override
+  Future<int> getUnreadNotificationCount(String type) {
+    // TODO: implement getUnreadNotificationCount
+    throw UnimplementedError();
   }
 }

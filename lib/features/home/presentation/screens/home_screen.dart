@@ -9,6 +9,7 @@ import 'package:dynamic_emr/features/home/presentation/screens/shift_screen.dart
 import 'package:dynamic_emr/features/home/presentation/widgets/quick_action_widget.dart';
 import 'package:dynamic_emr/features/home/presentation/widgets/today_attendance_widget.dart';
 import 'package:dynamic_emr/features/notice/presentation/screens/notice_screen.dart';
+import 'package:dynamic_emr/features/notification/presentation/notification_screen.dart';
 import 'package:dynamic_emr/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:dynamic_emr/features/profile/presentation/widgets/profile_picture_widget.dart';
 import 'package:dynamic_emr/features/punch/presentation/bloc/punch_bloc.dart';
@@ -235,6 +236,18 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(width: 16),
               Expanded(child: _buildUserInfo(state)),
+              Spacer(),
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => NotificationScreen(),
+                    ),
+                  );
+                },
+                icon: Icon(Icons.notifications),
+              ),
             ],
           );
         },

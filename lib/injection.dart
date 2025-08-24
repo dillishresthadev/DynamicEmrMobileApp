@@ -46,6 +46,13 @@ import 'package:dynamic_emr/features/notice/domain/repository/notice_repository.
 import 'package:dynamic_emr/features/notice/domain/usecases/notice_by_id_usecase.dart';
 import 'package:dynamic_emr/features/notice/domain/usecases/notice_usecase.dart';
 import 'package:dynamic_emr/features/notice/presentation/bloc/notice_bloc.dart';
+import 'package:dynamic_emr/features/notification/data/datasource/notification_remote_datasource.dart';
+import 'package:dynamic_emr/features/notification/data/repository/notification_repository_impl.dart';
+import 'package:dynamic_emr/features/notification/domain/repository/notification_repository.dart';
+import 'package:dynamic_emr/features/notification/domain/usecases/get_user_notification_usecase.dart';
+import 'package:dynamic_emr/features/notification/domain/usecases/listen_notification_usecase.dart';
+import 'package:dynamic_emr/features/notification/domain/usecases/send_fcm_device_token_anonymous_usecase.dart';
+import 'package:dynamic_emr/features/notification/domain/usecases/send_fcm_device_token_usecase.dart';
 import 'package:dynamic_emr/features/payrolls/data/datasource/payroll_remote_datasource.dart';
 import 'package:dynamic_emr/features/payrolls/data/repository/payroll_repository_impl.dart';
 import 'package:dynamic_emr/features/payrolls/domain/repository/payroll_repository.dart';
@@ -411,7 +418,38 @@ Future<void> initDependencies() async {
   injection.registerLazySingleton<HolidayRemoteDatasource>(
     () => HolidayRemoteDatasourceImpl(client: injection<DioHttpClient>()),
   );
+  // Notification
 
+  injection.registerLazySingleton<SendFcmDeviceTokenUsecase>(
+    () => SendFcmDeviceTokenUsecase(
+      repository: injection<NotificationRepository>(),
+    ),
+  );
+  injection.registerLazySingleton<SendFcmDeviceTokenAnonymousUsecase>(
+    () => SendFcmDeviceTokenAnonymousUsecase(
+      repository: injection<NotificationRepository>(),
+    ),
+  );
+  injection.registerLazySingleton<ListenNotificationUsecase>(
+    () => ListenNotificationUsecase(
+      repository: injection<NotificationRepository>(),
+    ),
+  );
+  injection.registerLazySingleton<GetUserNotificationUsecase>(
+    () => GetUserNotificationUsecase(
+      repository: injection<NotificationRepository>(),
+    ),
+  );
+
+  injection.registerLazySingleton<NotificationRepository>(
+    () => NotificationRepositoryImpl(
+      remoteDatasource: injection<NotificationRemoteDatasource>(),
+    ),
+  );
+
+  injection.registerLazySingleton<NotificationRemoteDatasource>(
+    () => NotificationRemoteDatasourceImpl(client: injection<DioHttpClient>()),
+  );
   // punch
   injection.registerLazySingleton<PunchBloc>(
     () => PunchBloc(

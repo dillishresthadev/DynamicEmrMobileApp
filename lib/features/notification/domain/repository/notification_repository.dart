@@ -4,9 +4,12 @@ import 'package:dynamic_emr/features/notification/domain/entities/notification_e
 abstract class NotificationRepository {
   Future<(int notificationCount, List<NotificationEntity> items)>
   getUserNotifications();
-  Future<void> sendFcmDeviceToken(String token, String applicationId);
+  // Future<void> sendFcmDeviceToken(String token, String applicationId);
 
-  /// Sends the FCM device token anonymously (for unauthenticated users)
+  /// Sends the FCM device token anonymously
   Future<void> sendFcmDeviceTokenAnonymous(String token);
+  Future<void> markNotificationAsRead(String notificationId);
+  Future<void> markAllNotificationAsRead();
+  Future<int> getUnreadNotificationCount(String type);
   Stream<FirebaseNotificationEntity> listenNotification();
 }
