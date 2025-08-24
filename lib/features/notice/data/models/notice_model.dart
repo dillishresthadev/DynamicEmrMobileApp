@@ -21,8 +21,8 @@ class NoticeModel extends NoticeEntity {
     publishedTime: json["publishedTime"] == null
         ? null
         : DateTime.parse(json["publishedTime"]),
-    tags: json["tags"],
+    tags: json["tags"] ?? '',
     featuredImage: json["featuredImage"],
-    excerpt: json["excerpt"],
+    excerpt: json["excerpt"] ?? '',
   );
 }

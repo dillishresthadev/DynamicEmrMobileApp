@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => injection<NoticeBloc>()),
         BlocProvider(create: (context) => injection<HolidayBloc>()),
         BlocProvider(create: (context) => injection<PunchBloc>()),
-        BlocProvider(create: (context)=>injection<NotificationBloc>())
+        BlocProvider(create: (context) => injection<NotificationBloc>()),
       ],
       child: MaterialApp(
         title: 'Dynamic EMR',
