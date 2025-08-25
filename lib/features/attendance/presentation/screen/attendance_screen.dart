@@ -98,40 +98,37 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                   if (state.status == AttendanceStatus.loading &&
                       state.primary == null)
                     const Center(child: CircularProgressIndicator())
-                  else if (state.primary != null)
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 8,
-                            mainAxisSpacing: 8,
-                            childAspectRatio: 2.3,
-                          ),
-                      itemCount: state.primary!.length,
-                      itemBuilder: (context, index) {
-                        final primaryAttendance = state.primary![index];
-                        final stat = statusCards.firstWhere(
-                          (e) => e['title'] == primaryAttendance.category,
-                          orElse: () => {
-                            'title': primaryAttendance.category,
-                            'icon': Icons.help_outline,
-                            'color': Colors.grey,
-                            'bgColor': Colors.grey.shade200,
-                          },
-                        );
-                        return AttendanceCardWidget(
-                          icon: stat['icon'] as IconData,
-                          color: stat['color'] as Color,
-                          bgColor: stat['bgColor'] as Color,
-                          count: primaryAttendance.qty.toString(),
-                          label: primaryAttendance.category,
-                        );
-                      },
-                    )
-                  else
-                    const Text("No primary attendance data"),
+                  else GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 8,
+                          mainAxisSpacing: 8,
+                          childAspectRatio: 2.3,
+                        ),
+                    itemCount: state.primary!.length,
+                    itemBuilder: (context, index) {
+                      final primaryAttendance = state.primary![index];
+                      final stat = statusCards.firstWhere(
+                        (e) => e['title'] == primaryAttendance.category,
+                        orElse: () => {
+                          'title': primaryAttendance.category,
+                          'icon': Icons.help_outline,
+                          'color': Colors.grey,
+                          'bgColor': Colors.grey.shade200,
+                        },
+                      );
+                      return AttendanceCardWidget(
+                        icon: stat['icon'] as IconData,
+                        color: stat['color'] as Color,
+                        bgColor: stat['bgColor'] as Color,
+                        count: primaryAttendance.qty.toString(),
+                        label: primaryAttendance.category,
+                      );
+                    },
+                  ),
 
                   const SizedBox(height: 32),
                   const Text(
@@ -147,40 +144,37 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                   if (state.status == AttendanceStatus.loading &&
                       state.extended == null)
                     const Center(child: CircularProgressIndicator())
-                  else if (state.extended != null)
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 8,
-                            mainAxisSpacing: 8,
-                            childAspectRatio: 2.3,
-                          ),
-                      itemCount: state.extended!.length,
-                      itemBuilder: (context, index) {
-                        final extendedAttendance = state.extended![index];
-                        final stat = statusCards.firstWhere(
-                          (e) => e['title'] == extendedAttendance.category,
-                          orElse: () => {
-                            'title': extendedAttendance.category,
-                            'icon': Icons.help_outline,
-                            'color': Colors.grey,
-                            'bgColor': Colors.grey.shade200,
-                          },
-                        );
-                        return AttendanceCardWidget(
-                          icon: stat['icon'] as IconData,
-                          color: stat['color'] as Color,
-                          bgColor: stat['bgColor'] as Color,
-                          count: extendedAttendance.qty.toString(),
-                          label: extendedAttendance.category,
-                        );
-                      },
-                    )
-                  else
-                    const Text("No extended attendance data"),
+                  else GridView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 8,
+                          mainAxisSpacing: 8,
+                          childAspectRatio: 2.3,
+                        ),
+                    itemCount: state.extended!.length,
+                    itemBuilder: (context, index) {
+                      final extendedAttendance = state.extended![index];
+                      final stat = statusCards.firstWhere(
+                        (e) => e['title'] == extendedAttendance.category,
+                        orElse: () => {
+                          'title': extendedAttendance.category,
+                          'icon': Icons.help_outline,
+                          'color': Colors.grey,
+                          'bgColor': Colors.grey.shade200,
+                        },
+                      );
+                      return AttendanceCardWidget(
+                        icon: stat['icon'] as IconData,
+                        color: stat['color'] as Color,
+                        bgColor: stat['bgColor'] as Color,
+                        count: extendedAttendance.qty.toString(),
+                        label: extendedAttendance.category,
+                      );
+                    },
+                  ),
 
                   const SizedBox(height: 32),
 

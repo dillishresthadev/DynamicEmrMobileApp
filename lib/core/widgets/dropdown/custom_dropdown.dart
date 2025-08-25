@@ -137,7 +137,7 @@ class CustomDropdown2 extends StatelessWidget {
       menuItemStyleData: MenuItemStyleData(
         height: 50,
         padding: EdgeInsets.symmetric(horizontal: 16),
-        overlayColor: MaterialStateProperty.all(
+        overlayColor: WidgetStateProperty.all(
           AppColors.primary.withOpacity(0.1),
         ),
       ),
@@ -152,12 +152,12 @@ class CustomDropdownClearFilters extends StatelessWidget {
   final ValueChanged<String?> onChanged;
 
   const CustomDropdownClearFilters({
-    Key? key,
+    super.key,
     required this.value,
     required this.items,
     required this.hintText,
     required this.onChanged,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

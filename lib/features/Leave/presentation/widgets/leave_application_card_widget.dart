@@ -17,7 +17,7 @@ class _LeaveApplicationCardWidgetState
   Widget build(BuildContext context) {
     final leave = widget.leave;
 
-    final hasPrimary = leave.fromDate != null && leave.toDate != null;
+    final hasPrimary = leave.toDate != null;
     final hasExtended =
         leave.extendedFromDate != null && leave.extendedToDate != null;
 

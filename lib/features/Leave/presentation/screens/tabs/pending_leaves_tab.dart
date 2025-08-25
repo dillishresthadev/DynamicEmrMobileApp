@@ -101,7 +101,7 @@ class LeaveDetailsBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasPrimary = leave.fromDate != null && leave.toDate != null;
+    final hasPrimary = leave.toDate != null;
     final hasExtended =
         leave.extendedFromDate != null && leave.extendedToDate != null;
 
@@ -159,7 +159,7 @@ class LeaveDetailsBottomSheet extends StatelessWidget {
                           color: Color(0xFF1E293B),
                         ),
                       ),
-                      if (leave.leaveNo?.isNotEmpty == true)
+                      if (leave.leaveNo.isNotEmpty == true)
                         Text(
                           'Leave No: ${leave.leaveNo}',
                           style: TextStyle(
@@ -204,11 +204,11 @@ class LeaveDetailsBottomSheet extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Employee Information
-                  if (leave.employeeDisplayName?.isNotEmpty == true)
+                  if (leave.employeeDisplayName.isNotEmpty == true)
                     _buildInfoSection('Employee Information', [
                       _buildInfoRow(
                         'Employee',
-                        leave.employeeDisplayName!,
+                        leave.employeeDisplayName,
                         Icons.person,
                       ),
                     ]),
@@ -220,45 +220,45 @@ class LeaveDetailsBottomSheet extends StatelessWidget {
                       DateTime.parse(leave.applicationDate).toDMMMYYYY(),
                       Icons.event_note,
                     ),
-                    if (leave.applicationDateNp?.isNotEmpty == true)
+                    if (leave.applicationDateNp.isNotEmpty == true)
                       _buildInfoRow(
                         'Application Date (NP)',
-                        leave.applicationDateNp!,
+                        leave.applicationDateNp,
                         Icons.calendar_today,
                       ),
-                    if (leave.status?.isNotEmpty == true)
-                      _buildInfoRow('Status', leave.status!, Icons.info),
+                    if (leave.status.isNotEmpty == true)
+                      _buildInfoRow('Status', leave.status, Icons.info),
                   ]),
 
                   // Primary Leave Information
                   if (hasPrimary) ...[
                     _buildInfoSection('Primary Leave', [
-                      if (leave.leaveTypeName?.isNotEmpty == true)
+                      if (leave.leaveTypeName.isNotEmpty == true)
                         _buildInfoRow(
                           'Leave Type',
-                          leave.leaveTypeName!,
+                          leave.leaveTypeName,
                           Icons.category,
                         ),
                       _buildInfoRow(
                         'From Date',
-                        DateTime.parse(leave.fromDate!).toDMMMYYYY(),
+                        DateTime.parse(leave.fromDate).toDMMMYYYY(),
                         Icons.date_range,
                       ),
                       _buildInfoRow(
                         'To Date',
-                        DateTime.parse(leave.toDate!).toDMMMYYYY(),
+                        DateTime.parse(leave.toDate).toDMMMYYYY(),
                         Icons.date_range,
                       ),
-                      if (leave.fromDateNp?.isNotEmpty == true)
+                      if (leave.fromDateNp.isNotEmpty == true)
                         _buildInfoRow(
                           'From Date (NP)',
-                          leave.fromDateNp!,
+                          leave.fromDateNp,
                           Icons.calendar_today,
                         ),
-                      if (leave.toDateNp?.isNotEmpty == true)
+                      if (leave.toDateNp.isNotEmpty == true)
                         _buildInfoRow(
                           'To Date (NP)',
-                          leave.toDateNp!,
+                          leave.toDateNp,
                           Icons.calendar_today,
                         ),
                       if (leave.halfDayStatus?.isNotEmpty == true)
@@ -321,11 +321,11 @@ class LeaveDetailsBottomSheet extends StatelessWidget {
                   ],
 
                   // Reason
-                  if (leave.reason?.trim().isNotEmpty == true)
+                  if (leave.reason.trim().isNotEmpty == true)
                     _buildInfoSection('Reason', [
                       _buildInfoRow(
                         'Leave Reason',
-                        leave.reason!,
+                        leave.reason,
                         Icons.description,
                       ),
                     ]),
@@ -465,7 +465,7 @@ class LeaveDetailsBottomSheet extends StatelessWidget {
   Widget _buildRecommendationSection() {
     final hasRecommendationData =
         leave.isRecommendationApproved ||
-        leave.recommendationStatus?.isNotEmpty == true ||
+        leave.recommendationStatus.isNotEmpty == true ||
         leave.recommendationApprovedBy?.isNotEmpty == true ||
         leave.recommendationApprovedOn?.isNotEmpty == true ||
         leave.recommendationRemarks?.isNotEmpty == true ||
@@ -475,11 +475,11 @@ class LeaveDetailsBottomSheet extends StatelessWidget {
 
     List<Widget> recommendationItems = [];
 
-    if (leave.recommendationStatus?.isNotEmpty == true) {
+    if (leave.recommendationStatus.isNotEmpty == true) {
       recommendationItems.add(
         _buildInfoRow(
           'Recommendation Status',
-          leave.recommendationStatus!,
+          leave.recommendationStatus,
           Icons.thumb_up,
         ),
       );
@@ -539,7 +539,7 @@ class LeaveDetailsBottomSheet extends StatelessWidget {
   Widget _buildSubstituteSection() {
     final hasSubstituteData =
         leave.isSubstituteAccepted ||
-        leave.substitutationStatus?.isNotEmpty == true ||
+        leave.substitutationStatus.isNotEmpty == true ||
         leave.substituteEmployeeName?.isNotEmpty == true ||
         leave.substituteAcceptRejectBy?.isNotEmpty == true ||
         leave.substituteAcceptRejectOn?.isNotEmpty == true ||
@@ -549,11 +549,11 @@ class LeaveDetailsBottomSheet extends StatelessWidget {
 
     List<Widget> substituteItems = [];
 
-    if (leave.substitutationStatus?.isNotEmpty == true) {
+    if (leave.substitutationStatus.isNotEmpty == true) {
       substituteItems.add(
         _buildInfoRow(
           'Substitution Status',
-          leave.substitutationStatus!,
+          leave.substitutationStatus,
           Icons.swap_horiz,
         ),
       );
