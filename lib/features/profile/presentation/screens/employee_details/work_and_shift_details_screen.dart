@@ -24,7 +24,7 @@ class _WorkAndShiftDetailsScreenState extends State<WorkAndShiftDetailsScreen> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(12.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -45,7 +45,7 @@ class _WorkAndShiftDetailsScreenState extends State<WorkAndShiftDetailsScreen> {
     return Container(
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -187,7 +187,7 @@ class _WorkAndShiftDetailsScreenState extends State<WorkAndShiftDetailsScreen> {
     return Container(
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Column(
           children: [
             Row(
@@ -245,10 +245,31 @@ class _WorkAndShiftDetailsScreenState extends State<WorkAndShiftDetailsScreen> {
                     employee.workBranchTitle,
                     Icons.location_on,
                   ),
+
                   _buildEnhancedInfoRow(
                     "Department",
-                    "Employee Department",
+                    employee.departmentTitle,
                     Icons.group,
+                  ),
+                  _buildEnhancedInfoRow(
+                    "TimeOffApprover",
+                    employee.timeOffApproverTitle.split('-').last,
+                    Icons.timer_off,
+                  ),
+                  _buildEnhancedInfoRow(
+                    "Manager",
+                    employee.managerTitle.split('-').last,
+                    Icons.manage_accounts,
+                  ),
+                  _buildEnhancedInfoRow(
+                    "Coach",
+                    employee.coachTitle.split('-').last,
+                    Icons.person,
+                  ),
+                  _buildEnhancedInfoRow(
+                    "Shift Approver",
+                    employee.shiftRequestApproverTitle.split('-').last,
+                    Icons.approval_rounded,
                   ),
                   _buildEnhancedInfoRow(
                     "Designation",

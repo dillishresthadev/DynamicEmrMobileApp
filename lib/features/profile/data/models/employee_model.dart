@@ -56,6 +56,11 @@ class EmployeeModel extends EmployeeEntity {
     required super.employeeWorkExperienceContacts,
     required super.employeeImageBaseUrl,
     required super.documentBaseUrl,
+    required super.departmentTitle,
+    required super.managerTitle,
+    required super.coachTitle,
+    required super.timeOffApproverTitle,
+    required super.shiftRequestApproverTitle,
   });
 
   // Method to create an instance from JSON
@@ -70,6 +75,11 @@ class EmployeeModel extends EmployeeEntity {
       devnagariName: json['devnagariName'] ?? '',
       employeeCode: json['employeeCode'] ?? '',
       designationTitle: json['designationTitle'] ?? '',
+      departmentTitle: json['departmentTitle'] ?? '',
+      managerTitle: json['managerTitle'] ?? 'N/A',
+      coachTitle: json['coachTitle'] ?? 'N/A',
+      timeOffApproverTitle: json['timeOffApproverTitle'] ?? 'N/A',
+      shiftRequestApproverTitle: json['shiftRequestApproverTitle'] ?? 'N/A',
       mobileNumber: json['mobileNumber'] ?? '',
       workBranchTitle: json['workBranchTitle'] ?? '',
       workAddress: json['workAddress'] ?? '',

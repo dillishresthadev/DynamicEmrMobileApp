@@ -15,6 +15,11 @@ class EmployeeEntity {
   final String lastName;
   final String shortName;
   final String devnagariName;
+  final String departmentTitle;
+  final String managerTitle;
+  final String coachTitle;
+  final String timeOffApproverTitle;
+  final String shiftRequestApproverTitle;
   final String employeeCode;
   final String designationTitle;
   final String mobileNumber;
@@ -63,6 +68,11 @@ class EmployeeEntity {
     required this.devnagariName,
     required this.employeeCode,
     required this.designationTitle,
+    required this.departmentTitle,
+    required this.managerTitle,
+    required this.coachTitle,
+    required this.timeOffApproverTitle,
+    required this.shiftRequestApproverTitle,
     required this.mobileNumber,
     required this.workBranchTitle,
     required this.workAddress,

@@ -96,52 +96,55 @@ class _TodayAttendanceWidgetState extends State<TodayAttendanceWidget> {
                   ],
                 ),
               ),
-              _buildStatusBadge(todayAttendance),
+              // _buildStatusBadge(todayAttendance),
             ],
           ),
           const SizedBox(height: 20),
-          Row(
-            spacing: 10,
-            children: [
-              Expanded(
-                child: Column(
-                  spacing: 5,
+          (todayAttendance.checkInTime != null &&
+                  todayAttendance.checkOutTime != null)
+              ? Row(
+                  spacing: 10,
                   children: [
-                    Text(
-                      "Check In",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      formatTime(todayAttendance.checkInTime),
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                    Expanded(
+                      child: Column(
+                        spacing: 5,
+                        children: [
+                          Text(
+                            "Check In",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            formatTime(todayAttendance.checkInTime),
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              ),
 
-              Expanded(
-                child: Column(
-                  spacing: 5,
-                  children: [
-                    Text(
-                      "Check Out",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      formatTime(todayAttendance.checkOutTime),
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                    Expanded(
+                      child: Column(
+                        spacing: 5,
+                        children: [
+                          Text(
+                            "Check Out",
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            formatTime(todayAttendance.checkOutTime),
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
-                ),
-              ),
-            ],
-          ),
+                )
+              : SizedBox.shrink(),
           SizedBox(height: 10),
           Align(
             alignment: Alignment.center,
@@ -177,23 +180,23 @@ class _TodayAttendanceWidgetState extends State<TodayAttendanceWidget> {
     );
   }
 
-  Widget _buildStatusBadge(todayAttendance) {
-    final isPresent = todayAttendance.checkInTime != null;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: isPresent ? Colors.green[100] : Colors.red[100],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(
-        isPresent ? "Present" : "Absent",
-        style: TextStyle(
-          color: isPresent ? Colors.green[800] : Colors.red[800],
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
+  // Widget _buildStatusBadge(todayAttendance) {
+  //   final isPresent = todayAttendance.checkInTime != null;
+  //   return Container(
+  //     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+  //     decoration: BoxDecoration(
+  //       color: isPresent ? Colors.green[100] : Colors.red[100],
+  //       borderRadius: BorderRadius.circular(12),
+  //     ),
+  //     child: Text(
+  //       isPresent ? "Present" : "Absent",
+  //       style: TextStyle(
+  //         color: isPresent ? Colors.green[800] : Colors.red[800],
+  //         fontWeight: FontWeight.bold,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildNoAttendanceCard() {
     return Container(

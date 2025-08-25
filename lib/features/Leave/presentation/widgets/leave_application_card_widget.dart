@@ -221,14 +221,12 @@ class _LeaveApplicationCardWidgetState
         Icon(Icons.date_range, size: 16, color: Colors.grey.shade600),
         const SizedBox(width: 4),
         Text(
-          '$type From: $from',
+          '$type : $from',
           style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
         ),
-        const SizedBox(width: 16),
-        Icon(Icons.date_range, size: 16, color: Colors.grey.shade600),
         const SizedBox(width: 4),
         Text(
-          'To: $to',
+          '- $to',
           style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
         ),
       ],
