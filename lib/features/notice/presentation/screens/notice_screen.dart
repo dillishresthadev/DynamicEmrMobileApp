@@ -29,47 +29,6 @@ class _NoticeScreenState extends State<NoticeScreen> {
       ),
       body: Column(
         children: [
-          // Container(
-          //   height: 60,
-          //   padding: const EdgeInsets.symmetric(vertical: 8),
-          //   color: Colors.white,
-          //   child: ListView.builder(
-          //     scrollDirection: Axis.horizontal,
-          //     padding: const EdgeInsets.symmetric(horizontal: 16),
-          //     itemCount: 4,
-          //     itemBuilder: (context, index) {
-          //       final filter = filters[index];
-          //       final isSelected = selectedFilter == filter;
-          //       return Padding(
-          //         padding: const EdgeInsets.only(right: 12),
-          //         child: FilterChip(
-          //           label: Text(
-          //             filter,
-          //             style: TextStyle(
-          //               color: isSelected
-          //                   ? Colors.white
-          //                   : const Color(0xFF2C3E50),
-          //               fontWeight: isSelected
-          //                   ? FontWeight.w600
-          //                   : FontWeight.w500,
-          //             ),
-          //           ),
-          //           selected: isSelected,
-          //           onSelected: (selected) {
-          //             setState(() {
-          //               selectedFilter = filter;
-          //             });
-          //           },
-          //           backgroundColor: Colors.grey[100],
-          //           selectedColor: const Color(0xFF3498DB),
-          //           checkmarkColor: Colors.white,
-          //           elevation: 0,
-          //           pressElevation: 2,
-          //         ),
-          //       );
-          //     },
-          //   ),
-          // ),
           Expanded(
             child: RefreshIndicator(
               onRefresh: () async {
@@ -80,9 +39,22 @@ class _NoticeScreenState extends State<NoticeScreen> {
                   if (state.status == NoticeStatus.loading) {
                     return Center(child: CircularProgressIndicator());
                   } else if (state.status == NoticeStatus.success) {
-                    final notices = state.notices
-                        .where((e) => e.isPublished == true)
-                        .toList();
+                    final notices =
+                        state.notices
+                            .where((e) => e.isPublished == true)
+                            .toList()
+                          ..sort((a, b) {
+                            if (a.publishedTime == null &&
+                                b.publishedTime == null) {
+                              return 0;
+                            }
+                            if (a.publishedTime == null) {
+                              return 1; // null goes last
+                            }
+
+                            if (b.publishedTime == null) return -1;
+                            return b.publishedTime!.compareTo(a.publishedTime!);
+                          });
 
                     return ListView.builder(
                       padding: const EdgeInsets.all(16),

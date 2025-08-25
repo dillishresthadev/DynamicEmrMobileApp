@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dynamic_emr/core/constants/app_colors.dart';
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/features/holiday/presentation/bloc/holiday_bloc.dart';
@@ -18,25 +20,50 @@ class _HolidayScreenState extends State<HolidayScreen> {
   DateTime? selectedDate;
   List<Map<String, dynamic>> selectedDateHolidays = [];
   List<Map<String, dynamic>> selectedMonthHolidays = [];
+  bool showNepaliDate = true;
 
   @override
   void initState() {
     super.initState();
-    context.read<HolidayBloc>().add(GetAllHolidayList());
-    context.read<HolidayBloc>().add(PastHolidayList());
+    selectedDate = DateTime.now();
     context.read<HolidayBloc>().add(UpcommingHolidayList());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: DynamicEMRAppBar(title: "Holidays"),
+      backgroundColor: Colors.grey[50],
+      appBar: DynamicEMRAppBar(
+        title: "Holidays",
+        automaticallyImplyLeading: true,
+        actions: [
+          IconButton(
+            icon: Icon(
+              showNepaliDate ? Icons.calendar_today : Icons.calendar_month,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              setState(() {
+                showNepaliDate = !showNepaliDate;
+              });
+            },
+          ),
+        ],
+      ),
       body: BlocBuilder<HolidayBloc, HolidayState>(
         builder: (context, state) {
           if (state.status == HolidayStatus.loading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Loading holidays...'),
+                ],
+              ),
+            );
           } else if (state.status == HolidayStatus.success) {
-            // Extract holiday dates from BLoC state
             final allHolidayDatePairs = state.holidayList
                 .expand((h) => h.holidayDates)
                 .map(
@@ -47,11 +74,22 @@ class _HolidayScreenState extends State<HolidayScreen> {
                 )
                 .toList();
 
-            // Initialize selected date
-            selectedDate ??= DateTime.now().toNepaliDateTime();
+            // Remove duplicates (only keep first holiday per date)
+            final uniqueHolidayMap = <String, Map<String, dynamic>>{};
+            for (var holiday in allHolidayDatePairs) {
+              final dateKey = DateFormat(
+                'yyyy-MM-dd',
+              ).format(holiday['enDate'] as DateTime);
+              if (!uniqueHolidayMap.containsKey(dateKey)) {
+                uniqueHolidayMap[dateKey] = holiday;
+              }
+            }
+            final uniqueHolidayList = uniqueHolidayMap.values.toList();
+
+            selectedDate ??= DateTime.now();
 
             // Filter holidays for selected day
-            selectedDateHolidays = allHolidayDatePairs.where((holiday) {
+            selectedDateHolidays = uniqueHolidayList.where((holiday) {
               DateTime holidayDate = holiday['enDate'] as DateTime;
               return holidayDate.year == selectedDate!.year &&
                   holidayDate.month == selectedDate!.month &&
@@ -59,235 +97,390 @@ class _HolidayScreenState extends State<HolidayScreen> {
             }).toList();
 
             // Filter holidays for current month
-            selectedMonthHolidays = allHolidayDatePairs.where((holiday) {
+            selectedMonthHolidays = uniqueHolidayList.where((holiday) {
               DateTime holidayDate = holiday['enDate'] as DateTime;
               return holidayDate.year == selectedDate!.year &&
                   holidayDate.month == selectedDate!.month;
             }).toList();
 
             // List of holiday dates for calendar highlight
-            List<DateTime> holidayDates = allHolidayDatePairs
+            List<DateTime> holidayDates = uniqueHolidayList
                 .map((e) => e['enDate'] as DateTime)
                 .toList();
 
-            return SafeArea(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16.0,
-                  vertical: 8.0,
+            return Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildCalendarCard(holidayDates),
+                        const SizedBox(height: 20),
+                        if (selectedDateHolidays.isNotEmpty) ...[
+                          _buildSelectedDateSection(),
+                          const SizedBox(height: 20),
+                        ],
+                        if (selectedMonthHolidays.isNotEmpty) ...[
+                          _buildMonthlyHolidaysSection(),
+                          const SizedBox(height: 20),
+                        ],
+                        _buildUpcomingHolidaysSection(uniqueHolidayList),
+                      ],
+                    ),
+                  ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildHeaderSection(),
-                    const SizedBox(height: 16),
-                    _buildCalendarCard(holidayDates),
-                    const SizedBox(height: 16),
-                    if (selectedMonthHolidays.isNotEmpty) ...[
-                      Text(
-                        "Holidays in ${NepaliDateFormat('MMMM y').format(selectedDate!.toNepaliDateTime())}",
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      SizedBox(
-                        height: 80,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: selectedMonthHolidays.length,
-                          separatorBuilder: (_, __) => const SizedBox(width: 8),
-                          itemBuilder: (context, index) {
-                            final holiday = selectedMonthHolidays[index];
-                            return _buildHolidayCard(holiday, isSmall: true);
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-                    _buildHolidayListSection(),
-                  ],
-                ),
-              ),
+              ],
             );
           }
-          return SizedBox.shrink();
+          return const SizedBox.shrink();
         },
-      ),
-    );
-  }
-
-  Widget _buildHeaderSection() {
-    return const Text(
-      "Holiday Calendar",
-      style: TextStyle(
-        fontSize: 22,
-        fontWeight: FontWeight.w600,
-        color: Colors.black,
       ),
     );
   }
 
   Widget _buildCalendarCard(List<DateTime> holidayDates) {
     return Card(
-      elevation: 4,
+      elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: SizedBox(
-          height: 450,
-          child: FlutterBSADCalendar(
-            weekColor: Colors.green,
-            calendarType: CalendarType.bs,
-            primaryColor: AppColors.primary,
-            holidays: holidayDates,
-            holidayColor: Colors.blueGrey,
-            mondayWeek: false,
-            initialDate: DateTime.now(),
-            firstDate: DateTime(2015),
-            lastDate: DateTime(2040),
-            todayDecoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: AppColors.primary.withValues(alpha:0.2),
-              border: Border.all(color: AppColors.primary, width: 1.5),
-            ),
-            selectedDayDecoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: AppColors.primary,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primary.withValues(alpha:0.3),
-                  blurRadius: 6,
-                  offset: const Offset(0, 3),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  showNepaliDate
+                      ? "नेपाली पात्रो (BS)"
+                      : "English Calendar (AD)",
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    showNepaliDate ? "BS" : "AD",
+                    style: TextStyle(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                    ),
+                  ),
                 ),
               ],
             ),
-            onDateSelected: (date, events) {
-              setState(() {
-                selectedDate = date.toDateTime();
-              });
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 415,
+              child: FlutterBSADCalendar(
+                weekColor: Colors.grey[600]!,
+                calendarType: showNepaliDate
+                    ? CalendarType.bs
+                    : CalendarType.ad,
+                primaryColor: AppColors.primary,
+                holidays: holidayDates,
+                holidayColor: Colors.red[400]!,
+                mondayWeek: false,
+                initialDate: selectedDate ?? DateTime.now(),
+                firstDate: DateTime(2015),
+                lastDate: DateTime(2040),
+                todayDecoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: AppColors.primary.withValues(alpha: 0.15),
+                  border: Border.all(color: AppColors.primary, width: 2),
+                ),
+                selectedDayDecoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: AppColors.primary,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                onDateSelected: (date, events) {
+                  setState(() {
+                    selectedDate = date.toDateTime();
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSelectedDateSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Selected Date Holidays",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[800],
+          ),
+        ),
+        const SizedBox(height: 12),
+        ...selectedDateHolidays.map(
+          (holiday) => _buildHolidayCard(holiday, isSelected: true),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMonthlyHolidaysSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Holidays in ${showNepaliDate ? NepaliDateFormat('MMMM y').format(selectedDate!.toNepaliDateTime()) : DateFormat('MMMM yyyy').format(selectedDate!)}",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[800],
+          ),
+        ),
+        const SizedBox(height: 12),
+        SizedBox(
+          height: 100,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: selectedMonthHolidays.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            itemBuilder: (context, index) {
+              final holiday = selectedMonthHolidays[index];
+              return _buildCompactHolidayCard(holiday);
             },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUpcomingHolidaysSection(List<Map<String, dynamic>> allHolidays) {
+    final upcomingHolidays = allHolidays
+        .where(
+          (holiday) => (holiday['enDate'] as DateTime).isAfter(DateTime.now()),
+        )
+        .take(3)
+        .toList();
+
+    if (upcomingHolidays.isEmpty) return const SizedBox();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Upcoming Holidays",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: Colors.grey[800],
+          ),
+        ),
+        const SizedBox(height: 12),
+        ...upcomingHolidays.map((holiday) => _buildHolidayCard(holiday)),
+      ],
+    );
+  }
+
+  Widget _buildHolidayCard(
+    Map<String, dynamic> holiday, {
+    bool isSelected = false,
+  }) {
+    final nepaliDate = (holiday['enDate'] as DateTime).toNepaliDateTime();
+    final isToday = DateUtils.isSameDay(holiday['enDate'], DateTime.now());
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Card(
+        elevation: isSelected ? 6 : 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        color: isSelected ? Colors.red[50] : Colors.white,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: isSelected ? Colors.red[200]! : Colors.transparent,
+              width: 1.5,
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        holiday['description'] ?? 'Holiday',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: isSelected
+                              ? Colors.red[700]
+                              : Colors.grey[800],
+                        ),
+                      ),
+                    ),
+                    if (isToday)
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Text(
+                          'Today',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildDateChip(
+                        "AD",
+                        DateFormat('MMM d, yyyy').format(holiday['enDate']),
+                        Colors.blue,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildDateChip(
+                        "BS",
+                        NepaliDateFormat('y MMMM d').format(nepaliDate),
+                        Colors.green,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildHolidayListSection() {
-    if (selectedDateHolidays.isEmpty) {
-      return const SizedBox();
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: selectedDateHolidays
-          .map((holiday) => _buildHolidayCard(holiday))
-          .toList(),
-    );
-  }
-
-  Widget _buildHolidayCard(
-    Map<String, dynamic> holiday, {
-    bool isSmall = false,
-  }) {
+  Widget _buildCompactHolidayCard(Map<String, dynamic> holiday) {
     final nepaliDate = (holiday['enDate'] as DateTime).toNepaliDateTime();
-    return Card(
-      color: isSmall ? Colors.grey[200] : Colors.red,
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: isSmall
-            ? const EdgeInsets.all(8.0)
-            : const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (!isSmall)
+
+    return SizedBox(
+      width: 200,
+      child: Card(
+        elevation: 2,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                holiday['description'] ?? 'Holiday',
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const Spacer(),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
-                    child: Text(
-                      holiday['description'] ?? 'Holiday',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                    child: _buildDateChip(
+                      "AD",
+                      DateFormat('MMM d').format(holiday['enDate']),
+                      Colors.blue,
+                      isCompact: true,
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.grey),
-                    ),
-                    child: Text(
-                      "Holiday",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.red.withValues(alpha: 0.8),
-                      ),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: _buildDateChip(
+                      "BS",
+                      NepaliDateFormat('MMM d').format(nepaliDate),
+                      Colors.green,
+                      isCompact: true,
                     ),
                   ),
                 ],
               ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                _buildDateChip(
-                  "AD",
-                  DateFormat('MMM d, yyyy').format(holiday['enDate']),
-                ),
-                const SizedBox(width: 8),
-                _buildDateChip(
-                  "BS",
-                  NepaliDateFormat('y MMMM d').format(nepaliDate),
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildDateChip(String label, String date) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: Colors.grey[50],
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey[200]!),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: const TextStyle(fontSize: 12, color: Colors.black),
+  Widget _buildDateChip(
+    String label,
+    String date,
+    Color color, {
+    bool isCompact = false,
+  }) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: isCompact ? 6 : 12,
+        vertical: isCompact ? 4 : 8,
+      ),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: isCompact ? 10 : 12,
+              color: color,
+              fontWeight: FontWeight.w500,
             ),
-            const SizedBox(height: 2),
-            Text(
-              date,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: AppColors.primary.withValues(alpha: 0.8),
-              ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            date,
+            style: TextStyle(
+              fontSize: isCompact ? 12 : 14,
+              fontWeight: FontWeight.w600,
+              color: color,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

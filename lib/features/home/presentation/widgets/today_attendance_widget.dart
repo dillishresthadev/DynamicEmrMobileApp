@@ -76,7 +76,7 @@ class _TodayAttendanceWidgetState extends State<TodayAttendanceWidget> {
                   size: 24,
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,10 +96,40 @@ class _TodayAttendanceWidgetState extends State<TodayAttendanceWidget> {
                   ],
                 ),
               ),
-              // _buildStatusBadge(todayAttendance),
+              (todayAttendance.checkInTime == null &&
+                      todayAttendance.checkOutTime == null)
+                  ? Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color:
+                            todayAttendance.statusColorCode.startsWith("#") &&
+                                todayAttendance.statusColorCode.length == 7
+                            ? Color(
+                                int.parse(
+                                  todayAttendance.statusColorCode.replaceFirst(
+                                    "#",
+                                    "0xFF",
+                                  ),
+                                ),
+                              )
+                            : null,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        todayAttendance.statusFullName.toString(),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    )
+                  : SizedBox.shrink(),
             ],
           ),
-          const SizedBox(height: 20),
           (todayAttendance.checkInTime != null &&
                   todayAttendance.checkOutTime != null)
               ? Row(
@@ -146,35 +176,41 @@ class _TodayAttendanceWidgetState extends State<TodayAttendanceWidget> {
                 )
               : SizedBox.shrink(),
           SizedBox(height: 10),
-          Align(
-            alignment: Alignment.center,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color:
-                    todayAttendance.statusColorCode.startsWith("#") &&
-                        todayAttendance.statusColorCode.length == 7
-                    ? Color(
-                        int.parse(
-                          todayAttendance.statusColorCode.replaceFirst(
-                            "#",
-                            "0xFF",
-                          ),
-                        ),
-                      )
-                    : null,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                todayAttendance.statusFullName.toString(),
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ),
+          (todayAttendance.checkInTime != null &&
+                  todayAttendance.checkOutTime != null)
+              ? Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color:
+                          todayAttendance.statusColorCode.startsWith("#") &&
+                              todayAttendance.statusColorCode.length == 7
+                          ? Color(
+                              int.parse(
+                                todayAttendance.statusColorCode.replaceFirst(
+                                  "#",
+                                  "0xFF",
+                                ),
+                              ),
+                            )
+                          : null,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      todayAttendance.statusFullName.toString(),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                )
+              : SizedBox.shrink(),
         ],
       ),
     );

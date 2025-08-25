@@ -228,8 +228,12 @@ class _ApplyLeaveFormScreenState extends State<ApplyLeaveFormScreen> {
   );
 
   Widget _buildPrimaryLeaveSection(List<Map<String, dynamic>> leaveTypes) =>
-      Card(
+      Container(
         margin: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.blue),
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Column(
@@ -305,7 +309,11 @@ class _ApplyLeaveFormScreenState extends State<ApplyLeaveFormScreen> {
       );
 
   Widget _buildExtendedLeaveSection(List<Map<String, dynamic>> leaveTypes) =>
-      Card(
+      Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.blue),
+          borderRadius: BorderRadius.circular(12),
+        ),
         margin: const EdgeInsets.symmetric(vertical: 8),
         child: Padding(
           padding: const EdgeInsets.all(12),
@@ -415,6 +423,7 @@ class _ApplyLeaveFormScreenState extends State<ApplyLeaveFormScreen> {
         return Scaffold(
           appBar: DynamicEMRAppBar(
             title: 'Apply for Leave',
+            automaticallyImplyLeading: true,
             actions: [
               IconButton(
                 onPressed: _resetForm,

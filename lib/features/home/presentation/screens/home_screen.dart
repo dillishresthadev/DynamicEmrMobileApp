@@ -2,6 +2,7 @@ import 'package:dynamic_emr/core/constants/app_colors.dart';
 import 'package:dynamic_emr/core/utils/app_snack_bar.dart';
 import 'package:dynamic_emr/core/utils/location_utils.dart';
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
+import 'package:dynamic_emr/features/Leave/presentation/screens/apply_leave_form_screen.dart';
 import 'package:dynamic_emr/features/attendance/presentation/bloc/attendance_bloc.dart';
 import 'package:dynamic_emr/features/attendance/presentation/screen/attendance_screen.dart';
 import 'package:dynamic_emr/features/holiday/presentation/screens/holiday_screen.dart';
@@ -9,7 +10,6 @@ import 'package:dynamic_emr/features/home/presentation/screens/shift_screen.dart
 import 'package:dynamic_emr/features/home/presentation/widgets/quick_action_widget.dart';
 import 'package:dynamic_emr/features/home/presentation/widgets/today_attendance_widget.dart';
 import 'package:dynamic_emr/features/notice/presentation/screens/notice_screen.dart';
-import 'package:dynamic_emr/features/notification/presentation/notification_screen.dart';
 import 'package:dynamic_emr/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:dynamic_emr/features/profile/presentation/widgets/profile_picture_widget.dart';
 import 'package:dynamic_emr/features/punch/presentation/bloc/punch_bloc.dart';
@@ -84,15 +84,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         },
                       ),
                       QuickAction(
-                        icon: Icons.new_releases_outlined,
-                        label: 'Notices',
-                        subtitle: 'View announcements',
-                        color: const Color(0xFF3B82F6),
+                        icon: Icons.event_available,
+                        label: 'Leave',
+                        subtitle: 'Apply leave',
+                        color: const Color(0xFFF6673B),
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const NoticeScreen(),
+                              builder: (_) => const ApplyLeaveFormScreen(),
                             ),
                           );
                         },
@@ -197,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
 
-                  _buildQuickStatsSection(),
+                  // _buildQuickStatsSection(),
                   SizedBox(height: 10),
                 ],
               ),
@@ -241,12 +241,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => NotificationScreen(),
-                    ),
+                    MaterialPageRoute(builder: (context) => NoticeScreen()),
                   );
                 },
-                icon: Icon(Icons.notifications_outlined,color: Colors.white,),
+                icon: Icon(Icons.notifications_outlined, color: Colors.white),
               ),
             ],
           );
