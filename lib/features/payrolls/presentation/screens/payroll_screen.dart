@@ -93,7 +93,7 @@ class _PayrollScreenState extends State<PayrollScreen> {
       backgroundColor: Colors.grey[50],
       appBar: DynamicEMRAppBar(title: "Payroll Details"),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(vertical: 12.0),
         child: Column(
           spacing: 10,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,7 +106,7 @@ class _PayrollScreenState extends State<PayrollScreen> {
               onNextMonth: _nextMonth,
             ),
             // Taxes Section
-            TaxesCard(),
+            TaxesCard(currentMonth: currentMonth, currentYear: currentYear),
 
             // Loans & Advances Section
             LoanAdvanceCardWidget(

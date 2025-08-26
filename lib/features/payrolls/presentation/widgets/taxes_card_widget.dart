@@ -1,20 +1,68 @@
-import 'package:dynamic_emr/features/payrolls/domain/entities/taxes_entity.dart';
+import 'package:dynamic_emr/core/constants/app_colors.dart';
 import 'package:dynamic_emr/features/payrolls/presentation/bloc/payroll_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class TaxesCard extends StatelessWidget {
-  const TaxesCard({super.key});
+  final int currentMonth;
+  final int currentYear;
 
-  static const _headerStyle = TextStyle(
-    fontWeight: FontWeight.w600,
-    fontSize: 14,
-  );
+  const TaxesCard({
+    super.key,
+    required this.currentMonth,
+    required this.currentYear,
+  });
 
-  static const _cellStyle = TextStyle(fontSize: 14);
+  String formatCurrencyNepali(double amount) {
+    String amt = amount.toStringAsFixed(2); // keep 2 decimal places
+    String decimalPart = "";
+    if (amt.contains(".")) {
+      decimalPart = amt.substring(amt.indexOf("."));
+      amt = amt.substring(0, amt.indexOf("."));
+    }
+
+    // First group: take last 3 digits
+    String result = "";
+    if (amt.length > 3) {
+      String last3 = amt.substring(amt.length - 3);
+      String remaining = amt.substring(0, amt.length - 3);
+
+      // Group remaining digits in 2s
+      List<String> groups = [];
+      while (remaining.length > 2) {
+        groups.insert(0, remaining.substring(remaining.length - 2));
+        remaining = remaining.substring(0, remaining.length - 2);
+      }
+      if (remaining.isNotEmpty) {
+        groups.insert(0, remaining);
+      }
+
+      result = "${groups.join(",")},$last3";
+    } else {
+      result = amt;
+    }
+
+    return result + decimalPart;
+  }
 
   @override
   Widget build(BuildContext context) {
+    final months = [
+      'Baisakh',
+      'Jestha',
+      'Ashadh',
+      'Shrawan',
+      'Bhadra',
+      'Ashoj',
+      'Kartik',
+      'Mangsir',
+      'Poush',
+      'Magh',
+      'Falgun',
+      'Chaitra',
+    ];
+    final monthName = months[currentMonth - 1];
+
     return BlocBuilder<PayrollBloc, PayrollState>(
       builder: (context, state) {
         switch (state.taxesStatus) {
@@ -26,33 +74,57 @@ class TaxesCard extends StatelessWidget {
               return const Center(child: Text('No tax details available'));
             }
 
-            final taxData = state.taxes;
-            return Card(
-              elevation: 2,
-              shadowColor: Colors.black.withValues(alpha: 0.1),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Tax Details',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF2C3E50),
+            // filter tax data
+            final filtered = state.taxes
+                .where(
+                  (t) =>
+                      t.month.toLowerCase() == monthName.toLowerCase() &&
+                      t.year.toString() == currentYear.toString(),
+                )
+                .toList();
+
+            if (filtered.isEmpty) {
+              return SizedBox.shrink();
+            }
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 18),
+              child: Column(
+                children: filtered.map((tax) {
+                  return Card(
+                    color: Color(0xFFFEF2F2),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "$monthName, $currentYear",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          _taxRow("SST", formatCurrencyNepali(tax.sst)),
+                          _taxRow(
+                            "Income Tax",
+                            formatCurrencyNepali(tax.incomeTax),
+                          ),
+                          const Divider(height: 20),
+                          _taxRow(
+                            "Total Deduction",
+                            formatCurrencyNepali(tax.totalDeduction),
+                            highlight: true,
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 16),
-
-                    _TableHeader(),
-
-                    _TableBody(taxData: taxData),
-                  ],
-                ),
+                  );
+                }).toList(),
               ),
             );
 
@@ -62,124 +134,27 @@ class TaxesCard extends StatelessWidget {
       },
     );
   }
-}
 
-class _TableHeader extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFF3498DB).withValues(alpha: 0.1),
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(8),
-          topRight: Radius.circular(8),
-        ),
-      ),
-      child: const Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: Text('Month', style: TaxesCard._headerStyle),
-          ),
-          Expanded(flex: 2, child: Text('SST', style: TaxesCard._headerStyle)),
-          Expanded(
-            flex: 2,
-            child: Text('Income Tax', style: TaxesCard._headerStyle),
-          ),
-          Expanded(
-            flex: 2,
-            child: Text('Total', style: TaxesCard._headerStyle),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _TableBody extends StatelessWidget {
-  final List<TaxesEntity> taxData; // replace dynamic with your model type
-
-  const _TableBody({required this.taxData});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[300]!),
-        borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(8),
-          bottomRight: Radius.circular(8),
-        ),
-      ),
-      child: Column(
-        children: taxData.asMap().entries.map((entry) {
-          int index = entry.key;
-          final data = entry.value;
-          bool isLast = index == taxData.length - 1;
-
-          return _TableRowItem(
-            month: "${data.year}/ ${data.month}",
-            sst: data.sst,
-            incomeTax: data.incomeTax,
-            total: data.totalDeduction,
-            isLast: isLast,
-          );
-        }).toList(),
-      ),
-    );
-  }
-}
-
-class _TableRowItem extends StatelessWidget {
-  final String month;
-  final double sst;
-  final double incomeTax;
-  final double total;
-  final bool isLast;
-
-  const _TableRowItem({
-    required this.month,
-    required this.sst,
-    required this.incomeTax,
-    required this.total,
-    required this.isLast,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        border: isLast
-            ? null
-            : Border(bottom: BorderSide(color: Colors.grey[200]!)),
-      ),
+  Widget _taxRow(String label, String value, {bool highlight = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(flex: 2, child: Text(month, style: TaxesCard._cellStyle)),
-          Expanded(
-            flex: 2,
-            child: Text(
-              'Rs. ${sst.toStringAsFixed(0)}',
-              style: TaxesCard._cellStyle,
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: highlight ? AppColors.primary : Colors.black,
             ),
           ),
-          Expanded(
-            flex: 2,
-            child: Text(
-              'Rs. ${incomeTax.toStringAsFixed(0)}',
-              style: TaxesCard._cellStyle,
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Text(
-              'Rs. ${total.toStringAsFixed(0)}',
-              style: TaxesCard._cellStyle.copyWith(
-                fontWeight: FontWeight.w500,
-                color: const Color(0xFF3498DB),
-              ),
+          Text(
+            "Rs. $value",
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: highlight ? FontWeight.w600 : FontWeight.w400,
+              color: highlight ? AppColors.primary : Color(0xFFDC2626),
             ),
           ),
         ],

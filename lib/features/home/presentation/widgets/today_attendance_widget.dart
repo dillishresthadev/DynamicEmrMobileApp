@@ -96,38 +96,35 @@ class _TodayAttendanceWidgetState extends State<TodayAttendanceWidget> {
                   ],
                 ),
               ),
-              (todayAttendance.checkInTime != null ||
-                      todayAttendance.checkOutTime != null)
-                  ? Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color:
-                            todayAttendance.statusColorCode.startsWith("#") &&
-                                todayAttendance.statusColorCode.length == 7
-                            ? Color(
-                                int.parse(
-                                  todayAttendance.statusColorCode.replaceFirst(
-                                    "#",
-                                    "0xFF",
-                                  ),
-                                ),
-                              )
-                            : null,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        todayAttendance.status.toString(),
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    )
-                  : SizedBox.shrink(),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color:
+                      todayAttendance.statusColorCode.startsWith("#") &&
+                          todayAttendance.statusColorCode.length == 7
+                      ? Color(
+                          int.parse(
+                            todayAttendance.statusColorCode.replaceFirst(
+                              "#",
+                              "0xFF",
+                            ),
+                          ),
+                        )
+                      : null,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  todayAttendance.status.toString(),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
             ],
           ),
           SizedBox(height: 10),
