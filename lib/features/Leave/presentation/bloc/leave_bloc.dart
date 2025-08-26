@@ -8,6 +8,10 @@ import 'package:dynamic_emr/features/Leave/domain/entities/leave_type_entity.dar
 import 'package:dynamic_emr/features/Leave/domain/usecases/apply_leave_usecase.dart';
 import 'package:dynamic_emr/features/Leave/domain/usecases/approved_leave_list_usecase.dart';
 import 'package:dynamic_emr/features/Leave/domain/usecases/extended_leave_type_usecase.dart';
+import 'package:dynamic_emr/features/Leave/domain/usecases/get_contract_usecase.dart';
+import 'package:dynamic_emr/features/Leave/domain/usecases/get_fiscalyear_by_contractid_usecase.dart';
+import 'package:dynamic_emr/features/Leave/domain/usecases/get_leave_history_by_contractid_fiscalyear_usecase.dart';
+import 'package:dynamic_emr/features/Leave/domain/usecases/get_leaves_by_contractid_fiscalyear_usecase.dart';
 import 'package:dynamic_emr/features/Leave/domain/usecases/leave_application_history_usecase.dart';
 import 'package:dynamic_emr/features/Leave/domain/usecases/leave_history_usecase.dart';
 import 'package:dynamic_emr/features/Leave/domain/usecases/leave_type_usecase.dart';
@@ -22,22 +26,32 @@ part 'leave_state.dart';
 class LeaveBloc extends Bloc<LeaveEvent, LeaveState> {
   final LeaveHistoryUsecase leaveHistoryUsecase;
   final LeaveApplicationHistoryUsecase leaveApplicationHistoryUsecase;
+  final GetLeavesByContractidFiscalyearUsecase
+  getLeavesByContractidFiscalyearUsecase;
   final ApprovedLeaveListUsecase approvedLeaveListUsecase;
   final PendingLeaveListUsecase pendingLeaveListUsecase;
   final ApplyLeaveUsecase applyLeaveUsecase;
   final LeaveTypeUsecase leaveTypeUsecase;
   final ExtendedLeaveTypeUsecase extendedLeaveTypeUsecase;
   final SubstitutionLeaveEmployeeUsecase substitutionLeaveEmployeeUsecase;
+  final GetContractUsecase getContractUsecase;
+  final GetFiscalyearByContractidUsecase getFiscalyearByContractidUsecase;
+  final GetLeaveHistoryByContractidFiscalyearUsecase
+  getLeaveHistoryByContractidFiscalyearUsecase;
 
   LeaveBloc({
     required this.leaveHistoryUsecase,
     required this.leaveApplicationHistoryUsecase,
+    required this.getLeavesByContractidFiscalyearUsecase,
     required this.approvedLeaveListUsecase,
     required this.pendingLeaveListUsecase,
     required this.applyLeaveUsecase,
     required this.leaveTypeUsecase,
     required this.extendedLeaveTypeUsecase,
     required this.substitutionLeaveEmployeeUsecase,
+    required this.getContractUsecase,
+    required this.getFiscalyearByContractidUsecase,
+    required this.getLeaveHistoryByContractidFiscalyearUsecase,
   }) : super(const LeaveState()) {
     on<LeaveHistoryEvent>(_onLeaveHistory);
     on<LeaveApplicationHistoryEvent>(_onLeaveApplicationHistory);
@@ -49,7 +63,9 @@ class LeaveBloc extends Bloc<LeaveEvent, LeaveState> {
     on<SubstitutionEmployeeEvent>(_onSubstitutionEmployee);
     on<GetContractEvent>(_onGetContract);
     on<GetFiscalYearByContractIdEvent>(_onGetFiscalYearByContractId);
-    on<GetLeaveHistoryByContractIdFiscalYearIdEvent>(_onGetLeaveHistoryByContractIdFiscalYearId);
+    on<GetLeaveHistoryByContractIdFiscalYearIdEvent>(
+      _onGetLeaveHistoryByContractIdFiscalYearId,
+    );
   }
 
   Future<void> _onLeaveHistory(
@@ -80,21 +96,26 @@ class LeaveBloc extends Bloc<LeaveEvent, LeaveState> {
     LeaveApplicationHistoryEvent event,
     Emitter<LeaveState> emit,
   ) async {
-    emit(state.copyWith(status: LeaveStatus.loading));
+    emit(state.copyWith(leaveApplicationHistoryStatus: LeaveStatus.loading));
     try {
-      final leaveApplicationHistory = await leaveApplicationHistoryUsecase
-          .call();
+      final leaveApplicationHistory =
+          await getLeavesByContractidFiscalyearUsecase.call(
+            event.contractId,
+            event.fiscalYearId,
+          );
       emit(
         state.copyWith(
           leaveApplicationHistory: leaveApplicationHistory,
-          status: LeaveStatus.leaveApplicationHistoryLoadSuccess,
+          leaveApplicationHistoryStatus:
+              LeaveStatus.leaveApplicationHistoryLoadSuccess,
         ),
       );
     } catch (e) {
       log("Error on Bloc [LeaveApplicationHistory] $e");
       emit(
         state.copyWith(
-          status: LeaveStatus.leaveApplicationHistoryLoadError,
+          leaveApplicationHistoryStatus:
+              LeaveStatus.leaveApplicationHistoryError,
           message: e.toString(),
         ),
       );
@@ -274,12 +295,75 @@ class LeaveBloc extends Bloc<LeaveEvent, LeaveState> {
     }
   }
 
-  FutureOr<void> _onGetContract(GetContractEvent event, Emitter<LeaveState> emit) {
+  FutureOr<void> _onGetContract(
+    GetContractEvent event,
+    Emitter<LeaveState> emit,
+  ) async {
+    try {
+      final contractList = await getContractUsecase.call();
+      emit(
+        state.copyWith(
+          leaveType: contractList,
+          status: LeaveStatus.contractLoadSuccess,
+        ),
+      );
+    } catch (e) {
+      log("Error on Bloc [Contract List] $e");
+      emit(
+        state.copyWith(
+          status: LeaveStatus.contractError,
+          contractMessage: e.toString(),
+        ),
+      );
+    }
   }
 
-  FutureOr<void> _onGetFiscalYearByContractId(GetFiscalYearByContractIdEvent event, Emitter<LeaveState> emit) {
+  FutureOr<void> _onGetFiscalYearByContractId(
+    GetFiscalYearByContractIdEvent event,
+    Emitter<LeaveState> emit,
+  ) async {
+    try {
+      final fiscalYearList = await getFiscalyearByContractidUsecase.call(
+        event.contractId,
+      );
+      emit(
+        state.copyWith(
+          leaveType: fiscalYearList,
+          status: LeaveStatus.fiscalYearLoadSuccess,
+        ),
+      );
+    } catch (e) {
+      log("Error on Bloc [fiscal year list] $e");
+      emit(
+        state.copyWith(
+          status: LeaveStatus.fiscalYearError,
+          fiscalYearMessage: e.toString(),
+        ),
+      );
+    }
   }
 
-  FutureOr<void> _onGetLeaveHistoryByContractIdFiscalYearId(GetLeaveHistoryByContractIdFiscalYearIdEvent event, Emitter<LeaveState> emit) {
+  FutureOr<void> _onGetLeaveHistoryByContractIdFiscalYearId(
+    GetLeaveHistoryByContractIdFiscalYearIdEvent event,
+    Emitter<LeaveState> emit,
+  ) async {
+    try {
+      final leaveHistory = await getLeaveHistoryByContractidFiscalyearUsecase
+          .call(event.contractId, event.fiscalYearId);
+      emit(
+        state.copyWith(
+          leaveHistory: leaveHistory,
+          status: LeaveStatus.leaveHistoryLoadSuccess,
+        ),
+      );
+    } catch (e) {
+      log("Error on Bloc [_onGetLeaveHistoryByContractIdFiscalYearId] $e");
+      emit(
+        state.copyWith(
+          status: LeaveStatus.leaveHistoryLoadError,
+          fiscalYearMessage: e.toString(),
+        ),
+      );
+    }
   }
 }

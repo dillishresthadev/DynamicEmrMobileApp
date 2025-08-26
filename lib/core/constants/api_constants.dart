@@ -98,7 +98,8 @@ class ApiConstants {
   static const String sendFcmDeviceTokenAnonymous =
       "/api/FcmDeviceToken/DeviceTokenPostAnonymous";
 
-  static const String getAllNotification = "/api/Notification/GetUserNotifications";
+  static const String getAllNotification =
+      "/api/Notification/GetUserNotifications";
 
   // Machine Attendence
   static const String postMachineAttendance =

@@ -84,99 +84,121 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 16),
-                  const Text(
-                    'Primary Attendance',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1E293B),
+                  Theme(
+                    data: Theme.of(
+                      context,
+                    ).copyWith(dividerColor: Colors.transparent),
+
+                    child: ExpansionTile(
+                      initiallyExpanded: true,
+                      tilePadding: EdgeInsets.zero,
+                      title: const Text(
+                        'Primary Attendance',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF1E293B),
+                        ),
+                      ),
+                      children: [
+                        const SizedBox(height: 16),
+                        if (state.status == AttendanceStatus.loading &&
+                            state.primary == null)
+                          const Center(child: CircularProgressIndicator())
+                        else
+                          GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 8,
+                                  mainAxisSpacing: 8,
+                                  childAspectRatio: 2.3,
+                                ),
+                            itemCount: state.primary!.length,
+                            itemBuilder: (context, index) {
+                              final primaryAttendance = state.primary![index];
+                              final stat = statusCards.firstWhere(
+                                (e) => e['title'] == primaryAttendance.category,
+                                orElse: () => {
+                                  'title': primaryAttendance.category,
+                                  'icon': Icons.help_outline,
+                                  'color': Colors.grey,
+                                  'bgColor': Colors.grey.shade200,
+                                },
+                              );
+                              return AttendanceCardWidget(
+                                icon: stat['icon'] as IconData,
+                                color: stat['color'] as Color,
+                                bgColor: stat['bgColor'] as Color,
+                                count: primaryAttendance.qty.toString(),
+                                label: primaryAttendance.category,
+                              );
+                            },
+                          ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 12),
 
-                  if (state.status == AttendanceStatus.loading &&
-                      state.primary == null)
-                    const Center(child: CircularProgressIndicator())
-                  else GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 8,
-                          mainAxisSpacing: 8,
-                          childAspectRatio: 2.3,
+                  Theme(
+                    data: Theme.of(
+                      context,
+                    ).copyWith(dividerColor: Colors.transparent),
+
+                    child: ExpansionTile(
+                      initiallyExpanded: true,
+                      tilePadding: EdgeInsets.zero,
+                      title: const Text(
+                        'Extended Attendance',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF1E293B),
                         ),
-                    itemCount: state.primary!.length,
-                    itemBuilder: (context, index) {
-                      final primaryAttendance = state.primary![index];
-                      final stat = statusCards.firstWhere(
-                        (e) => e['title'] == primaryAttendance.category,
-                        orElse: () => {
-                          'title': primaryAttendance.category,
-                          'icon': Icons.help_outline,
-                          'color': Colors.grey,
-                          'bgColor': Colors.grey.shade200,
-                        },
-                      );
-                      return AttendanceCardWidget(
-                        icon: stat['icon'] as IconData,
-                        color: stat['color'] as Color,
-                        bgColor: stat['bgColor'] as Color,
-                        count: primaryAttendance.qty.toString(),
-                        label: primaryAttendance.category,
-                      );
-                    },
-                  ),
+                      ),
+                      children: [
+                        const SizedBox(height: 16),
 
-                  const SizedBox(height: 32),
-                  const Text(
-                    'Extended Attendance',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1E293B),
+                        if (state.status == AttendanceStatus.loading &&
+                            state.extended == null)
+                          const Center(child: CircularProgressIndicator())
+                        else
+                          GridView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 8,
+                                  mainAxisSpacing: 8,
+                                  childAspectRatio: 2.3,
+                                ),
+                            itemCount: state.extended!.length,
+                            itemBuilder: (context, index) {
+                              final extendedAttendance = state.extended![index];
+                              final stat = statusCards.firstWhere(
+                                (e) =>
+                                    e['title'] == extendedAttendance.category,
+                                orElse: () => {
+                                  'title': extendedAttendance.category,
+                                  'icon': Icons.help_outline,
+                                  'color': Colors.grey,
+                                  'bgColor': Colors.grey.shade200,
+                                },
+                              );
+                              return AttendanceCardWidget(
+                                icon: stat['icon'] as IconData,
+                                color: stat['color'] as Color,
+                                bgColor: stat['bgColor'] as Color,
+                                count: extendedAttendance.qty.toString(),
+                                label: extendedAttendance.category,
+                              );
+                            },
+                          ),
+                      ],
                     ),
                   ),
-                  const SizedBox(height: 16),
-
-                  if (state.status == AttendanceStatus.loading &&
-                      state.extended == null)
-                    const Center(child: CircularProgressIndicator())
-                  else GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 8,
-                          mainAxisSpacing: 8,
-                          childAspectRatio: 2.3,
-                        ),
-                    itemCount: state.extended!.length,
-                    itemBuilder: (context, index) {
-                      final extendedAttendance = state.extended![index];
-                      final stat = statusCards.firstWhere(
-                        (e) => e['title'] == extendedAttendance.category,
-                        orElse: () => {
-                          'title': extendedAttendance.category,
-                          'icon': Icons.help_outline,
-                          'color': Colors.grey,
-                          'bgColor': Colors.grey.shade200,
-                        },
-                      );
-                      return AttendanceCardWidget(
-                        icon: stat['icon'] as IconData,
-                        color: stat['color'] as Color,
-                        bgColor: stat['bgColor'] as Color,
-                        count: extendedAttendance.qty.toString(),
-                        label: extendedAttendance.category,
-                      );
-                    },
-                  ),
-
-                  const SizedBox(height: 32),
 
                   if (state.summary != null) ...[
                     Row(

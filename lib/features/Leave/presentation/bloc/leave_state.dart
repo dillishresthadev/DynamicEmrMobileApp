@@ -6,7 +6,7 @@ enum LeaveStatus {
   leaveHistoryLoadSuccess,
   leaveHistoryLoadError,
   leaveApplicationHistoryLoadSuccess,
-  leaveApplicationHistoryLoadError,
+  leaveApplicationHistoryError,
   approvedLeaveLoadSuccess,
   approvedLeaveLoadError,
   pendingLeaveLoadSuccess,
@@ -19,9 +19,9 @@ enum LeaveStatus {
   extendedLeaveTypeError,
   substitutionEmployeeSuccess,
   substitutionEmployeeError,
-  contractLoaded,
+  contractLoadSuccess,
   contractError,
-  fiscalYearLoaded,
+  fiscalYearLoadSuccess,
   fiscalYearError,
 }
 
@@ -41,6 +41,8 @@ final class LeaveState extends Equatable {
   final LeaveStatus contractStatus;
   final LeaveStatus fiscalYearStatus;
 
+  final LeaveStatus leaveApplicationHistoryStatus;
+
   final String message;
   final String approvedLeaveMessage;
   final String pendingLeaveMessage;
@@ -57,6 +59,7 @@ final class LeaveState extends Equatable {
     this.pendingLeaveStatus = LeaveStatus.initial,
     this.contractStatus = LeaveStatus.initial,
     this.fiscalYearStatus = LeaveStatus.initial,
+    this.leaveApplicationHistoryStatus = LeaveStatus.initial,
     this.message = '',
     this.approvedLeaveMessage = '',
     this.pendingLeaveMessage = '',
@@ -81,6 +84,7 @@ final class LeaveState extends Equatable {
     LeaveStatus? pendingLeaveStatus,
     LeaveStatus? contractStatus,
     LeaveStatus? fiscalYearStatus,
+    LeaveStatus? leaveApplicationHistoryStatus,
     LeaveStatus? status,
     String? approvedLeaveMessage,
     String? pendingLeaveMessage,
@@ -103,6 +107,8 @@ final class LeaveState extends Equatable {
       contractStatus: contractStatus ?? this.contractStatus,
       fiscalYearStatus: fiscalYearStatus ?? this.fiscalYearStatus,
       status: status ?? this.status,
+      leaveApplicationHistoryStatus:
+          leaveApplicationHistoryStatus ?? this.leaveApplicationHistoryStatus,
       approvedLeaveMessage: approvedLeaveMessage ?? this.approvedLeaveMessage,
       pendingLeaveMessage: pendingLeaveMessage ?? this.pendingLeaveMessage,
       contractMessage: contractMessage ?? this.contractMessage,
@@ -122,6 +128,7 @@ final class LeaveState extends Equatable {
     substitutionEmployee,
     applyLeave,
     status,
+    leaveApplicationHistoryStatus,
     approvedLeaveStatus,
     pendingLeaveStatus,
     contractStatus,

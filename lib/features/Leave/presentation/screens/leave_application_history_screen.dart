@@ -1,8 +1,17 @@
+import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
+import 'package:dynamic_emr/features/Leave/presentation/bloc/leave_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 class LeaveApplicationHistoryScreen extends StatefulWidget {
-  const LeaveApplicationHistoryScreen({super.key});
+  final int contractId;
+  final int fiscalYearId;
+  const LeaveApplicationHistoryScreen({
+    super.key,
+    required this.contractId,
+    required this.fiscalYearId,
+  });
 
   @override
   State<LeaveApplicationHistoryScreen> createState() =>
@@ -11,76 +20,15 @@ class LeaveApplicationHistoryScreen extends StatefulWidget {
 
 class _LeaveApplicationHistoryScreenState
     extends State<LeaveApplicationHistoryScreen> {
-  bool isLoading = false;
-  List<Map<String, dynamic>> leaveHistory = [];
-
   @override
   void initState() {
+    context.read<LeaveBloc>().add(
+      GetLeaveHistoryByContractIdFiscalYearIdEvent(
+        contractId: widget.contractId,
+        fiscalYearId: widget.fiscalYearId,
+      ),
+    );
     super.initState();
-    _loadLeaveHistory();
-  }
-
-  void _loadLeaveHistory() {
-    setState(() {
-      isLoading = true;
-    });
-
-    // Simulate API call delay
-    Future.delayed(Duration(seconds: 1), () {
-      setState(() {
-        isLoading = false;
-        leaveHistory = _getMockData();
-      });
-    });
-  }
-
-  List<Map<String, dynamic>> _getMockData() {
-    return [
-      {
-        "id": 1356,
-        "applicationDate": "2025-08-18T09:05:22.7377527",
-        "applicationDateNp": "2082/05/02",
-        "leaveTypeId": 1,
-        "employeeId": 65,
-        "fromDate": "2025-08-18T00:00:00",
-        "fromDateNp": "2082/05/02",
-        "toDate": "2025-08-21T00:00:00",
-        "toDateNp": "2082/05/05",
-        "halfDayStatus": "On Start",
-        "totalLeaveDays": 4.00,
-        "extendedFromDate": "2025-08-18T00:00:00",
-        "extendedToDate": "2025-08-21T00:00:00",
-        "extendedFromDateNp": "2082/05/02",
-        "extendedToDateNp": null,
-        "extendedLeaveTypeId": 3,
-        "extendedHalfDayStatus": null,
-        "extendedTotalLeaveDays": 0.00,
-        "reason": "casual leave",
-        "status": "Open",
-        "leaveTypeName": "Home Leave",
-        "extendedLeaveTypeName": "Leave Without Pay",
-        "employeeDisplayName": "HRM-0064-ASG-Chudaraj paudyal (Assistant)",
-        "isRecommendationApproved": false,
-        "isApproved": false,
-        "isSubstituteAccepted": false,
-        "substitutationStatus": "Pending",
-        "recommendationStatus": "Pending",
-        "leaveNo": "H001-082/83-17",
-        "isInValidForApproval": false,
-        "leaveApprovedBy": null,
-        "approveRemarks": null,
-        "leaveApprovedOn": null,
-        "rejectedBy": null,
-        "recommendationApprovedBy": null,
-        "recommendationApprovedOn": null,
-        "recommendationRemarks": null,
-        "substituteAcceptRejectBy": null,
-        "substituteAcceptRejectOn": null,
-        "substituteRemarks": null,
-        "substituteEmployeeName": "HRM-6-Pranjal - ()",
-        "recommendedByEmployeeName": null,
-      },
-    ];
   }
 
   Color _getStatusColor(String status) {
@@ -144,9 +92,11 @@ class _LeaveApplicationHistoryScreenState
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: _getStatusColor(status).withValues(alpha:0.1),
+        color: _getStatusColor(status).withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _getStatusColor(status).withValues(alpha:0.3)),
+        border: Border.all(
+          color: _getStatusColor(status).withValues(alpha: 0.3),
+        ),
       ),
       child: Text(
         status,
@@ -159,7 +109,7 @@ class _LeaveApplicationHistoryScreenState
     );
   }
 
-  Widget _buildLeaveCard(Map<String, dynamic> leave) {
+  Widget _buildLeaveCard(dynamic leave) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
@@ -167,12 +117,12 @@ class _LeaveApplicationHistoryScreenState
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: Offset(0, 2),
           ),
         ],
-        border: Border.all(color: Colors.grey.withValues(alpha:0.1)),
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,7 +144,7 @@ class _LeaveApplicationHistoryScreenState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        leave['leaveTypeName'] ?? 'N/A',
+                        leave.leaveTypeName ?? 'N/A',
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -203,13 +153,13 @@ class _LeaveApplicationHistoryScreenState
                       ),
                       SizedBox(height: 4),
                       Text(
-                        'Leave #${leave['leaveNo'] ?? 'N/A'}',
+                        'Leave #${leave.leaveNo ?? 'N/A'}',
                         style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       ),
                     ],
                   ),
                 ),
-                _buildStatusChip(leave['status'] ?? 'Unknown'),
+                _buildStatusChip(leave.status ?? 'Unknown'),
               ],
             ),
           ),
@@ -219,46 +169,39 @@ class _LeaveApplicationHistoryScreenState
             padding: EdgeInsets.all(16),
             child: Column(
               children: [
-                _buildInfoRow('From Date', _formatDate(leave['fromDate'])),
-                _buildInfoRow('To Date', _formatDate(leave['toDate'])),
+                _buildInfoRow('From Date', _formatDate(leave.fromDate)),
+                _buildInfoRow('To Date', _formatDate(leave.toDate)),
                 _buildInfoRow(
                   'Days',
-                  '${leave['totalLeaveDays']?.toInt() ?? 0} days',
+                  '${leave.totalLeaveDays?.toInt() ?? 0} days',
                 ),
-                _buildInfoRow(
-                  'Applied On',
-                  _formatDate(leave['applicationDate']),
-                ),
-                _buildInfoRow('Reason', leave['reason'] ?? 'N/A'),
+                _buildInfoRow('Applied On', _formatDate(leave.applicationDate)),
+                _buildInfoRow('Reason', leave.reason ?? 'N/A'),
 
-                if (leave['leaveApprovedBy'] != null) ...[
+                if (leave.leaveApprovedBy != null) ...[
                   Divider(height: 24),
-                  _buildInfoRow(
-                    'Approved By',
-                    leave['leaveApprovedBy'] ?? 'N/A',
-                  ),
+                  _buildInfoRow('Approved By', leave.leaveApprovedBy ?? 'N/A'),
                   _buildInfoRow(
                     'Approved On',
-                    _formatDate(leave['leaveApprovedOn']),
+                    _formatDate(leave.leaveApprovedOn),
                   ),
                 ],
 
-                if (leave['substituteEmployeeName'] != null) ...[
+                if (leave.substituteEmployeeName != null) ...[
                   Divider(height: 24),
                   _buildInfoRow(
                     'Substitute',
-                    leave['substituteEmployeeName'] ?? 'N/A',
+                    leave.substituteEmployeeName ?? 'N/A',
                   ),
                   _buildInfoRow(
                     'Sub. Status',
-                    leave['substitutationStatus'] ?? 'N/A',
+                    leave.substitutationStatus ?? 'N/A',
                   ),
                 ],
 
-                // Extended leave details
-                if (leave['extendedFromDate'] != null &&
-                    leave['extendedToDate'] != null &&
-                    leave['extendedTotalLeaveDays'] > 0) ...[
+                if (leave.extendedFromDate != null &&
+                    leave.extendedToDate != null &&
+                    (leave.extendedTotalLeaveDays ?? 0) > 0) ...[
                   Divider(height: 24),
                   Text(
                     'Extended Leave Details',
@@ -271,19 +214,19 @@ class _LeaveApplicationHistoryScreenState
                   SizedBox(height: 8),
                   _buildInfoRow(
                     'Extended From',
-                    _formatDate(leave['extendedFromDate']),
+                    _formatDate(leave.extendedFromDate),
                   ),
                   _buildInfoRow(
                     'Extended To',
-                    _formatDate(leave['extendedToDate']),
+                    _formatDate(leave.extendedToDate),
                   ),
                   _buildInfoRow(
                     'Extended Days',
-                    '${leave['extendedTotalLeaveDays']?.toInt() ?? 0} days',
+                    '${leave.extendedTotalLeaveDays?.toInt() ?? 0} days',
                   ),
                   _buildInfoRow(
                     'Extended Type',
-                    leave['extendedLeaveTypeName'] ?? 'N/A',
+                    leave.extendedLeaveTypeName ?? 'N/A',
                   ),
                 ],
               ],
@@ -298,23 +241,21 @@ class _LeaveApplicationHistoryScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        title: Text(
-          'Leave History',
-          style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
-        ),
-        backgroundColor: Color(0xFF2196F3),
-        elevation: 0,
-        iconTheme: IconThemeData(color: Colors.white),
+      appBar: DynamicEMRAppBar(
+        title: "Leave History",
+        automaticallyImplyLeading: true,
       ),
-      body: isLoading
-          ? Center(
+      body: BlocConsumer<LeaveBloc, LeaveState>(
+        listener: (context, state) {},
+        builder: (context, state) {
+          if (state.leaveApplicationHistoryStatus == LeaveStatus.loading) {
+            return Center(
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF2196F3)),
               ),
-            )
-          : leaveHistory.isEmpty
-          ? Center(
+            );
+          } else if (state.leaveApplicationHistory.isEmpty) {
+            return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -330,19 +271,46 @@ class _LeaveApplicationHistoryScreenState
                   ),
                 ],
               ),
-            )
-          : RefreshIndicator(
+            );
+          } else if (state.leaveApplicationHistoryStatus ==
+              LeaveStatus.leaveApplicationHistoryLoadSuccess) {
+            return RefreshIndicator(
               onRefresh: () async {
-                _loadLeaveHistory();
+                context.read<LeaveBloc>().add(
+                  GetLeaveHistoryByContractIdFiscalYearIdEvent(
+                    contractId: widget.contractId,
+                    fiscalYearId: widget.fiscalYearId,
+                  ),
+                );
               },
-              child: ListView.builder(
-                padding: EdgeInsets.symmetric(vertical: 16),
-                itemCount: leaveHistory.length,
-                itemBuilder: (context, index) {
-                  return _buildLeaveCard(leaveHistory[index]);
-                },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      itemCount: state.leaveApplicationHistory.length,
+                      itemBuilder: (context, index) {
+                        final leave = state.leaveApplicationHistory[index];
+                        return _buildLeaveCard(leave);
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ),
+            );
+          } else if (state.leaveApplicationHistoryStatus ==
+              LeaveStatus.leaveApplicationHistoryError) {
+            return Center(
+              child: Text(
+                "Error: ${state.message}",
+                style: TextStyle(color: Colors.red),
+              ),
+            );
+          }
+          return Center(child: Text("Error un known ${state.status}"));
+        },
+      ),
     );
   }
 }

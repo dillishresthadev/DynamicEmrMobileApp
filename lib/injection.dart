@@ -11,6 +11,10 @@ import 'package:dynamic_emr/features/Leave/domain/repository/leave_repository.da
 import 'package:dynamic_emr/features/Leave/domain/usecases/apply_leave_usecase.dart';
 import 'package:dynamic_emr/features/Leave/domain/usecases/approved_leave_list_usecase.dart';
 import 'package:dynamic_emr/features/Leave/domain/usecases/extended_leave_type_usecase.dart';
+import 'package:dynamic_emr/features/Leave/domain/usecases/get_contract_usecase.dart';
+import 'package:dynamic_emr/features/Leave/domain/usecases/get_fiscalyear_by_contractid_usecase.dart';
+import 'package:dynamic_emr/features/Leave/domain/usecases/get_leave_history_by_contractid_fiscalyear_usecase.dart';
+import 'package:dynamic_emr/features/Leave/domain/usecases/get_leaves_by_contractid_fiscalyear_usecase.dart';
 import 'package:dynamic_emr/features/Leave/domain/usecases/leave_application_history_usecase.dart';
 import 'package:dynamic_emr/features/Leave/domain/usecases/leave_history_usecase.dart';
 import 'package:dynamic_emr/features/Leave/domain/usecases/leave_type_usecase.dart';
@@ -228,6 +232,31 @@ Future<void> initDependencies() async {
       extendedLeaveTypeUsecase: injection<ExtendedLeaveTypeUsecase>(),
       substitutionLeaveEmployeeUsecase:
           injection<SubstitutionLeaveEmployeeUsecase>(),
+      getContractUsecase: injection<GetContractUsecase>(),
+      getFiscalyearByContractidUsecase:
+          injection<GetFiscalyearByContractidUsecase>(),
+      getLeaveHistoryByContractidFiscalyearUsecase:
+          injection<GetLeaveHistoryByContractidFiscalyearUsecase>(),
+      getLeavesByContractidFiscalyearUsecase:
+          injection<GetLeavesByContractidFiscalyearUsecase>(),
+    ),
+  );
+  injection.registerLazySingleton<GetContractUsecase>(
+    () => GetContractUsecase(repository: injection<LeaveRepository>()),
+  );
+  injection.registerLazySingleton<GetLeavesByContractidFiscalyearUsecase>(
+    () => GetLeavesByContractidFiscalyearUsecase(
+      repository: injection<LeaveRepository>(),
+    ),
+  );
+  injection.registerLazySingleton<GetFiscalyearByContractidUsecase>(
+    () => GetFiscalyearByContractidUsecase(
+      repository: injection<LeaveRepository>(),
+    ),
+  );
+  injection.registerLazySingleton<GetLeaveHistoryByContractidFiscalyearUsecase>(
+    () => GetLeaveHistoryByContractidFiscalyearUsecase(
+      repository: injection<LeaveRepository>(),
     ),
   );
   injection.registerLazySingleton<LeaveTypeUsecase>(
@@ -427,7 +456,8 @@ Future<void> initDependencies() async {
     () => NotificationBloc(
       sendFcmDeviceTokenAnonymousUsecase:
           injection<SendFcmDeviceTokenAnonymousUsecase>(),
-      markAllNotificationAsReadUsecase: injection<MarkAllNotificationAsReadUsecase>(),
+      markAllNotificationAsReadUsecase:
+          injection<MarkAllNotificationAsReadUsecase>(),
       markNotificationAsReadUsecase: injection<MarkNotificationAsReadUsecase>(),
     ),
   );

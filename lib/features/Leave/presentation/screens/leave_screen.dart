@@ -1,8 +1,9 @@
 import 'package:dynamic_emr/core/constants/app_colors.dart';
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
+import 'package:dynamic_emr/features/Leave/domain/entities/leave_history_entity.dart';
 import 'package:dynamic_emr/features/Leave/presentation/bloc/leave_bloc.dart';
 import 'package:dynamic_emr/features/Leave/presentation/screens/apply_leave_form_screen.dart';
-import 'package:dynamic_emr/features/Leave/presentation/screens/leave_application_history_screen.dart';
+import 'package:dynamic_emr/features/Leave/presentation/screens/leave_history_screen.dart';
 import 'package:dynamic_emr/features/Leave/presentation/screens/tabs/approved_leaves_tab.dart';
 import 'package:dynamic_emr/features/Leave/presentation/screens/tabs/pending_leaves_tab.dart';
 import 'package:dynamic_emr/features/Leave/presentation/widgets/leave_card_widget.dart';
@@ -97,9 +98,7 @@ class _LeaveScreenState extends State<LeaveScreen>
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => LeaveApplicationHistoryScreen(),
-                ),
+                MaterialPageRoute(builder: (context) => LeaveHistoryScreen()),
               );
             },
             icon: Icon(Icons.history),
@@ -177,7 +176,7 @@ class _LeaveScreenState extends State<LeaveScreen>
     );
   }
 
-  Widget _buildLeaveHistoryGrid(List<dynamic> leaveHistory) {
+  Widget _buildLeaveHistoryGrid(List<LeaveHistoryEntity> leaveHistory) {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -196,7 +195,8 @@ class _LeaveScreenState extends State<LeaveScreen>
           icon: config['icon'] as IconData,
           color: config['color'] as Color,
           bgColor: config['bgColor'] as Color,
-          count: leave.balance.toString(),
+          availableLeaaveCount: leave.balance.toString(),
+          totalLeaveCount: leave.allocated.toString(),
           label: leave.leaveType,
         );
       },

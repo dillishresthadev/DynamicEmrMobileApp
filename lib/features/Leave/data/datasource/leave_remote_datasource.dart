@@ -489,7 +489,7 @@ class LeaveRemoteDatasourceImpl implements LeaveRemoteDatasource {
           .map((json) => LeaveApplicationModel.fromJson(json))
           .toList();
     } catch (e) {
-      log("Error getting contracts list: $e");
+      log("Error getting leaves application history list: $e");
       rethrow;
     }
   }

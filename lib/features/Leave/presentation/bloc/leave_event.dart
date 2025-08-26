@@ -31,7 +31,18 @@ final class GetLeaveHistoryByContractIdFiscalYearIdEvent extends LeaveEvent {
   List<Object> get props => [contractId, fiscalYearId];
 }
 
-final class LeaveApplicationHistoryEvent extends LeaveEvent {}
+final class LeaveApplicationHistoryEvent extends LeaveEvent {
+  final int contractId;
+  final int fiscalYearId;
+
+  const LeaveApplicationHistoryEvent({
+    required this.contractId,
+    required this.fiscalYearId,
+  });
+
+  @override
+  List<Object> get props => [contractId, fiscalYearId];
+}
 
 final class ApprovedLeaveListEvent extends LeaveEvent {}
 

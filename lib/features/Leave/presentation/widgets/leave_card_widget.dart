@@ -4,7 +4,8 @@ class LeaveCardWidget extends StatelessWidget {
   final IconData icon;
   final Color color;
   final Color bgColor;
-  final String count;
+  final String availableLeaaveCount;
+  final String totalLeaveCount;
   final String label;
 
   const LeaveCardWidget({
@@ -12,7 +13,8 @@ class LeaveCardWidget extends StatelessWidget {
     required this.icon,
     required this.color,
     required this.bgColor,
-    required this.count,
+    required this.availableLeaaveCount,
+    required this.totalLeaveCount,
     required this.label,
   });
 
@@ -36,7 +38,7 @@ class LeaveCardWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    count,
+                    "$availableLeaaveCount/$totalLeaveCount",
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
