@@ -47,6 +47,9 @@ class LeaveBloc extends Bloc<LeaveEvent, LeaveState> {
     on<LeaveTypeEvent>(_onLeaveType);
     on<LeaveTypeExtendedEvent>(_onLeaveTypeExtended);
     on<SubstitutionEmployeeEvent>(_onSubstitutionEmployee);
+    on<GetContractEvent>(_onGetContract);
+    on<GetFiscalYearByContractIdEvent>(_onGetFiscalYearByContractId);
+    on<GetLeaveHistoryByContractIdFiscalYearIdEvent>(_onGetLeaveHistoryByContractIdFiscalYearId);
   }
 
   Future<void> _onLeaveHistory(
@@ -269,5 +272,14 @@ class LeaveBloc extends Bloc<LeaveEvent, LeaveState> {
         ),
       );
     }
+  }
+
+  FutureOr<void> _onGetContract(GetContractEvent event, Emitter<LeaveState> emit) {
+  }
+
+  FutureOr<void> _onGetFiscalYearByContractId(GetFiscalYearByContractIdEvent event, Emitter<LeaveState> emit) {
+  }
+
+  FutureOr<void> _onGetLeaveHistoryByContractIdFiscalYearId(GetLeaveHistoryByContractIdFiscalYearIdEvent event, Emitter<LeaveState> emit) {
   }
 }

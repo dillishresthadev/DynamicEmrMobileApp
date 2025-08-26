@@ -19,6 +19,10 @@ enum LeaveStatus {
   extendedLeaveTypeError,
   substitutionEmployeeSuccess,
   substitutionEmployeeError,
+  contractLoaded,
+  contractError,
+  fiscalYearLoaded,
+  fiscalYearError,
 }
 
 final class LeaveState extends Equatable {
@@ -30,12 +34,18 @@ final class LeaveState extends Equatable {
   final List<LeaveTypeEntity> leaveType;
   final List<LeaveTypeEntity> extendedLeaveType;
   final List<LeaveTypeEntity> substitutionEmployee;
+
   final LeaveStatus status;
   final LeaveStatus approvedLeaveStatus;
   final LeaveStatus pendingLeaveStatus;
+  final LeaveStatus contractStatus;
+  final LeaveStatus fiscalYearStatus;
+
   final String message;
   final String approvedLeaveMessage;
   final String pendingLeaveMessage;
+  final String contractMessage;
+  final String fiscalYearMessage;
 
   const LeaveState({
     this.leaveHistory = const [],
@@ -45,9 +55,13 @@ final class LeaveState extends Equatable {
     this.status = LeaveStatus.initial,
     this.approvedLeaveStatus = LeaveStatus.initial,
     this.pendingLeaveStatus = LeaveStatus.initial,
+    this.contractStatus = LeaveStatus.initial,
+    this.fiscalYearStatus = LeaveStatus.initial,
     this.message = '',
     this.approvedLeaveMessage = '',
     this.pendingLeaveMessage = '',
+    this.contractMessage = '',
+    this.fiscalYearMessage = '',
     this.applyLeave = false,
     this.leaveType = const [],
     this.extendedLeaveType = const [],
@@ -59,15 +73,19 @@ final class LeaveState extends Equatable {
     List<LeaveApplicationEntity>? leaveApplicationHistory,
     List<LeaveApplicationEntity>? approvedLeave,
     List<LeaveApplicationEntity>? pendingLeave,
-    final List<LeaveTypeEntity>? leaveType,
-    final List<LeaveTypeEntity>? extendedLeaveType,
-    final List<LeaveTypeEntity>? substitutionEmployee,
+    List<LeaveTypeEntity>? leaveType,
+    List<LeaveTypeEntity>? extendedLeaveType,
+    List<LeaveTypeEntity>? substitutionEmployee,
     bool? applyLeave,
     LeaveStatus? approvedLeaveStatus,
     LeaveStatus? pendingLeaveStatus,
+    LeaveStatus? contractStatus,
+    LeaveStatus? fiscalYearStatus,
     LeaveStatus? status,
     String? approvedLeaveMessage,
     String? pendingLeaveMessage,
+    String? contractMessage,
+    String? fiscalYearMessage,
     String? message,
   }) {
     return LeaveState(
@@ -82,9 +100,13 @@ final class LeaveState extends Equatable {
       applyLeave: applyLeave ?? this.applyLeave,
       approvedLeaveStatus: approvedLeaveStatus ?? this.approvedLeaveStatus,
       pendingLeaveStatus: pendingLeaveStatus ?? this.pendingLeaveStatus,
+      contractStatus: contractStatus ?? this.contractStatus,
+      fiscalYearStatus: fiscalYearStatus ?? this.fiscalYearStatus,
       status: status ?? this.status,
       approvedLeaveMessage: approvedLeaveMessage ?? this.approvedLeaveMessage,
       pendingLeaveMessage: pendingLeaveMessage ?? this.pendingLeaveMessage,
+      contractMessage: contractMessage ?? this.contractMessage,
+      fiscalYearMessage: fiscalYearMessage ?? this.fiscalYearMessage,
       message: message ?? this.message,
     );
   }
@@ -100,6 +122,14 @@ final class LeaveState extends Equatable {
     substitutionEmployee,
     applyLeave,
     status,
+    approvedLeaveStatus,
+    pendingLeaveStatus,
+    contractStatus,
+    fiscalYearStatus,
     message,
+    approvedLeaveMessage,
+    pendingLeaveMessage,
+    contractMessage,
+    fiscalYearMessage,
   ];
 }

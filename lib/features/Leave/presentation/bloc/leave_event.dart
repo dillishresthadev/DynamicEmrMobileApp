@@ -9,6 +9,28 @@ sealed class LeaveEvent extends Equatable {
 
 final class LeaveHistoryEvent extends LeaveEvent {}
 
+final class GetContractEvent extends LeaveEvent {}
+
+final class GetFiscalYearByContractIdEvent extends LeaveEvent {
+  final int contractId;
+
+  const GetFiscalYearByContractIdEvent({required this.contractId});
+  @override
+  List<Object> get props => [contractId];
+}
+
+final class GetLeaveHistoryByContractIdFiscalYearIdEvent extends LeaveEvent {
+  final int contractId;
+  final int fiscalYearId;
+
+  const GetLeaveHistoryByContractIdFiscalYearIdEvent({
+    required this.contractId,
+    required this.fiscalYearId,
+  });
+  @override
+  List<Object> get props => [contractId, fiscalYearId];
+}
+
 final class LeaveApplicationHistoryEvent extends LeaveEvent {}
 
 final class ApprovedLeaveListEvent extends LeaveEvent {}
