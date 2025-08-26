@@ -36,12 +36,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: DynamicEMRAppBar(
         title: "Profile",
         actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.pushNamed(context, RouteNames.settingScreen);
-            },
-            icon: Icon(Icons.settings_outlined, color: Colors.white),
-          ),
+          // IconButton(
+          //   onPressed: () {
+          //     Navigator.pushNamed(context, RouteNames.settingScreen);
+          //   },
+          //   icon: Icon(Icons.settings_outlined, color: Colors.white),
+          // ),
           IconButton(
             onPressed: () {
               showDialog(
