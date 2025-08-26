@@ -96,8 +96,8 @@ class _TodayAttendanceWidgetState extends State<TodayAttendanceWidget> {
                   ],
                 ),
               ),
-              (todayAttendance.checkInTime == null &&
-                      todayAttendance.checkOutTime == null)
+              (todayAttendance.checkInTime != null ||
+                      todayAttendance.checkOutTime != null)
                   ? Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
@@ -119,7 +119,7 @@ class _TodayAttendanceWidgetState extends State<TodayAttendanceWidget> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        todayAttendance.statusFullName.toString(),
+                        todayAttendance.status.toString(),
                         style: const TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -130,7 +130,8 @@ class _TodayAttendanceWidgetState extends State<TodayAttendanceWidget> {
                   : SizedBox.shrink(),
             ],
           ),
-          (todayAttendance.checkInTime != null &&
+          SizedBox(height: 10),
+          (todayAttendance.checkInTime != null ||
                   todayAttendance.checkOutTime != null)
               ? Row(
                   spacing: 10,
