@@ -47,110 +47,122 @@ class _AttendanceSummaryScreenState extends State<AttendanceSummaryScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                "Filter Attendance",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 20),
-
-              Row(
+        return SafeArea(
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+              top: 16,
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  // Start Date
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          "Start Date",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        SizedBox(height: 5),
-                        CustomDateTimeField(
-                          prefixIcon: Icon(Icons.date_range),
-                          controller: _startdatecontroller,
-                          firstDate: DateTime(1900),
-                          lastDate: DateTime.now(),
-                          hintText: "Start Date",
-                        ),
-                      ],
-                    ),
+                  const Text(
+                    "Filter Attendance",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(width: 16),
-                  // End Date
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text("End Date", style: TextStyle(fontSize: 16)),
-                        const SizedBox(height: 5),
-                        CustomDateTimeField(
-                          prefixIcon: Icon(Icons.date_range),
-                          controller: _enddatecontroller,
-                          firstDate: DateTime(1900),
-                          lastDate: DateTime.now(),
-                          hintText: "End Date",
+                  const SizedBox(height: 20),
+
+                  Row(
+                    children: [
+                      // Start Date
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Start Date",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            const SizedBox(height: 5),
+                            CustomDateTimeField(
+                              prefixIcon: Icon(Icons.date_range),
+                              controller: _startdatecontroller,
+                              firstDate: DateTime(1900),
+                              lastDate: DateTime.now(),
+                              hintText: "Start Date",
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
+                      const SizedBox(width: 16),
+                      // End Date
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "End Date",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            const SizedBox(height: 5),
+                            CustomDateTimeField(
+                              prefixIcon: Icon(Icons.date_range),
+                              controller: _enddatecontroller,
+                              firstDate: DateTime(1900),
+                              lastDate: DateTime.now(),
+                              hintText: "End Date",
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+
+                  CustomDropdown(
+                    value: _selectedShift,
+                    items: type,
+                    hintText: "Type",
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedShift = value;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 20),
+
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_startdatecontroller.text.isEmpty ||
+                          _enddatecontroller.text.isEmpty) {
+                        return;
+                      }
+                      context.read<AttendanceBloc>().add(
+                        GetAttendanceSummaryEvent(
+                          fromDate: DateTime.parse(_startdatecontroller.text),
+                          toDate: DateTime.parse(_enddatecontroller.text),
+                          shiftType: _selectedShift ?? '',
+                        ),
+                      );
+                      Navigator.of(context).pop();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 48),
+                      backgroundColor: AppColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12.0),
+                    ),
+                    child: const Text(
+                      "Apply Filter",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: 10),
-              CustomDropdown(
-                value: _selectedShift,
-                items: type,
-                hintText: "Type",
-                onChanged: (value) {
-                  setState(() {
-                    _selectedShift = value;
-                  });
-                },
-              ),
-              SizedBox(height: 10),
-
-              ElevatedButton(
-                onPressed: () {
-                  if (_startdatecontroller.text.isEmpty ||
-                      _enddatecontroller.text.isEmpty) {
-                    return;
-                  }
-                  context.read<AttendanceBloc>().add(
-                    GetAttendanceSummaryEvent(
-                      fromDate: DateTime.parse(_startdatecontroller.text),
-                      toDate: DateTime.parse(_enddatecontroller.text),
-                      shiftType: _selectedShift ?? '',
-                    ),
-                  );
-                  Navigator.of(context).pop();
-                },
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 48),
-                  backgroundColor: AppColors.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 12.0),
-                ),
-                child: const Text(
-                  "Apply Filter",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         );
       },

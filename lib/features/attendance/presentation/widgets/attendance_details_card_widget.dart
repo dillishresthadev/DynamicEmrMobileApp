@@ -191,7 +191,7 @@ class AttendanceDetailsCardWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        DateFormat('EEEE, MMM dd, yyyy').format(date),
+                        DateFormat('EEE, MMM dd, yyyy').format(date),
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
@@ -221,7 +221,7 @@ class AttendanceDetailsCardWidget extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    attendanceDetails.statusFullName.toString(),
+                    attendanceDetails.status.toString(),
                     style: const TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
