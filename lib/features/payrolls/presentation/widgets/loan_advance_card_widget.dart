@@ -34,12 +34,10 @@ class LoanAdvanceCardWidget extends StatelessWidget {
           BlocBuilder<PayrollBloc, PayrollState>(
             builder: (context, state) {
               if (state.loanAndAdvanceStatus == PayrollStatus.loading) {
-                log("Loading on loan data");
                 return const Center(child: CircularProgressIndicator());
               } else if (state.loanAndAdvanceStatus == PayrollStatus.success) {
                 final loanDataList = state.loanAndAdvance?.loanAndAdvanceData;
                 final totalAmount = state.loanAndAdvance?.balanceAmount;
-                log("loan data $loanDataList");
                 if (loanDataList == null || loanDataList.isEmpty) {
                   return const Padding(
                     padding: EdgeInsets.symmetric(vertical: 16),

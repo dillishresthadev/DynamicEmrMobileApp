@@ -91,40 +91,32 @@ class _TicketCard extends StatelessWidget {
       children: [
         Row(
           children: [
-            Expanded(
-              child: _MetadataChip(
-                icon: Icons.flag_outlined,
-                label: "priority : ${ticket.priority}",
-                color: _getPriorityColor(ticket.priority),
-              ),
+            _MetadataChip(
+              icon: Icons.flag_outlined,
+              label: "priority : ${ticket.priority}",
+              color: _getPriorityColor(ticket.priority),
             ),
             const SizedBox(width: 8),
-            Expanded(
-              child: _MetadataChip(
-                icon: Icons.error_outline,
-                label: "Severity : ${ticket.severity}",
-                color: _getSeverityColor(ticket.severity),
-              ),
+            _MetadataChip(
+              icon: Icons.error_outline,
+              label: "Severity : ${ticket.severity}",
+              color: _getSeverityColor(ticket.severity),
             ),
           ],
         ),
         const SizedBox(height: 8),
         Row(
           children: [
-            Expanded(
-              child: _MetadataChip(
-                icon: Icons.person_outline,
-                label: "Assigned : ${ticket.assignedTo}",
-                color: Colors.blue.shade600,
-              ),
+            _MetadataChip(
+              icon: Icons.person_outline,
+              label: "Assigned : ${ticket.assignedTo}",
+              color: Colors.blue.shade600,
             ),
             const SizedBox(width: 8),
-            Expanded(
-              child: _MetadataChip(
-                icon: Icons.schedule_outlined,
-                label: ticketDate,
-                color: Colors.grey.shade600,
-              ),
+            _MetadataChip(
+              icon: Icons.schedule_outlined,
+              label: ticketDate,
+              color: Colors.grey.shade600,
             ),
           ],
         ),
