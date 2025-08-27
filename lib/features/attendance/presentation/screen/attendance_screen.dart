@@ -101,7 +101,6 @@ class _AttendanceScreenState extends State<AttendanceScreen> {
                         ),
                       ),
                       children: [
-                        const SizedBox(height: 16),
                         if (state.status == AttendanceStatus.loading &&
                             state.primary == null)
                           const Center(child: CircularProgressIndicator())

@@ -28,10 +28,15 @@ class _PendingLeavesTabState extends State<PendingLeavesTab> {
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.white,
       builder: (context) => FractionallySizedBox(
         heightFactor: 0.7, // 70% of screen height
-        child: LeaveDetailsBottomSheet(leave: leave),
+        child: Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+          ),
+          child: LeaveDetailsBottomSheet(leave: leave),
+        ),
       ),
     );
   }

@@ -103,22 +103,39 @@ class _TicketScreenState extends State<TicketScreen>
             onPressed: () {
               showModalBottomSheet(
                 context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadiusGeometry.vertical(
+                    top: Radius.circular(16),
+                  ),
+                ),
                 builder: (context) {
-                  return TicketFilterWidget(
-                    onApply: (filter) => _applyFilter(filter),
-                    onClear: () {
-                      _applyFilter(
-                        TicketFilterData(
-                          ticketCategoryId: 0,
-                          status: "",
-                          priority: "",
-                          severity: "",
-                          orderBy: "",
-                          fromDate: "",
-                          toDate: "",
-                        ),
-                      );
-                    },
+                  return SafeArea(
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        top: 16,
+                        right: 16,
+                        left: 16,
+                        bottom: MediaQuery.of(context).viewInsets.bottom + 16,
+                      ),
+                      child: TicketFilterWidget(
+                        onApply: (filter) => _applyFilter(filter),
+                        onClear: () {
+                          _applyFilter(
+                            TicketFilterData(
+                              ticketCategoryId: 0,
+                              status: "",
+                              priority: "",
+                              severity: "",
+                              orderBy: "",
+                              fromDate: "",
+                              toDate: "",
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                   );
                 },
               );

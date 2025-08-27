@@ -86,7 +86,13 @@ class _TicketFilterWidgetState extends State<TicketFilterWidget> {
         padding: EdgeInsets.all(16),
         child: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const Text(
+                "Filter Ticket",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
               // Category & Status
               Row(
                 children: [

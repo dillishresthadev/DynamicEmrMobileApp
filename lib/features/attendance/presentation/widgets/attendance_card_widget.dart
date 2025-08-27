@@ -38,7 +38,7 @@ class AttendanceCardWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "$count.0",
+                      count,
                       style: const TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
