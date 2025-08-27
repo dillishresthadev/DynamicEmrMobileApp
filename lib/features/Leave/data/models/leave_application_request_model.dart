@@ -28,7 +28,7 @@ class LeaveApplicationRequestModel extends LeaveApplicationRequestEntity {
       toDate: json['toDate'] as String?,
       toDateNp: json['toDateNp'] as String?,
       halfDayStatus: json['halfDayStatus'] as String?,
-      totalLeaveDays: json['totalLeaveDays'] as int?,
+      totalLeaveDays: json['totalLeaveDays'] as double?,
       extendedTotalLeaveDays: json['extendedTotalLeaveDays'] as int?,
       reason: json['reason'] as String?,
       extendedFromDate: json['extendedFromDate'] as String?,

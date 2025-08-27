@@ -71,8 +71,23 @@ class _ApplyLeaveFormScreenState extends State<ApplyLeaveFormScreen> {
     context.read<LeaveBloc>().add(SubstitutionEmployeeEvent());
   }
 
-  int _calculateDays(DateTime start, DateTime end) =>
+  int _calculateDaysExtended(DateTime start, DateTime end) =>
       end.difference(start).inDays + 1;
+
+  double _calculateDays(DateTime start, DateTime end, {String? halfDayOption}) {
+    // Total days between start and end (inclusive)
+    int totalDays = end.difference(start).inDays + 1;
+
+    double leaveDays = totalDays.toDouble();
+
+    if (halfDayOption == "On Start" || halfDayOption == "On End") {
+      leaveDays -= 0.5;
+    } else if (halfDayOption == "Both") {
+      leaveDays -= 1;
+    }
+
+    return leaveDays;
+  }
 
   String _toNepaliDate(DateTime gregorian) {
     final np = gregorian.toNepaliDateTime();
@@ -137,7 +152,11 @@ class _ApplyLeaveFormScreenState extends State<ApplyLeaveFormScreen> {
             ? _toNepaliDate(_endDatePrimary!)
             : null,
         totalLeaveDays: (_startDatePrimary != null && _endDatePrimary != null)
-            ? _calculateDays(_startDatePrimary!, _endDatePrimary!)
+            ? _calculateDays(
+                _startDatePrimary!,
+                _endDatePrimary!,
+                halfDayOption: _selectedHalfDay,
+              )
             : null,
 
         // Extended
@@ -156,7 +175,7 @@ class _ApplyLeaveFormScreenState extends State<ApplyLeaveFormScreen> {
             : null,
         extendedTotalLeaveDays:
             (_startDateExtended != null && _endDateExtended != null)
-            ? _calculateDays(_startDateExtended!, _endDateExtended!)
+            ? _calculateDaysExtended(_startDateExtended!, _endDateExtended!)
             : null,
 
         // Common
@@ -294,11 +313,21 @@ class _ApplyLeaveFormScreenState extends State<ApplyLeaveFormScreen> {
               const SizedBox(height: 10),
               Text("Total Leave Days"),
               const SizedBox(height: 6),
+              // Text(
+              //   (_startDatePrimary != null && _endDatePrimary != null)
+              //       ? _calculateDays(
+              //           _startDatePrimary!,
+              //           _endDatePrimary!,
+              //         ).toString()
+              //       : "0",
+              //   style: const TextStyle(fontWeight: FontWeight.bold),
+              // ),
               Text(
                 (_startDatePrimary != null && _endDatePrimary != null)
                     ? _calculateDays(
                         _startDatePrimary!,
                         _endDatePrimary!,
+                        halfDayOption: _selectedHalfDay,
                       ).toString()
                     : "0",
                 style: const TextStyle(fontWeight: FontWeight.bold),
@@ -370,7 +399,7 @@ class _ApplyLeaveFormScreenState extends State<ApplyLeaveFormScreen> {
               const SizedBox(height: 6),
               Text(
                 (_startDateExtended != null && _endDateExtended != null)
-                    ? _calculateDays(
+                    ? _calculateDaysExtended(
                         _startDateExtended!,
                         _endDateExtended!,
                       ).toString()

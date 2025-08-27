@@ -9,7 +9,7 @@ class LeaveApplicationRequestEntity {
   String? toDate;
   String? toDateNp;
   String? halfDayStatus;
-  int? totalLeaveDays;
+  double? totalLeaveDays;
   int? extendedTotalLeaveDays;
   String? reason;
   String? extendedFromDate;
