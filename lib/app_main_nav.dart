@@ -20,7 +20,6 @@ class _AppMainNavState extends State<AppMainNav> {
   final List<Widget> _pages = [
     HomeScreen(),
     PayrollScreen(),
-    // AttendanceScreen(),
     LeaveScreen(),
     WorkScreen(),
     ProfileScreen(),
