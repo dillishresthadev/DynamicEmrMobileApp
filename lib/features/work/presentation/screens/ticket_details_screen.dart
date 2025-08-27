@@ -10,6 +10,7 @@ import 'package:dynamic_emr/features/work/presentation/widgets/ticket_file_widge
 import 'package:dynamic_emr/features/work/presentation/widgets/ticket_info_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:intl/intl.dart';
 
 class TicketDetailsScreen extends StatefulWidget {
@@ -162,14 +163,24 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                     ),
                                   ),
                                   const SizedBox(height: 6),
-                                  Text(
-                                    ticket.ticket.description,
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      color: Colors.black54,
-                                      height: 1.4,
-                                    ),
+                                  // Rending HTML tags as ticket may comes from web too
+                                  Html(
+                                    data: ticket.ticket.description,
+                                    style: {
+                                      "*": Style(
+                                        fontSize: FontSize(14),
+                                        color: Colors.black54,
+                                      ),
+                                    },
                                   ),
+                                  // Text(
+                                  //   ticket.ticket.description,
+                                  //   style: const TextStyle(
+                                  //     fontSize: 14,
+                                  //     color: Colors.black54,
+                                  //     height: 1.4,
+                                  //   ),
+                                  // ),
                                 ],
                               ),
                               const SizedBox(height: 12),
