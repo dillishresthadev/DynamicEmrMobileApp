@@ -25,6 +25,9 @@ void main() async {
 
   // Dependency Injection
   await initDependencies();
+
+  // Bloc observer
+  // Bloc.observer = MyBlocObserver();
   runApp(const MyApp());
 }
 
