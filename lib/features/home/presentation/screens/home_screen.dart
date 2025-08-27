@@ -61,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
-                spacing: 20,
+                spacing: 8,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildModernHeader(),
@@ -431,75 +431,75 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildQuickStatsSection() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Container(
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [const Color(0xFF1F2937), Colors.grey[800]!],
-          ),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'This Week Overview',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  child: _buildStatItem('Hours Worked', '38.5h', Icons.timer),
-                ),
-                Expanded(
-                  child: _buildStatItem(
-                    'Days Present',
-                    '4/5',
-                    Icons.calendar_today,
-                  ),
-                ),
-                Expanded(
-                  child: _buildStatItem('On Time', '80%', Icons.schedule),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget _buildQuickStatsSection() {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(horizontal: 20),
+  //     child: Container(
+  //       padding: const EdgeInsets.all(24),
+  //       decoration: BoxDecoration(
+  //         gradient: LinearGradient(
+  //           begin: Alignment.topLeft,
+  //           end: Alignment.bottomRight,
+  //           colors: [const Color(0xFF1F2937), Colors.grey[800]!],
+  //         ),
+  //         borderRadius: BorderRadius.circular(20),
+  //       ),
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           const Text(
+  //             'This Week Overview',
+  //             style: TextStyle(
+  //               fontSize: 18,
+  //               fontWeight: FontWeight.bold,
+  //               color: Colors.white,
+  //             ),
+  //           ),
+  //           const SizedBox(height: 20),
+  //           Row(
+  //             children: [
+  //               Expanded(
+  //                 child: _buildStatItem('Hours Worked', '38.5h', Icons.timer),
+  //               ),
+  //               Expanded(
+  //                 child: _buildStatItem(
+  //                   'Days Present',
+  //                   '4/5',
+  //                   Icons.calendar_today,
+  //                 ),
+  //               ),
+  //               Expanded(
+  //                 child: _buildStatItem('On Time', '80%', Icons.schedule),
+  //               ),
+  //             ],
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  Widget _buildStatItem(String label, String value, IconData icon) {
-    return Column(
-      children: [
-        Icon(icon, color: Colors.white70, size: 24),
-        const SizedBox(height: 8),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 12, color: Colors.white70),
-          textAlign: TextAlign.center,
-        ),
-      ],
-    );
-  }
+  // Widget _buildStatItem(String label, String value, IconData icon) {
+  //   return Column(
+  //     children: [
+  //       Icon(icon, color: Colors.white70, size: 24),
+  //       const SizedBox(height: 8),
+  //       Text(
+  //         value,
+  //         style: const TextStyle(
+  //           fontSize: 20,
+  //           fontWeight: FontWeight.bold,
+  //           color: Colors.white,
+  //         ),
+  //       ),
+  //       Text(
+  //         label,
+  //         style: const TextStyle(fontSize: 12, color: Colors.white70),
+  //         textAlign: TextAlign.center,
+  //       ),
+  //     ],
+  //   );
+  // }
 
   String _getGreeting() {
     final hour = DateTime.now().hour;

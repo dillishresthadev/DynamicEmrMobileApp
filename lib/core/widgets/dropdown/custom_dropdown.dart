@@ -28,7 +28,7 @@ class CustomDropdown extends StatelessWidget {
               value: item,
               child: Text(
                 item,
-                style: TextStyle(color: Colors.black.withOpacity(0.8)),
+                style: TextStyle(color: Colors.black.withValues(alpha: 0.8)),
               ),
             ),
           )
@@ -49,7 +49,7 @@ class CustomDropdown extends StatelessWidget {
       ),
       hint: Text(
         hintText,
-        style: TextStyle(color: Colors.black.withOpacity(0.5)),
+        style: TextStyle(color: Colors.black.withValues(alpha: 0.5)),
       ),
       dropdownStyleData: DropdownStyleData(
         decoration: BoxDecoration(
@@ -63,7 +63,7 @@ class CustomDropdown extends StatelessWidget {
           return Text(
             item,
             style: TextStyle(
-              color: Colors.black.withOpacity(0.8),
+              color: Colors.black.withValues(alpha: 0.8),
               fontSize: 14,
             ),
           );
@@ -97,14 +97,14 @@ class CustomDropdown2 extends StatelessWidget {
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: validator,
       value: value,
-      barrierColor: Colors.black.withOpacity(0.5),
+      barrierColor: Colors.black.withValues(alpha: 0.5),
       items: items
           .map(
             (item) => DropdownMenuItem<int>(
               value: item["value"],
               child: Text(
                 item["label"],
-                style: TextStyle(color: Colors.black.withOpacity(0.8)),
+                style: TextStyle(color: Colors.black.withValues(alpha: 0.8)),
               ),
             ),
           )
@@ -125,7 +125,7 @@ class CustomDropdown2 extends StatelessWidget {
       ),
       hint: Text(
         hintText,
-        style: TextStyle(color: Colors.black.withOpacity(0.5)),
+        style: TextStyle(color: Colors.black.withValues(alpha: 0.5)),
       ),
       dropdownStyleData: DropdownStyleData(
         decoration: BoxDecoration(
@@ -138,7 +138,7 @@ class CustomDropdown2 extends StatelessWidget {
         height: 50,
         padding: EdgeInsets.symmetric(horizontal: 16),
         overlayColor: WidgetStateProperty.all(
-          AppColors.primary.withOpacity(0.1),
+          AppColors.primary.withValues(alpha: 0.1),
         ),
       ),
     );
@@ -175,7 +175,7 @@ class CustomDropdownClearFilters extends StatelessWidget {
                 value: item,
                 child: Text(
                   item,
-                  style: TextStyle(color: Colors.black.withValues(alpha:0.8)),
+                  style: TextStyle(color: Colors.black.withValues(alpha: 0.8)),
                 ),
               ),
             )
@@ -196,7 +196,7 @@ class CustomDropdownClearFilters extends StatelessWidget {
         ),
         hint: Text(
           hintText,
-          style: TextStyle(color: Colors.black.withValues(alpha:0.5)),
+          style: TextStyle(color: Colors.black.withValues(alpha: 0.5)),
         ),
         dropdownStyleData: DropdownStyleData(
           decoration: BoxDecoration(
@@ -210,7 +210,7 @@ class CustomDropdownClearFilters extends StatelessWidget {
             return Text(
               item,
               style: TextStyle(
-                color: Colors.black.withValues(alpha:0.8),
+                color: Colors.black.withValues(alpha: 0.8),
                 fontSize: 14,
               ),
             );

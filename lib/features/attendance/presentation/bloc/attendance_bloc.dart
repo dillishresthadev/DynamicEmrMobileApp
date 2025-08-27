@@ -52,7 +52,7 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
       emit(
         state.copyWith(
           status: AttendanceStatus.loadPrimaryError,
-          message: e.toString(),
+          message: "Failed getting Month Attendance",
         ),
       );
     }
@@ -77,7 +77,7 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
       emit(
         state.copyWith(
           status: AttendanceStatus.loadExtendedError,
-          message: e.toString(),
+          message: "Failed getting extended attendance",
         ),
       );
     }
@@ -105,7 +105,7 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
       emit(
         state.copyWith(
           status: AttendanceStatus.loadSummaryError,
-          message: e.toString(),
+          message: "Failed getting attendance summary",
         ),
       );
     }

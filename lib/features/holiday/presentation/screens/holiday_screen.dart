@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dynamic_emr/core/constants/app_colors.dart';
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/features/holiday/presentation/bloc/holiday_bloc.dart';

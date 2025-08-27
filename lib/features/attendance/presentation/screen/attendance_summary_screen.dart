@@ -46,7 +46,9 @@ class _AttendanceSummaryScreenState extends State<AttendanceSummaryScreen> {
   void _showFilterBottomSheet() {
     showModalBottomSheet(
       context: context,
+      backgroundColor: Colors.white,
       isScrollControlled: true,
+
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
@@ -62,6 +64,7 @@ class _AttendanceSummaryScreenState extends State<AttendanceSummaryScreen> {
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text(
                     "Filter Attendance",
