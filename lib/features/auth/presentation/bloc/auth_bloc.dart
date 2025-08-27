@@ -172,7 +172,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } catch (e) {
       log('Login error: $e');
 
-      emit(AuthErrorState(errorMessage: "Login Failed : $e"));
+      emit(AuthErrorState(errorMessage: "Login Failed"));
     }
   }
 
@@ -192,7 +192,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(HospitalBaseUrlSuccessState());
     } catch (e) {
       log('Login error: $e');
-      emit(AuthErrorState(errorMessage: "Login Failed : $e"));
+      emit(AuthErrorState(errorMessage: "Login Failed"));
     }
   }
 
@@ -209,7 +209,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthHospitalBranchLoadedState(hospitalBranch: hospitalBranch));
     } catch (e) {
       log('Failed getting branch: $e');
-      emit(AuthErrorState(errorMessage: "Failed getting branch : $e"));
+      emit(AuthErrorState(errorMessage: "Failed getting branch"));
     }
   }
 
@@ -226,11 +226,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthHospitalFinancialYearState(financialYear: financialYear));
     } catch (e) {
       log('Failed getting Financial Year data: $e');
-      emit(
-        AuthErrorState(
-          errorMessage: "Failed getting Financial Year data  : $e",
-        ),
-      );
+      emit(AuthErrorState(errorMessage: "Failed getting Financial Year data"));
     }
   }
 
@@ -250,7 +246,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthLogoutSuccessState());
     } catch (e) {
       log("Error Logging out :$e");
-      emit(AuthLogoutErrorState(errorMessage: e.toString()));
+      emit(AuthLogoutErrorState(errorMessage: "Error Logging out"));
     }
   }
 }

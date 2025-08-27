@@ -46,7 +46,7 @@ class _TodayAttendanceWidgetState extends State<TodayAttendanceWidget> {
     final todayAttendance = todaysAttendanceList.first;
 
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
@@ -62,6 +62,7 @@ class _TodayAttendanceWidgetState extends State<TodayAttendanceWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // SizedBox(height: 12),
           Row(
             children: [
               Container(
@@ -127,7 +128,10 @@ class _TodayAttendanceWidgetState extends State<TodayAttendanceWidget> {
               ),
             ],
           ),
-          SizedBox(height: 10),
+          (todayAttendance.checkInTime != null ||
+                  todayAttendance.checkOutTime != null)
+              ? SizedBox(height: 10)
+              : SizedBox.shrink(),
           (todayAttendance.checkInTime != null ||
                   todayAttendance.checkOutTime != null)
               ? Row(

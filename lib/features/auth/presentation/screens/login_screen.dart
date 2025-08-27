@@ -46,6 +46,13 @@ class _LoginScreenState extends State<LoginScreen> {
       },
       child: Scaffold(
         backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: Icon(Icons.arrow_back),
+          ),
+        ),
         body: SafeArea(
           child: LayoutBuilder(
             builder: (context, constraints) {

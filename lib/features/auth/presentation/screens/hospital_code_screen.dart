@@ -21,7 +21,7 @@ class _HospitalCodeScreenState extends State<HospitalCodeScreen> {
 
   void _validateAndSubmit() {
     if (enteredCode.length == 6 && !isLoading) {
-      setState(() => isLoading = true); 
+      setState(() => isLoading = true);
       context.read<AuthBloc>().add(
         GetHospitalBaseUrlEvent(hospitalCode: enteredCode),
       );
@@ -46,12 +46,13 @@ class _HospitalCodeScreenState extends State<HospitalCodeScreen> {
         }
 
         if (state is HospitalBaseUrlSuccessState) {
-          Navigator.pushReplacementNamed(context, RouteNames.loginScreen);
+          Navigator.pushNamed(context, RouteNames.loginScreen);
         } else if (state is AuthErrorState) {
           AppSnackBar.show(context, state.errorMessage, SnackbarType.error);
         }
       },
       child: Scaffold(
+        backgroundColor: Colors.white,
         body: SafeArea(
           child: Stack(
             children: [

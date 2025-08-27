@@ -1,11 +1,9 @@
 import 'package:dynamic_emr/core/constants/app_colors.dart';
+import 'package:dynamic_emr/core/routes/route_names.dart';
 import 'package:dynamic_emr/core/utils/app_snack_bar.dart';
 import 'package:dynamic_emr/core/utils/location_utils.dart';
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
-import 'package:dynamic_emr/features/Leave/presentation/screens/apply_leave_form_screen.dart';
 import 'package:dynamic_emr/features/attendance/presentation/bloc/attendance_bloc.dart';
-import 'package:dynamic_emr/features/attendance/presentation/screen/attendance_screen.dart';
-import 'package:dynamic_emr/features/holiday/presentation/screens/holiday_screen.dart';
 import 'package:dynamic_emr/features/home/presentation/screens/shift_screen.dart';
 import 'package:dynamic_emr/features/home/presentation/widgets/quick_action_widget.dart';
 import 'package:dynamic_emr/features/home/presentation/widgets/today_attendance_widget.dart';
@@ -13,7 +11,6 @@ import 'package:dynamic_emr/features/notice/presentation/screens/notice_screen.d
 import 'package:dynamic_emr/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:dynamic_emr/features/profile/presentation/widgets/profile_picture_widget.dart';
 import 'package:dynamic_emr/features/punch/presentation/bloc/punch_bloc.dart';
-import 'package:dynamic_emr/features/work/presentation/screens/create_ticket_form_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -75,11 +72,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         subtitle: 'View attendance',
                         color: const Color(0xFF3BF6BE),
                         onTap: () {
-                          Navigator.push(
+                          Navigator.pushNamed(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => const AttendanceScreen(),
-                            ),
+                            RouteNames.attendanceScreen,
                           );
                         },
                       ),
@@ -89,11 +84,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         subtitle: 'Apply leave',
                         color: const Color(0xFFF6673B),
                         onTap: () {
-                          Navigator.push(
+                          Navigator.pushNamed(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => const ApplyLeaveFormScreen(),
-                            ),
+                            RouteNames.applyLeaveFormScreen,
                           );
                         },
                       ),
@@ -103,11 +96,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         subtitle: 'Check calendar',
                         color: const Color(0xFF10B981),
                         onTap: () {
-                          Navigator.push(
+                          Navigator.pushNamed(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => const HolidayScreen(),
-                            ),
+                            RouteNames.holidayScreen,
                           );
                         },
                       ),
@@ -117,11 +108,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         subtitle: 'Create new ticket',
                         color: const Color(0xFFF59E0B),
                         onTap: () {
-                          Navigator.push(
+                          Navigator.pushNamed(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => CreateTicketFormScreen(),
-                            ),
+                            RouteNames.createTicketFormScreen,
                           );
                         },
                       ),
