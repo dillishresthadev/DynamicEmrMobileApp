@@ -47,6 +47,7 @@ class EmployeeEntity {
   final String bankName;
   final String bankAccountNumber;
   final String bankAccountType;
+  final bool hasMultiShift;
   final List<EmployeeEducationEntity> employeeEducations;
   final List<EmployeeEmergencyContactEntity> employeeEmergencyContacts;
   final List<EmployeeNomineeEntity> employeeNominees;
@@ -98,6 +99,7 @@ class EmployeeEntity {
     required this.bankName,
     required this.bankAccountNumber,
     required this.bankAccountType,
+    required this.hasMultiShift,
     required this.employeeEducations,
     required this.employeeEmergencyContacts,
     required this.employeeNominees,

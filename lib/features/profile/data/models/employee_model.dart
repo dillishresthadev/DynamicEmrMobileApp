@@ -44,6 +44,7 @@ class EmployeeModel extends EmployeeEntity {
     required super.salaryType,
     required super.bankName,
     required super.bankAccountNumber,
+    required super.hasMultiShift,
     required super.bankAccountType,
     required super.employeeEducations,
     required super.employeeEmergencyContacts,
@@ -106,7 +107,7 @@ class EmployeeModel extends EmployeeEntity {
       bankName: json['bankName'] ?? '',
       bankAccountNumber: json['bankAccountNumber'] ?? '',
       bankAccountType: json['bankAccountType'] ?? '',
-
+      hasMultiShift: json['hasMultiShift'] ?? false,
       employeeWorkExperienceContacts:
           (json['employeeWorkExperienceContacts'] as List?)
               ?.map((e) => EmployeeWorkExperienceModel.fromJson(e))
