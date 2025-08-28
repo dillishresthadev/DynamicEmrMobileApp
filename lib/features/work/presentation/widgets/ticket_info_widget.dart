@@ -20,6 +20,9 @@ class TicketInfoWidget extends StatelessWidget {
     final createdOnDate = DateFormat(
       'EE dd MMM, yyyy hh:mm a',
     ).format(ticket.issueOn);
+    final assignOnDate = DateFormat(
+      'EE dd MMM, yyyy hh:mm a',
+    ).format(ticket.assignedOn);
 
     return Card(
       elevation: 2,
@@ -57,10 +60,7 @@ class TicketInfoWidget extends StatelessWidget {
                 _buildInfoItem("Created On", createdOnDate),
                 _buildInfoItem("Created By", ticket.issueBy),
                 AssignToBottomSheetWidget(users: user, ticket: ticket),
-                _buildInfoItem(
-                  "Assigned On",
-                  dateFormat.format(ticket.assignedOn),
-                ),
+                _buildInfoItem("Assigned On", assignOnDate),
 
                 // Editable Severity
                 _buildEditableItem(
@@ -166,7 +166,7 @@ class TicketInfoWidget extends StatelessWidget {
                       value,
                       style: TextStyle(
                         fontWeight: FontWeight.w500,
-                        color: valueColor ?? Colors.black87,
+                        color: _getValueColor(value.toLowerCase()),
                       ),
                     ),
                     const SizedBox(width: 6),
@@ -228,5 +228,18 @@ class TicketInfoWidget extends StatelessWidget {
             .toList(),
       ),
     );
+  }
+
+  Color _getValueColor(String priority) {
+    switch (priority.toLowerCase()) {
+      case 'high':
+        return Colors.red.shade600;
+      case 'medium':
+        return Colors.orange.shade600;
+      case 'low':
+        return Colors.green.shade600;
+      default:
+        return Colors.grey.shade600;
+    }
   }
 }
