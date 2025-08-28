@@ -21,7 +21,7 @@ class AvailableLeaveDetailsBottomSheetWidget extends StatelessWidget {
       maxChildSize: 0.8,
       builder: (context, scrollController) {
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 2.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -30,7 +30,7 @@ class AvailableLeaveDetailsBottomSheetWidget extends StatelessWidget {
                 child: Container(
                   width: 40,
                   height: 4,
-                  margin: const EdgeInsets.only(bottom: 16),
+                  margin: const EdgeInsets.only(top: 5, bottom: 12),
                   decoration: BoxDecoration(
                     color: Colors.grey.shade400,
                     borderRadius: BorderRadius.circular(10),
@@ -55,7 +55,7 @@ class AvailableLeaveDetailsBottomSheetWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 12),
 
               // Info Tiles
               _LeaveInfoTile(
@@ -77,7 +77,7 @@ class AvailableLeaveDetailsBottomSheetWidget extends StatelessWidget {
                 color: Colors.green,
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 12),
 
               // Close Button
               ElevatedButton.icon(

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dynamic_emr/core/constants/app_colors.dart';
 import 'package:dynamic_emr/core/utils/app_snack_bar.dart';
 import 'package:dynamic_emr/core/utils/file_picker_utils.dart';
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
@@ -89,67 +90,6 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    'Ticket Timeline',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black87,
-                                    ),
-                                  ),
-
-                                  // close or reopen
-                                  ElevatedButton.icon(
-                                    onPressed: () {
-                                      ticket.ticket.status == "Open"
-                                          ? context.read<WorkBloc>().add(
-                                              TicketClosedEvent(
-                                                ticketId: ticket.id,
-                                              ),
-                                            )
-                                          : context.read<WorkBloc>().add(
-                                              TicketReopenEvent(
-                                                ticketId: ticket.id,
-                                              ),
-                                            );
-                                    },
-                                    icon: Icon(
-                                      ticket.ticket.status == "Open"
-                                          ? Icons.close
-                                          : Icons.refresh,
-                                      color: Colors.white,
-                                      size: 16,
-                                    ),
-                                    label: Text(
-                                      ticket.ticket.status == "Open"
-                                          ? 'Close'
-                                          : 'Reopen',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          ticket.ticket.status == "Open"
-                                          ? Colors.red
-                                          : Colors.green,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 12,
-                                        vertical: 6,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(4),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 16),
                               // ticket title and descriptions
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -162,25 +102,16 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                       color: Colors.black87,
                                     ),
                                   ),
-                                  const SizedBox(height: 6),
                                   // Rending HTML tags as ticket may comes from web too
                                   Html(
                                     data: ticket.ticket.description,
                                     style: {
                                       "*": Style(
                                         fontSize: FontSize(14),
-                                        color: Colors.black54,
+                                        color: Colors.black87,
                                       ),
                                     },
                                   ),
-                                  // Text(
-                                  //   ticket.ticket.description,
-                                  //   style: const TextStyle(
-                                  //     fontSize: 14,
-                                  //     color: Colors.black54,
-                                  //     height: 1.4,
-                                  //   ),
-                                  // ),
                                 ],
                               ),
                               const SizedBox(height: 12),
@@ -271,30 +202,140 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                 ],
                               ),
 
-                              TextButton(
-                                onPressed: () {
-                                  if (_commentController.text.trim().isEmpty) {
-                                    AppSnackBar.show(
-                                      context,
-                                      "Your comment message is empty",
-                                      SnackbarType.error,
-                                    );
-                                  } else {
-                                    // Convert File objects to paths
-                                    List<String> attachmentPaths =
-                                        commentAttachments
-                                            .map((file) => file.path)
-                                            .toList();
-                                    context.read<WorkBloc>().add(
-                                      CommentOnTicketEvent(
-                                        ticketId: ticket.id,
-                                        message: _commentController.text,
-                                        attachmentPaths: attachmentPaths,
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: ElevatedButton.icon(
+                                      icon: Icon(
+                                        Icons.comment,
+                                        color: Colors.white,
                                       ),
-                                    );
-                                  }
-                                },
-                                child: Text("Comment"),
+                                      label: Text(
+                                        "Comment",
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: AppColors.primary,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 6,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        if (_commentController.text
+                                            .trim()
+                                            .isEmpty) {
+                                          AppSnackBar.show(
+                                            context,
+                                            "Your comment message is empty",
+                                            SnackbarType.error,
+                                          );
+                                        } else {
+                                          // Convert File objects to paths
+                                          List<String> attachmentPaths =
+                                              commentAttachments
+                                                  .map((file) => file.path)
+                                                  .toList();
+                                          context.read<WorkBloc>().add(
+                                            CommentOnTicketEvent(
+                                              ticketId: ticket.id,
+                                              message: _commentController.text,
+                                              attachmentPaths: attachmentPaths,
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(width: 12),
+                                  // close or reopen
+                                  Expanded(
+                                    child: ElevatedButton.icon(
+                                      onPressed: () async {
+                                        final shouldProceed = await showDialog<bool>(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            title: const Text("Confirm Action"),
+                                            content: Text(
+                                              ticket.ticket.status == "Open"
+                                                  ? "Are you sure you want to close this ticket?"
+                                                  : "Are you sure you want to reopen this ticket?",
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () => Navigator.of(
+                                                  context,
+                                                ).pop(false),
+                                                child: const Text("Cancel"),
+                                              ),
+                                              TextButton(
+                                                onPressed: () => Navigator.of(
+                                                  context,
+                                                ).pop(true),
+
+                                                child: const Text("Yes"),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+
+                                        if (shouldProceed == true) {
+                                          if (ticket.ticket.status == "Open") {
+                                            context.read<WorkBloc>().add(
+                                              TicketClosedEvent(
+                                                ticketId: ticket.id,
+                                              ),
+                                            );
+                                          } else {
+                                            context.read<WorkBloc>().add(
+                                              TicketReopenEvent(
+                                                ticketId: ticket.id,
+                                              ),
+                                            );
+                                          }
+                                        }
+                                      },
+                                      icon: Icon(
+                                        ticket.ticket.status == "Open"
+                                            ? Icons.close
+                                            : Icons.refresh,
+                                        color: Colors.white,
+                                      ),
+                                      label: Text(
+                                        ticket.ticket.status == "Open"
+                                            ? 'Close'
+                                            : 'Reopen',
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            ticket.ticket.status == "Open"
+                                            ? Colors.red
+                                            : Colors.green,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 6,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            4,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),

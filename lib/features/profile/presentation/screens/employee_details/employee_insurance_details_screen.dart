@@ -225,6 +225,8 @@ class EnhancedInsuranceCard extends StatelessWidget {
         return Icons.favorite;
       case 'health insurance':
         return Icons.local_hospital;
+      case 'home insurance':
+        return Icons.home;
       case 'vehicle insurance':
         return Icons.directions_car;
       case 'property insurance':
@@ -702,14 +704,14 @@ class EnhancedInsuranceCard extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Maturity Amount',
+                                'Maturity Period',
                                 style: TextStyle(
                                   fontSize: 11,
                                   color: Colors.grey[600],
                                 ),
                               ),
                               Text(
-                                'NPR ${formatCurrencyNepali(insurance.maturityPeriod)}',
+                                '${insurance.maturityPeriod.toStringAsFixed(1)} year',
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,

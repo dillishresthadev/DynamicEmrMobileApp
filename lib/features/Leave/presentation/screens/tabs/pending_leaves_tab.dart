@@ -47,7 +47,7 @@ class _PendingLeavesTabState extends State<PendingLeavesTab> {
       body: RefreshIndicator(
         onRefresh: _refreshData,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           child: BlocBuilder<LeaveBloc, LeaveState>(
             builder: (context, state) {
               if (state.pendingLeaveStatus == LeaveStatus.loading) {

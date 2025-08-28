@@ -133,7 +133,7 @@ class _LeaveScreenState extends State<LeaveScreen>
 
   Widget _buildAvailableLeavesSection() {
     return Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0),
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
@@ -148,7 +148,6 @@ class _LeaveScreenState extends State<LeaveScreen>
             ),
           ),
           children: [
-            const SizedBox(height: 12),
             BlocBuilder<LeaveBloc, LeaveState>(
               builder: (context, state) {
                 if (state.status == LeaveStatus.loading &&
@@ -180,7 +179,8 @@ class _LeaveScreenState extends State<LeaveScreen>
   Widget _buildLeaveHistoryGrid(List<LeaveHistoryEntity> leaveHistory) {
     return GridView.builder(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
+      // physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.only(bottom: 5),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         crossAxisSpacing: 8,

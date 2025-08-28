@@ -243,187 +243,179 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
           child: BlocBuilder<LeaveBloc, LeaveState>(
             builder: (context, state) {
               return SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(12.0),
                 child: Form(
                   key: _formKey,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Info Box
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.blue.shade50,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.blue.shade200),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                Icons.info_outline,
-                                color: Colors.blue.shade600,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  'Please provide all necessary details for your request or issue. Once submitted, your ticket will be assigned to particular employee, and you will be notified when there is an update or resolution.',
-                                  style: Theme.of(context).textTheme.bodySmall
-                                      ?.copyWith(color: Colors.blue.shade800),
-                                ),
-                              ),
-                            ],
-                          ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Info Box
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.shade50,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.blue.shade200),
                         ),
-
-                        buildSectionTitle("Categories"),
-                        CustomDropdown2(
-                          value: _selectedCategoriesType,
-                          items: categoriesItems,
-                          hintText: "Select Ticket Categories *",
-                          onChanged: (value) =>
-                              setState(() => _selectedCategoriesType = value),
-                        ),
-
-                        buildSectionTitle("Title"),
-                        CustomInputField(
-                          controller: _titleController,
-                          hintText: "Please provide a title for your ticket *",
-                          maxLines: 1,
-                          validator: (value) =>
-                              value == null || value.trim().isEmpty
-                              ? 'Title is required'
-                              : null,
-                        ),
-
-                        buildSectionTitle("Description/Message"),
-                        CustomInputField(
-                          controller: _descriptionController,
-                          hintText:
-                              "Please provide a description for your ticket *",
-                          maxLines: 2,
-                          validator: (value) =>
-                              value == null || value.trim().isEmpty
-                              ? 'Description is required'
-                              : null,
-                        ),
-
-                        buildSectionTitle("Files/Images"),
-
-                        buildAttachmentButtons(),
-
-                        //  attachments list
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Row(
                           children: [
-                            const SizedBox(height: 10),
-                            ...attachments.map(
-                              (file) => Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 4.0,
-                                ),
-                                child: Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.insert_drive_file,
-                                      color: Colors.grey,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        file.path.split('/').last,
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.blue,
-                                        ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.close,
-                                        color: Colors.red,
-                                      ),
-                                      onPressed: () {
-                                        setState(() {
-                                          (attachments).remove(file);
-                                        });
-                                      },
-                                    ),
-                                  ],
-                                ),
+                            Icon(
+                              Icons.info_outline,
+                              color: Colors.blue.shade600,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Please provide all necessary details for your request or issue. Once submitted, your ticket will be assigned to particular employee, and you will be notified when there is an update or resolution.',
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(color: Colors.blue.shade800),
                               ),
                             ),
                           ],
                         ),
-                        buildSectionTitle("Severity"),
-                        CustomDropdown(
-                          value: _selectedSeverityType,
-                          items: ['Low', 'Medium', 'High'],
-                          hintText: "Select Severity Type *",
-                          onChanged: (value) =>
-                              setState(() => _selectedSeverityType = value),
-                        ),
+                      ),
 
-                        buildSectionTitle("Priority"),
-                        CustomDropdown(
-                          value: _selectedPriorityType,
-                          items: ['Low', 'Medium', 'High'],
-                          hintText: "Select Priority Type *",
-                          onChanged: (value) =>
-                              setState(() => _selectedPriorityType = value),
-                        ),
+                      buildSectionTitle("Categories"),
+                      CustomDropdown2(
+                        value: _selectedCategoriesType,
+                        items: categoriesItems,
+                        hintText: "Select Ticket Categories *",
+                        onChanged: (value) =>
+                            setState(() => _selectedCategoriesType = value),
+                      ),
 
-                        buildSectionTitle("Assigned To"),
+                      buildSectionTitle("Title"),
+                      CustomInputField(
+                        controller: _titleController,
+                        hintText: "Title for your ticket *",
+                        maxLines: 1,
+                        validator: (value) =>
+                            value == null || value.trim().isEmpty
+                            ? 'Title is required'
+                            : null,
+                      ),
 
-                        AssignToDropdownWidget(
-                          employee: assignToItems,
-                          onSelected: (label, value) {
-                            setState(() {
-                              _selectedAssignToType = value;
-                            });
-                            log("Selected Employee: $label ($value)");
-                          },
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Select a colleague who can resolve this issues',
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                color: Colors.grey[600],
-                                fontStyle: FontStyle.italic,
+                      buildSectionTitle("Description/Message"),
+                      CustomInputField(
+                        controller: _descriptionController,
+                        hintText: "Description for your ticket *",
+                        maxLines: 2,
+                        validator: (value) =>
+                            value == null || value.trim().isEmpty
+                            ? 'Description is required'
+                            : null,
+                      ),
+
+                      buildSectionTitle("Files/Images"),
+
+                      buildAttachmentButtons(),
+
+                      //  attachments list
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 10),
+                          ...attachments.map(
+                            (file) => Padding(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 4.0,
                               ),
-                        ),
-
-                        const SizedBox(height: 24),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 50,
-                          child: ElevatedButton.icon(
-                            onPressed: _submitForm,
-                            icon: const Icon(Icons.send),
-                            label: const Text(
-                              'Create New Ticket',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primary,
-                              foregroundColor: Colors.white,
-                              elevation: 3,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.insert_drive_file,
+                                    color: Colors.grey,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      file.path.split('/').last,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.blue,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.close, color: Colors.red),
+                                    onPressed: () {
+                                      setState(() {
+                                        (attachments).remove(file);
+                                      });
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
                           ),
+                        ],
+                      ),
+                      buildSectionTitle("Severity"),
+                      CustomDropdown(
+                        value: _selectedSeverityType,
+                        items: ['Low', 'Medium', 'High'],
+                        hintText: "Select Severity Type *",
+                        onChanged: (value) =>
+                            setState(() => _selectedSeverityType = value),
+                      ),
+
+                      buildSectionTitle("Priority"),
+                      CustomDropdown(
+                        value: _selectedPriorityType,
+                        items: ['Low', 'Medium', 'High'],
+                        hintText: "Select Priority Type *",
+                        onChanged: (value) =>
+                            setState(() => _selectedPriorityType = value),
+                      ),
+
+                      buildSectionTitle("Assigned To"),
+
+                      AssignToDropdownWidget(
+                        employee: assignToItems,
+                        onSelected: (label, value) {
+                          setState(() {
+                            _selectedAssignToType = value;
+                          });
+                          log("Selected Employee: $label ($value)");
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Select a colleague who can resolve this issues',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey[600],
+                          fontStyle: FontStyle.italic,
                         ),
-                      ],
-                    ),
+                      ),
+
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: ElevatedButton.icon(
+                          onPressed: _submitForm,
+                          icon: const Icon(Icons.send),
+                          label: const Text(
+                            'Create New Ticket',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: Colors.white,
+                            elevation: 3,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               );
