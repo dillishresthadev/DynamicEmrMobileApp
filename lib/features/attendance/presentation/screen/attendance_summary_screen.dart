@@ -29,7 +29,7 @@ class _AttendanceSummaryScreenState extends State<AttendanceSummaryScreen> {
     super.initState();
     context.read<AttendanceBloc>().add(
       GetAttendanceSummaryEvent(
-        fromDate: DateTime.now().subtract(Duration(days: 7)),
+        fromDate: DateTime(DateTime.now().year, DateTime.now().month, 1),
         toDate: DateTime.now(),
         shiftType: "",
       ),

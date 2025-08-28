@@ -15,7 +15,10 @@ class DocumentViewerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: DynamicEMRAppBar(title: document.documentType ?? "Document"),
+      appBar: DynamicEMRAppBar(
+        title: document.documentType ?? "Document",
+        automaticallyImplyLeading: true,
+      ),
       body: InteractiveViewer(
         constrained: true, // keeps child inside viewport initially
         clipBehavior: Clip.none,

@@ -1,3 +1,4 @@
+import 'package:dynamic_emr/core/constants/app_colors.dart';
 import 'package:dynamic_emr/features/attendance/presentation/bloc/attendance_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -62,7 +63,6 @@ class _TodayAttendanceWidgetState extends State<TodayAttendanceWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // SizedBox(height: 12),
           Row(
             children: [
               Container(
@@ -134,47 +134,150 @@ class _TodayAttendanceWidgetState extends State<TodayAttendanceWidget> {
               : SizedBox.shrink(),
           (todayAttendance.checkInTime != null ||
                   todayAttendance.checkOutTime != null)
-              ? Row(
-                  spacing: 10,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        spacing: 5,
-                        children: [
-                          Text(
-                            "Check In",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            formatTime(todayAttendance.checkInTime),
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+              ?
+                // Container(
+                //     color: Colors.greenAccent,
+                //     child: Row(
+                //       spacing: 10,
+                //       children: [
+                //         Expanded(
+                //           child: Column(
+                //             spacing: 5,
+                //             children: [
+                //               Text(
+                //                 "Check In".toUpperCase(),
+                //                 style: TextStyle(fontWeight: FontWeight.bold),
+                //               ),
+                //               Text(
+                //                 formatTime(todayAttendance.checkInTime),
+                //                 style: TextStyle(fontSize: 18),
+                //               ),
+                //             ],
+                //           ),
+                //         ),
+                //         Expanded(
+                //           child: Column(
+                //             spacing: 5,
+                //             children: [
+                //               Text(
+                //                 "Check Out".toUpperCase(),
+                //                 style: TextStyle(fontWeight: FontWeight.bold),
+                //               ),
+                //               Text(
+                //                 formatTime(todayAttendance.checkOutTime),
+                //                 style: TextStyle(fontSize: 18),
+                //               ),
+                //             ],
+                //           ),
+                //         ),
+                //       ],
+                //     ),
+                //   )
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    // gradient: const LinearGradient(
+                    //   colors: [
+                    //     Color(0xFF105CB9),
+                    //     Color(0xFF3491D3),
+                    //   ], // green HRMS-style
+                    //   begin: Alignment.topLeft,
+                    //   end: Alignment.bottomRight,
+                    // ),
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
                       ),
-                    ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: const [
+                                Icon(
+                                  Icons.login,
+                                  size: 18,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(width: 6),
+                                Text(
+                                  "CHECK IN",
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 1.2,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              formatTime(todayAttendance.checkInTime),
+                              style: const TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
 
-                    Expanded(
-                      child: Column(
-                        spacing: 5,
-                        children: [
-                          Text(
-                            "Check Out",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            formatTime(todayAttendance.checkOutTime),
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+                      // Divider
+                      Container(
+                        width: 1,
+                        height: 30,
+                        color: Colors.white.withValues(alpha: 0.5),
                       ),
-                    ),
-                  ],
+
+                      Expanded(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: const [
+                                Icon(
+                                  Icons.logout,
+                                  size: 18,
+                                  color: Colors.white,
+                                ),
+                                SizedBox(width: 6),
+                                Text(
+                                  "CHECK OUT",
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontWeight: FontWeight.w500,
+                                    letterSpacing: 1.2,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              formatTime(todayAttendance.checkOutTime),
+                              style: const TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 )
               : SizedBox.shrink(),
           SizedBox(height: 10),

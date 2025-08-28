@@ -55,155 +55,150 @@ class _HomeScreenState extends State<HomeScreen> {
         child: SafeArea(
           child: RefreshIndicator(
             onRefresh: _refreshData,
-            child: Column(
-              spacing: 5,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildModernHeader(),
-                TodayAttendanceWidget(),
-                const ShiftScreen(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 18.0),
-                  child: Text(
-                    "Quick Action",
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+            child: SingleChildScrollView(
+              child: Column(
+                spacing: 5,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildModernHeader(),
+                  TodayAttendanceWidget(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                    child: Text(
+                      "Quick Action",
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  child: ListView(
-                    children: [
-                      QuickActionsWidget(
-                        actions: [
-                          QuickAction(
-                            icon: Icons.people,
-                            label: 'Attendance',
-                            subtitle: 'View attendance',
-                            color: const Color(0xFF3BF6BE),
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                RouteNames.attendanceScreen,
-                              );
-                            },
-                          ),
-                          QuickAction(
-                            icon: Icons.event_available,
-                            label: 'Leave',
-                            subtitle: 'Apply leave',
-                            color: const Color(0xFFF6673B),
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                RouteNames.applyLeaveFormScreen,
-                              );
-                            },
-                          ),
-                          QuickAction(
-                            icon: Icons.event_available,
-                            label: 'Holidays',
-                            subtitle: 'Check calendar',
-                            color: const Color(0xFF10B981),
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                RouteNames.holidayScreen,
-                              );
-                            },
-                          ),
-                          QuickAction(
-                            icon: Icons.work_outline,
-                            label: 'Ticket',
-                            subtitle: 'Create new ticket',
-                            color: const Color(0xFFF59E0B),
-                            onTap: () {
-                              Navigator.pushNamed(
-                                context,
-                                RouteNames.createTicketFormScreen,
-                              );
-                            },
-                          ),
-                          QuickAction(
-                            icon: Icons.fingerprint,
-                            label: 'Punch In',
-                            subtitle: 'Check In / Out',
-                            color: const Color(0xFF10B943),
-                            onTap: () async {
-                              final confirm = await showDialog<bool>(
-                                context: context,
-                                builder: (context) => AlertDialog.adaptive(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  title: const Text("Confirm Action"),
-                                  content: const Text(
-                                    "Are you sure you want to punch in/out?",
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.of(context).pop(false),
-                                      child: const Text("Cancel"),
-                                    ),
-                                    TextButton(
-                                      onPressed: () =>
-                                          Navigator.of(context).pop(true),
-                                      child: const Text("Yes"),
-                                    ),
-                                  ],
+                  QuickActionsWidget(
+                    actions: [
+                      QuickAction(
+                        icon: Icons.people,
+                        label: 'Attendance',
+                        subtitle: 'View attendance',
+                        color: const Color(0xFF3BF6BE),
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            RouteNames.attendanceScreen,
+                          );
+                        },
+                      ),
+                      QuickAction(
+                        icon: Icons.event_available,
+                        label: 'Leave',
+                        subtitle: 'Apply leave',
+                        color: const Color(0xFFF6673B),
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            RouteNames.applyLeaveFormScreen,
+                          );
+                        },
+                      ),
+                      QuickAction(
+                        icon: Icons.event_available,
+                        label: 'Holidays',
+                        subtitle: 'Check calendar',
+                        color: const Color(0xFF10B981),
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            RouteNames.holidayScreen,
+                          );
+                        },
+                      ),
+                      QuickAction(
+                        icon: Icons.work_outline,
+                        label: 'Ticket',
+                        subtitle: 'Create new ticket',
+                        color: const Color(0xFFF59E0B),
+                        onTap: () {
+                          Navigator.pushNamed(
+                            context,
+                            RouteNames.createTicketFormScreen,
+                          );
+                        },
+                      ),
+                      QuickAction(
+                        icon: Icons.fingerprint,
+                        label: 'Punch In',
+                        subtitle: 'Check In / Out',
+                        color: const Color(0xFF10B943),
+                        onTap: () async {
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (context) => AlertDialog.adaptive(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              title: const Text("Confirm Action"),
+                              content: const Text(
+                                "Are you sure you want to punch in/out?",
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(false),
+                                  child: const Text("Cancel"),
+                                ),
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.of(context).pop(true),
+                                  child: const Text("Yes"),
+                                ),
+                              ],
+                            ),
+                          );
+
+                          if (confirm == true) {
+                            final location = await LocationUtils.getLatLng(
+                              context,
+                            );
+                            if (location != null) {
+                              context.read<PunchBloc>().add(
+                                TodayPunchEvent(
+                                  long: location["longitude"].toString(),
+                                  lat: location["latitude"].toString(),
                                 ),
                               );
-
-                              if (confirm == true) {
-                                final location = await LocationUtils.getLatLng(
-                                  context,
-                                );
-                                if (location != null) {
-                                  context.read<PunchBloc>().add(
-                                    TodayPunchEvent(
-                                      long: location["longitude"].toString(),
-                                      lat: location["latitude"].toString(),
-                                    ),
-                                  );
-                                  AppSnackBar.show(
-                                    context,
-                                    "Punched In success",
-                                    SnackbarType.success,
-                                  );
-                                } else {
-                                  AppSnackBar.show(
-                                    context,
-                                    "Could not get location.",
-                                    SnackbarType.error,
-                                  );
-                                }
-                              }
-                            },
-                          ),
-                          QuickAction(
-                            icon: Icons.history,
-                            label: 'Punch History',
-                            subtitle: 'View punch history',
-                            color: const Color(0xFF1067B9),
-                            onTap: () {
-                              context.read<PunchBloc>().add(
-                                GetTodayPunchListEvent(),
+                              AppSnackBar.show(
+                                context,
+                                "Punched In success",
+                                SnackbarType.success,
                               );
-                              _showPunchHistory(context);
-                            },
-                          ),
-                        ],
+                            } else {
+                              AppSnackBar.show(
+                                context,
+                                "Could not get location.",
+                                SnackbarType.error,
+                              );
+                            }
+                          }
+                        },
+                      ),
+                      QuickAction(
+                        icon: Icons.history,
+                        label: 'Punch History',
+                        subtitle: 'View punch history',
+                        color: const Color(0xFF1067B9),
+                        onTap: () {
+                          context.read<PunchBloc>().add(
+                            GetTodayPunchListEvent(),
+                          );
+                          _showPunchHistory(context);
+                        },
                       ),
                     ],
                   ),
-                ),
 
-                // _buildQuickStatsSection(),
-                SizedBox(height: 10),
-              ],
+                  // _buildQuickStatsSection(),
+                  SizedBox(height: 10),
+                ],
+              ),
             ),
           ),
         ),
@@ -224,31 +219,47 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildModernHeader() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      decoration: const BoxDecoration(color: AppColors.primary),
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+      decoration: const BoxDecoration(
+        color: AppColors.primary,
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(20),
+          bottomRight: Radius.circular(20),
+        ),
+      ),
       child: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, state) {
-          return Row(
+          return Column(
             children: [
-              ProfilePictureWidget(
-                profileUrl:
-                    "${state.employee?.employeeImageBaseUrl}/${state.employee?.imagePath}",
-                firstName: state.employee?.firstName ?? 'Dynamic',
-                lastName: state.employee?.lastName ?? 'EMR',
-                avatarRadius: 20,
+              Row(
+                children: [
+                  ProfilePictureWidget(
+                    profileUrl:
+                        "${state.employee?.employeeImageBaseUrl}/${state.employee?.imagePath}",
+                    firstName: state.employee?.firstName ?? 'Dynamic',
+                    lastName: state.employee?.lastName ?? 'EMR',
+                    avatarRadius: 20,
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(child: _buildUserInfo(state)),
+                  Spacer(),
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => NoticeScreen()),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.notifications_outlined,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 16),
-              Expanded(child: _buildUserInfo(state)),
-              Spacer(),
-              IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => NoticeScreen()),
-                  );
-                },
-                icon: Icon(Icons.notifications_outlined, color: Colors.white),
-              ),
+              SizedBox(height: 10),
+
+              const ShiftScreen(),
             ],
           );
         },

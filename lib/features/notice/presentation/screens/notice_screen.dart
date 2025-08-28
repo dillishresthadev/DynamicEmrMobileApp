@@ -84,7 +84,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
     final timeAgo = _getTimeAgo(notice.publishedTime);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -104,7 +104,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
           borderRadius: BorderRadius.circular(16),
           onTap: () => _showNoticeDetail(context, notice),
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -153,7 +153,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
 
                 // Title
                 Text(
@@ -165,7 +165,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
                     height: 1.3,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 6),
 
                 // Excerpt
                 Text(
@@ -178,7 +178,7 @@ class _NoticeScreenState extends State<NoticeScreen> {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
 
                 // Footer
                 Row(

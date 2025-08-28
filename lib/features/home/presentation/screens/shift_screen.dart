@@ -124,6 +124,20 @@ class ModernShiftCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2), // subtle black shadow
+            offset: const Offset(2, 2),
+            blurRadius: 6,
+            spreadRadius: 1,
+          ),
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2), // HRMS accent blue glow
+            offset: const Offset(-2, -2),
+            blurRadius: 6,
+            spreadRadius: 1,
+          ),
+        ],
         gradient: LinearGradient(
           colors: [
             AppColors.primary,
@@ -279,7 +293,7 @@ class _PageIndicator extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(4),
               color: isActive
-                  ? AppColors.primary
+                  ? Colors.white
                   : Colors.grey.withValues(alpha: 0.3),
             ),
           ),
