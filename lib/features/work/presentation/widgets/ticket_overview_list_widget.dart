@@ -34,14 +34,25 @@ class _TicketCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 2,
-      color: Colors.white,
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            spreadRadius: 2,
+            blurRadius: 6,
+            offset: Offset(0, 3),
+          ),
+        ],
+      ),
+
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -62,12 +73,8 @@ class _TicketCard extends StatelessWidget {
       children: [
         Expanded(
           child: Text(
-            ticket.ticketNo2,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.5,
-            ),
+            ticket.ticketNo.toUpperCase(),
+            style: const TextStyle(fontSize: 16, letterSpacing: 0.5),
           ),
         ),
         _StatusBadge(status: ticket.status),
@@ -78,41 +85,21 @@ class _TicketCard extends StatelessWidget {
   Widget _buildTitle() {
     return Text(
       ticket.title,
-      style: TextStyle(fontSize: 15, height: 1.4, color: Colors.grey.shade700),
+      style: TextStyle(fontSize: 18, height: 1.4, fontWeight: FontWeight.bold),
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
     );
   }
 
   Widget _buildMetadata() {
-    final ticketDate = DateFormat('MMM dd, yyyy').format(ticket.ticketDate);
+    final ticketDate = DateFormat(
+      'EE dd MMM, yyyy hh:mm a',
+    ).format(ticket.ticketDate);
 
     return Column(
       children: [
         Row(
           children: [
-            _MetadataChip(
-              icon: Icons.flag_outlined,
-              label: "priority : ${ticket.priority}",
-              color: _getPriorityColor(ticket.priority),
-            ),
-            const SizedBox(width: 8),
-            _MetadataChip(
-              icon: Icons.error_outline,
-              label: "Severity : ${ticket.severity}",
-              color: _getSeverityColor(ticket.severity),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            _MetadataChip(
-              icon: Icons.person_outline,
-              label: "Assigned : ${ticket.assignedTo}",
-              color: Colors.blue.shade600,
-            ),
-            const SizedBox(width: 8),
             _MetadataChip(
               icon: Icons.schedule_outlined,
               label: ticketDate,
@@ -120,15 +107,52 @@ class _TicketCard extends StatelessWidget {
             ),
           ],
         ),
-        if (ticket.issueBy.isNotEmpty) ...[
-          const SizedBox(height: 8),
-          _MetadataChip(
-            icon: Icons.account_circle_outlined,
-            label: 'Created by ${ticket.issueBy}',
-            color: Colors.purple.shade600,
-            fullWidth: true,
-          ),
-        ],
+        const SizedBox(height: 8),
+
+        Row(
+          children: [
+            _MetadataChip(
+              icon: Icons.account_circle_outlined,
+              label: 'Created by: ${ticket.issueBy}',
+              color: Colors.purple.shade600,
+              // fullWidth: true,
+            ),
+            const SizedBox(width: 8),
+
+            _MetadataChip(
+              icon: Icons.person_outline,
+              label: "Assigned to: ${ticket.assignedTo}",
+              color: Colors.blue.shade600,
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 8),
+
+        Row(
+          children: [
+            _MetadataChip(
+              icon: Icons.flag_outlined,
+              label: "Priority: ${ticket.priority}",
+              color: _getPriorityColor(ticket.priority),
+            ),
+            const SizedBox(width: 8),
+            _MetadataChip(
+              icon: Icons.error_outline,
+              label: "Severity: ${ticket.severity}",
+              color: _getSeverityColor(ticket.severity),
+            ),
+          ],
+        ),
+        // if (ticket.issueBy.isNotEmpty) ...[
+        //   const SizedBox(height: 8),
+        //   _MetadataChip(
+        //     icon: Icons.account_circle_outlined,
+        //     label: 'Created by ${ticket.issueBy}',
+        //     color: Colors.purple.shade600,
+        //     fullWidth: true,
+        //   ),
+        // ],
       ],
     );
   }
@@ -153,7 +177,7 @@ class _TicketCard extends StatelessWidget {
       case 'medium':
         return Colors.orange.shade600;
       case 'low':
-        return Colors.yellow.shade700;
+        return Colors.green.shade600;
       default:
         return Colors.grey.shade600;
     }

@@ -17,61 +17,73 @@ class TicketInfoWidget extends StatelessWidget {
     final dateFormat = DateFormat('dd/MM/yyyy');
     final dateTimeFormat = DateFormat('M/d/yyyy h:mm:ss a');
 
+    final createdOnDate = DateFormat(
+      'EE dd MMM, yyyy hh:mm a',
+    ).format(ticket.issueOn);
+
     return Card(
       elevation: 2,
       color: Colors.white,
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "Ticket Information",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("Ticket Information"),
+                Text(ticket.ticketNo.toUpperCase()),
+              ],
             ),
+            // Text(
+            //   "Ticket Information ${ticket.ticketNo.toUpperCase()}",
+            //   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            // ),
             const SizedBox(height: 16),
 
             Wrap(
-              spacing: 20,
-              runSpacing: 12,
+              spacing: 10,
+              runSpacing: 2,
               children: [
-                _buildInfoItem("Ticket Number", ticket.ticketNo.toUpperCase()),
-                _buildInfoItem("Created On", dateFormat.format(ticket.issueOn)),
+                // _buildInfoItem("Ticket Number"),
+                _buildInfoItem("Registration No", ticket.ticketNo2),
                 _buildInfoItem(
-                  "Ticket Status",
-                  ticket.status,
-                  valueColor: Colors.blue,
+                  "Ticket Category",
+                  ticket.ticketCategoryName,
+                  fontWeight: FontWeight.bold,
                 ),
 
-                AssignToBottomSheetWidget(users: user, ticket: ticket),
-
-                _buildInfoItem("Registration No", ticket.ticketNo2),
+                _buildInfoItem("Created On", createdOnDate),
                 _buildInfoItem("Created By", ticket.issueBy),
+                AssignToBottomSheetWidget(users: user, ticket: ticket),
+                _buildInfoItem(
+                  "Assigned On",
+                  dateFormat.format(ticket.assignedOn),
+                ),
 
                 // Editable Severity
                 _buildEditableItem(
                   context,
                   "Ticket Severity",
                   ticket.severity,
-                  valueColor: Colors.red,
+                  valueColor: Colors.green,
                   onEdit: () => _showSeverityDialog(context, ticket),
                 ),
-
-                _buildInfoItem(
-                  "Assigned On",
-                  dateFormat.format(ticket.assignedOn),
-                ),
-                _buildInfoItem("Ticket Category", ticket.ticketCategoryName),
 
                 // Editable Priority
                 _buildEditableItem(
                   context,
                   "Priority",
                   ticket.priority,
-                  valueColor: Colors.orange,
+                  valueColor: Colors.green,
                   onEdit: () => _showPriorityDialog(context, ticket),
                 ),
-
+                _buildInfoItem(
+                  "Ticket Status",
+                  ticket.status,
+                  valueColor: Colors.blue,
+                ),
                 _buildInfoItem(
                   "Last Modified On",
                   dateTimeFormat.format(ticket.updateTime ?? DateTime.now()),
@@ -84,7 +96,12 @@ class TicketInfoWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoItem(String label, String value, {Color? valueColor}) {
+  Widget _buildInfoItem(
+    String label,
+    String value, {
+    Color? valueColor,
+    FontWeight? fontWeight,
+  }) {
     return SizedBox(
       width: double.infinity,
       child: Column(
@@ -105,7 +122,7 @@ class TicketInfoWidget extends StatelessWidget {
                   value,
                   textAlign: TextAlign.end,
                   style: TextStyle(
-                    fontWeight: FontWeight.w500,
+                    fontWeight: fontWeight,
                     color: valueColor ?? Colors.black87,
                   ),
                 ),

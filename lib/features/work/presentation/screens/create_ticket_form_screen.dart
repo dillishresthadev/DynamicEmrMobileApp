@@ -359,38 +359,6 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
                             ),
                           ],
                         ),
-
-                        // Row(
-                        //   children: [
-                        //     ElevatedButton.icon(
-                        //       onPressed: () async {
-                        //         final file = await FilePickerUtils.pickImage(
-                        //           fromCamera: true,
-                        //         );
-                        //         if (file != null) {
-                        //           setState(() {
-                        //             attachments.add(file);
-                        //           });
-                        //         }
-                        //       },
-                        //       icon: const Icon(Icons.camera_alt),
-                        //       label: const Text('Camera'),
-                        //     ),
-
-                        //     ElevatedButton.icon(
-                        //       onPressed: () async {
-                        //         final file = await FilePickerUtils.pickFile();
-                        //         if (file != null) {
-                        //           setState(() {
-                        //             attachments.add(file);
-                        //           });
-                        //         }
-                        //       },
-                        //       icon: const Icon(Icons.upload_file),
-                        //       label: const Text('Gallery / File'),
-                        //     ),
-                        //   ],
-                        // ),
                         buildSectionTitle("Severity"),
                         CustomDropdown(
                           value: _selectedSeverityType,

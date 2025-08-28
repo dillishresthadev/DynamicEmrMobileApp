@@ -262,7 +262,7 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
         "Severity": severity,
         "Priority": priority,
         "AssignToEmployeeId": assignToEmployeeId,
-        "AttachmentFiles": files?.first,
+        "AttachmentFiles": files,
       });
 
       final rawResponse = await client.post(

@@ -370,7 +370,9 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
             iconColor: iconColor,
             title: "${activity.replyBy} ${activity.ticketAction}".trim(),
             subtitle: activity.comment ?? "",
-            time: DateFormat('M/d/yyyy h:mm:ss a').format(activity.replyOn),
+            time: DateFormat(
+              'EE dd MMM, yyyy hh:mm a',
+            ).format(activity.replyOn),
             isFirst: index == 0,
             isLast: index == ticketActivity.length - 1,
             attachedDocs: activity.attachedDocuments,
@@ -427,41 +429,43 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: RichText(
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text:
-                                    '${title.split(' ').first} ', // First word
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
-                                ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text:
+                                        '${title.split(' ').first} ', // First word
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: title
+                                        .split(' ')
+                                        .skip(1)
+                                        .join(' '), // Remaining text
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              TextSpan(
-                                text: title
-                                    .split(' ')
-                                    .skip(1)
-                                    .join(' '), // Remaining text
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.normal,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
+                        ],
                       ),
-                      Text(
-                        time,
-                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                      ),
+                      Text(time, style: TextStyle(fontSize: 12)),
                     ],
                   ),
                   const SizedBox(height: 4),
