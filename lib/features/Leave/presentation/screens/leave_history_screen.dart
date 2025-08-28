@@ -5,6 +5,7 @@ import 'package:dynamic_emr/features/Leave/domain/entities/leave_history_entity.
 import 'package:dynamic_emr/features/Leave/domain/entities/leave_type_entity.dart';
 import 'package:dynamic_emr/features/Leave/presentation/bloc/leave_bloc.dart';
 import 'package:dynamic_emr/features/Leave/presentation/screens/leave_application_history_screen.dart';
+import 'package:dynamic_emr/features/Leave/presentation/widgets/available_leave_details_bottom_sheet_widget.dart';
 import 'package:dynamic_emr/features/Leave/presentation/widgets/leave_card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -215,16 +216,6 @@ class _LeaveHistoryScreenState extends State<LeaveHistoryScreen> {
                     child: Center(child: CircularProgressIndicator()),
                   );
                 }
-
-                // if (state.status == LeaveStatus.leaveHistoryLoadError &&
-                //     state.leaveHistory.isEmpty) {
-                //   return _buildErrorContainer(state.message);
-                // }
-
-                // if (state.leaveHistory.isEmpty) {
-                //   return _buildEmptyContainer();
-                // }
-
                 return _buildLeaveHistoryGrid(state.leaveHistory);
               },
             ),
@@ -249,13 +240,30 @@ class _LeaveHistoryScreenState extends State<LeaveHistoryScreen> {
         final leave = leaveHistory[index];
         final config = _getLeaveCardConfig(leave.leaveType);
 
-        return LeaveCardWidget(
-          icon: config['icon'] as IconData,
-          color: config['color'] as Color,
-          bgColor: config['bgColor'] as Color,
-          availableLeaaveCount: leave.balance.toString(),
-          totalLeaveCount: leave.allocated.toString(),
-          label: leave.leaveType,
+        return InkWell(
+          onTap: () {
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.white,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+              ),
+              builder: (context) {
+                return AvailableLeaveDetailsBottomSheetWidget(
+                  leave: leave,
+                  config: config,
+                );
+              },
+            );
+          },
+          child: LeaveCardWidget(
+            icon: config['icon'] as IconData,
+            color: config['color'] as Color,
+            bgColor: config['bgColor'] as Color,
+            availableLeaaveCount: leave.balance.toString(),
+            label: leave.leaveType,
+          ),
         );
       },
     );

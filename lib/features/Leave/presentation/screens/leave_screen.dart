@@ -7,6 +7,7 @@ import 'package:dynamic_emr/features/Leave/presentation/screens/leave_history_sc
 import 'package:dynamic_emr/features/Leave/presentation/screens/tabs/approved_leaves_tab.dart';
 import 'package:dynamic_emr/features/Leave/presentation/screens/tabs/pending_leaves_tab.dart';
 import 'package:dynamic_emr/features/Leave/presentation/widgets/leave_card_widget.dart';
+import 'package:dynamic_emr/features/Leave/presentation/widgets/available_leave_details_bottom_sheet_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -191,13 +192,31 @@ class _LeaveScreenState extends State<LeaveScreen>
         final leave = leaveHistory[index];
         final config = _getLeaveCardConfig(leave.leaveType);
 
-        return LeaveCardWidget(
-          icon: config['icon'] as IconData,
-          color: config['color'] as Color,
-          bgColor: config['bgColor'] as Color,
-          availableLeaaveCount: leave.balance.toString(),
-          totalLeaveCount: leave.allocated.toString(),
-          label: leave.leaveType,
+        return InkWell(
+          onTap: () {
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              backgroundColor: Colors.white,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+              ),
+              builder: (context) {
+                return AvailableLeaveDetailsBottomSheetWidget(
+                  leave: leave,
+                  config: config,
+                );
+              },
+            );
+          },
+          child: LeaveCardWidget(
+            icon: config['icon'] as IconData,
+            color: config['color'] as Color,
+            bgColor: config['bgColor'] as Color,
+            availableLeaaveCount: leave.balance.toString(),
+            // totalLeaveCount: leave.allocated.toString(),
+            label: leave.leaveType,
+          ),
         );
       },
     );
