@@ -133,23 +133,22 @@ class _WorkScreenState extends State<WorkScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildOverviewCards(myTickets),
-                  SizedBox(height: 24),
+                  SizedBox(height: 12),
                   WorkStatusChartWidget(ticketSummary: myTickets),
-                  SizedBox(height: 24),
+                  SizedBox(height: 12),
                   Row(
                     children: [
                       Expanded(
                         child: SeverityChartWidget(ticketSummary: myTickets),
                       ),
-                      SizedBox(width: 16),
+                      SizedBox(width: 8),
                       Expanded(
                         child: PriorityChartWidget(ticketSummary: myTickets),
                       ),
                     ],
                   ),
-                  SizedBox(height: 24),
+                  SizedBox(height: 12),
                   WorkCompletionRateCardWidget(ticketSummary: myTickets),
-                  SizedBox(height: 16),
                 ],
               );
             }
@@ -181,23 +180,22 @@ class _WorkScreenState extends State<WorkScreen>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildOverviewCards(myTickets),
-                  SizedBox(height: 24),
+                  SizedBox(height: 12),
                   WorkStatusChartWidget(ticketSummary: myTickets),
-                  SizedBox(height: 24),
+                  SizedBox(height: 12),
                   Row(
                     children: [
                       Expanded(
                         child: SeverityChartWidget(ticketSummary: myTickets),
                       ),
-                      SizedBox(width: 16),
+                      SizedBox(width: 8),
                       Expanded(
                         child: PriorityChartWidget(ticketSummary: myTickets),
                       ),
                     ],
                   ),
-                  SizedBox(height: 24),
+                  SizedBox(height: 12),
                   WorkCompletionRateCardWidget(ticketSummary: myTickets),
-                  SizedBox(height: 16),
                 ],
               );
             }
@@ -213,7 +211,7 @@ class _WorkScreenState extends State<WorkScreen>
       children: [
         Expanded(
           child: WorkOverviewCardWidget(
-            title: 'Total Tickets',
+            title: 'Tickets',
             value: (data.open + data.closed + data.inProgress).toString(),
             icon: Icons.assignment,
             color: Color(0xFF1E3A8A),

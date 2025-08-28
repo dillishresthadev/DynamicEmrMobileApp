@@ -9,10 +9,17 @@ class WorkStatusChartWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 8,
+            offset: Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -26,65 +33,77 @@ class WorkStatusChartWidget extends StatelessWidget {
             ),
           ),
           SizedBox(height: 20),
-          SizedBox(
-            height: 200,
-            child:
-                (ticketSummary.open +
-                        ticketSummary.inProgress +
-                        ticketSummary.closed) >
-                    0
-                ? PieChart(
-                    PieChartData(
-                      sectionsSpace: 4,
-                      centerSpaceRadius: 50,
-                      sections: [
-                        PieChartSectionData(
-                          color: Color(0xFFEF4444),
-                          value: ticketSummary.open.toDouble(),
-                          title: '${ticketSummary.open}',
-                          titleStyle: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        PieChartSectionData(
-                          color: Color(0xFFF59E0B),
-                          value: ticketSummary.inProgress.toDouble(),
-                          title: '${ticketSummary.inProgress}',
-                          titleStyle: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                        PieChartSectionData(
-                          color: Color(0xFF10B981),
-                          value: ticketSummary.closed.toDouble(),
-                          title: '${ticketSummary.closed}',
-                          titleStyle: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                : Center(
-                    child: Text(
-                      'No data available',
-                      style: TextStyle(color: Colors.grey[500]),
-                    ),
-                  ),
-          ),
-          SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _buildLegendItem('Open', Color(0xFFEF4444)),
-              _buildLegendItem('In Progress', Color(0xFFF59E0B)),
-              _buildLegendItem('Closed', Color(0xFF10B981)),
+              // Pie Chart
+              Expanded(
+                child: SizedBox(
+                  height: 140,
+                  child:
+                      (ticketSummary.open +
+                              ticketSummary.inProgress +
+                              ticketSummary.closed) >
+                          0
+                      ? PieChart(
+                          PieChartData(
+                            sectionsSpace: 5,
+                            centerSpaceRadius: 28,
+                            sections: [
+                              PieChartSectionData(
+                                color: Color(0xFFEF4444),
+                                value: ticketSummary.open.toDouble(),
+                                title: '${ticketSummary.open}',
+                                titleStyle: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              PieChartSectionData(
+                                color: Color(0xFFF59E0B),
+                                value: ticketSummary.inProgress.toDouble(),
+                                title: '${ticketSummary.inProgress}',
+                                titleStyle: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              PieChartSectionData(
+                                color: Color(0xFF10B981),
+                                value: ticketSummary.closed.toDouble(),
+                                title: '${ticketSummary.closed}',
+                                titleStyle: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : Center(
+                          child: Text(
+                            'No data available',
+                            style: TextStyle(color: Colors.grey[500]),
+                          ),
+                        ),
+                ),
+              ),
+              SizedBox(width: 16),
+              // Legend
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildLegendItem('Open', Color(0xFFEF4444)),
+                  SizedBox(height: 8),
+                  _buildLegendItem('In Progress', Color(0xFFF59E0B)),
+                  SizedBox(height: 8),
+                  _buildLegendItem('Closed', Color(0xFF10B981)),
+                ],
+              ),
             ],
           ),
         ],

@@ -136,9 +136,10 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDatasource {
   Future<LoginResponseModel> refreshToken({
     required String refreshToken,
   }) async {
+    final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
     try {
       final response = await client.post(
-        ApiConstants.userRefreshToken,
+        "$baseUrl/${ApiConstants.userRefreshToken}",
         body: {"RefreshToken": refreshToken},
       );
       log('New Access Token Response: ${response['token']}');

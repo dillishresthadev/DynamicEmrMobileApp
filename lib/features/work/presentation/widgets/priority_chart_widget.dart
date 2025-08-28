@@ -8,8 +8,16 @@ class PriorityChartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final maxY =
+        [
+          ticketSummary.priorityHigh,
+          ticketSummary.priorityMedium,
+          ticketSummary.priorityLow,
+        ].reduce((a, b) => a > b ? a : b).toDouble() *
+        1.2;
+
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -25,45 +33,42 @@ class PriorityChartWidget extends StatelessWidget {
               color: Colors.grey[800],
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           SizedBox(
             height: 120,
             child:
-                (ticketSummary.severityHigh +
-                        ticketSummary.severityMedium +
-                        ticketSummary.severityLow) >
+                (ticketSummary.priorityHigh +
+                        ticketSummary.priorityMedium +
+                        ticketSummary.priorityLow) >
                     0
                 ? BarChart(
                     BarChartData(
                       alignment: BarChartAlignment.spaceAround,
-                      maxY:
-                          [
-                            ticketSummary.severityHigh,
-                            ticketSummary.severityMedium,
-                            ticketSummary.severityLow,
-                          ].reduce((a, b) => a > b ? a : b).toDouble() *
-                          1.2,
+                      maxY: maxY,
                       barTouchData: BarTouchData(enabled: false),
                       titlesData: FlTitlesData(
                         show: true,
                         bottomTitles: AxisTitles(
                           sideTitles: SideTitles(
                             showTitles: true,
-                            getTitlesWidget: (double value, TitleMeta meta) {
+                            getTitlesWidget: (value, meta) {
                               switch (value.toInt()) {
                                 case 0:
                                   return Text(
-                                    'H',
+                                    'H [${ticketSummary.priorityHigh}]',
+                                    textAlign: TextAlign.center,
                                     style: TextStyle(fontSize: 10),
                                   );
                                 case 1:
                                   return Text(
-                                    'M',
+                                    'M [${ticketSummary.priorityMedium}]',
+                                    textAlign: TextAlign.center,
                                     style: TextStyle(fontSize: 10),
                                   );
                                 case 2:
                                   return Text(
-                                    'L',
+                                    'L [${ticketSummary.priorityLow}]',
+                                    textAlign: TextAlign.center,
                                     style: TextStyle(fontSize: 10),
                                   );
                                 default:
@@ -73,7 +78,20 @@ class PriorityChartWidget extends StatelessWidget {
                           ),
                         ),
                         leftTitles: AxisTitles(
-                          sideTitles: SideTitles(showTitles: false),
+                          sideTitles: SideTitles(
+                            showTitles: true,
+                            reservedSize: 30,
+                            interval: (maxY / 5).ceilToDouble(),
+                            getTitlesWidget: (value, meta) {
+                              return Text(
+                                value.toInt().toString(),
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.grey,
+                                ),
+                              );
+                            },
+                          ),
                         ),
                         topTitles: AxisTitles(
                           sideTitles: SideTitles(showTitles: false),
@@ -83,39 +101,30 @@ class PriorityChartWidget extends StatelessWidget {
                         ),
                       ),
                       borderData: FlBorderData(show: false),
+                      gridData: FlGridData(
+                        show: true,
+                        drawHorizontalLine: true,
+                        horizontalInterval: (maxY / 5).ceilToDouble(),
+                        getDrawingHorizontalLine: (value) => FlLine(
+                          color: Colors.grey.withValues(alpha: 0.2),
+                          strokeWidth: 1,
+                        ),
+                      ),
                       barGroups: [
-                        BarChartGroupData(
-                          x: 0,
-                          barRods: [
-                            BarChartRodData(
-                              toY: ticketSummary.severityHigh.toDouble(),
-                              color: Color(0xFFEF4444),
-                              width: 20,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                          ],
+                        _makeBar(
+                          0,
+                          ticketSummary.priorityHigh.toDouble(),
+                          Color(0xFFEF4444),
                         ),
-                        BarChartGroupData(
-                          x: 1,
-                          barRods: [
-                            BarChartRodData(
-                              toY: ticketSummary.severityMedium.toDouble(),
-                              color: Color(0xFFF59E0B),
-                              width: 20,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                          ],
+                        _makeBar(
+                          1,
+                          ticketSummary.priorityMedium.toDouble(),
+                          Color(0xFFF59E0B),
                         ),
-                        BarChartGroupData(
-                          x: 2,
-                          barRods: [
-                            BarChartRodData(
-                              toY: ticketSummary.severityLow.toDouble(),
-                              color: Color(0xFF10B981),
-                              width: 20,
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                          ],
+                        _makeBar(
+                          2,
+                          ticketSummary.priorityLow.toDouble(),
+                          Color(0xFF10B981),
                         ),
                       ],
                     ),
@@ -129,6 +138,20 @@ class PriorityChartWidget extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  BarChartGroupData _makeBar(int x, double value, Color color) {
+    return BarChartGroupData(
+      x: x,
+      barRods: [
+        BarChartRodData(
+          toY: value,
+          color: color,
+          width: 20,
+          borderRadius: BorderRadius.circular(4),
+        ),
+      ],
     );
   }
 }
