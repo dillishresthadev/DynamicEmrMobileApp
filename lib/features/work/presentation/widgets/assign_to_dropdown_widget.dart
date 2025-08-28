@@ -1,29 +1,26 @@
-import 'package:dynamic_emr/features/work/domain/entities/ticket_entity.dart';
-import 'package:dynamic_emr/features/work/domain/entities/work_user_entity.dart';
+import 'package:dynamic_emr/core/widgets/form/custom_input_field.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../bloc/work_bloc.dart';
+class AssignToDropdownWidget extends StatefulWidget {
+  final List<Map<String, dynamic>> employee;
 
-class AssignToBottomSheetWidget extends StatefulWidget {
-  final List<WorkUserEntity> users;
-  final TicketEntity ticket;
+  final Function(String label, int value) onSelected;
 
-  const AssignToBottomSheetWidget({
+  const AssignToDropdownWidget({
     super.key,
-    required this.users,
-    required this.ticket,
+    required this.employee,
+    required this.onSelected,
   });
 
   @override
-  State<AssignToBottomSheetWidget> createState() =>
-      _AssignToBottomSheetWidgetState();
+  State<AssignToDropdownWidget> createState() => _AssignToDropdownWidgetState();
 }
 
-class _AssignToBottomSheetWidgetState extends State<AssignToBottomSheetWidget> {
-  String? _selectedUserText;
+class _AssignToDropdownWidgetState extends State<AssignToDropdownWidget> {
+  String? _selectedemployeeText;
+  int? selectedemployeeValue;
 
-  void _openAssignToBottomSheetWidget() {
+  void _openAssignToDropdownWidget() {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -33,11 +30,13 @@ class _AssignToBottomSheetWidgetState extends State<AssignToBottomSheetWidget> {
       ),
       builder: (context) {
         TextEditingController searchController = TextEditingController();
-        List<WorkUserEntity> filteredUsers = List.from(widget.users);
+        List<Map<String, dynamic>> filteredemployee = List.from(
+          widget.employee,
+        );
 
         return Padding(
           padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom, // handle keyboard
+            bottom: MediaQuery.of(context).viewInsets.bottom +16,
           ),
           child: DraggableScrollableSheet(
             expand: false,
@@ -53,10 +52,10 @@ class _AssignToBottomSheetWidgetState extends State<AssignToBottomSheetWidget> {
                       vertical: 16,
                     ),
                     child: Column(
-                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          "Assign To",
+                          "Substitute Employee",
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -64,12 +63,12 @@ class _AssignToBottomSheetWidgetState extends State<AssignToBottomSheetWidget> {
                         ),
                         const SizedBox(height: 12),
 
-                        // 🔍 Search field
+                        // 🔍 Search field (fixed at top)
                         TextField(
                           controller: searchController,
                           decoration: const InputDecoration(
                             prefixIcon: Icon(Icons.search),
-                            hintText: "Search user...",
+                            hintText: "Search employee...",
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.all(
                                 Radius.circular(12),
@@ -78,11 +77,11 @@ class _AssignToBottomSheetWidgetState extends State<AssignToBottomSheetWidget> {
                           ),
                           onChanged: (value) {
                             setModalState(() {
-                              filteredUsers = widget.users
+                              filteredemployee = widget.employee
                                   .where(
-                                    (u) => u.text.toLowerCase().contains(
-                                      value.toLowerCase(),
-                                    ),
+                                    (u) => (u['label'] as String)
+                                        .toLowerCase()
+                                        .contains(value.toLowerCase()),
                                   )
                                   .toList();
                             });
@@ -90,28 +89,47 @@ class _AssignToBottomSheetWidgetState extends State<AssignToBottomSheetWidget> {
                         ),
                         const SizedBox(height: 16),
 
-                        // User List
+                        // Employee List
                         Expanded(
                           child: ListView.builder(
                             controller: scrollController,
-                            shrinkWrap: true,
-                            itemCount: filteredUsers.length,
+                            itemCount:
+                                filteredemployee.length +
+                                1, // +1 for "Select One"
                             itemBuilder: (context, index) {
-                              final user = filteredUsers[index];
+                              if (index == 0) {
+                                // First option = Clear selection
+                                return ListTile(
+                                  title: const Text("-- Select One --"),
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedemployeeText = null;
+                                      selectedemployeeValue = null;
+                                    });
+
+                                    widget.onSelected(
+                                      "",
+                                      -1,
+                                    ); // send empty/invalid
+                                    Navigator.pop(context);
+                                  },
+                                );
+                              }
+
+                              // Normal employees
+                              final user = filteredemployee[index - 1];
+                              final userLabel = user['label'] ?? "Unknown";
+                              final userValue = user['value'] ?? -1;
+
                               return ListTile(
-                                title: Text(user.text),
+                                title: Text(userLabel),
                                 onTap: () {
                                   setState(() {
-                                    _selectedUserText = user.text;
+                                    _selectedemployeeText = userLabel;
+                                    selectedemployeeValue = userValue;
                                   });
 
-                                  context.read<WorkBloc>().add(
-                                    EditAssignToEvent(
-                                      ticketId: widget.ticket.id,
-                                      assignedUserId: int.parse(user.value),
-                                    ),
-                                  );
-
+                                  widget.onSelected(userLabel, userValue);
                                   Navigator.pop(context);
                                 },
                               );
@@ -133,39 +151,15 @@ class _AssignToBottomSheetWidgetState extends State<AssignToBottomSheetWidget> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: _openAssignToBottomSheetWidget,
+      onTap: _openAssignToDropdownWidget,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text(
-                "Assign To",
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: Colors.grey,
-                ),
-              ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    _selectedUserText ?? widget.ticket.assignedTo,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      color: _selectedUserText == null
-                          ? Colors.grey
-                          : Colors.black,
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  const Icon(Icons.edit, size: 16, color: Colors.blueGrey),
-                ],
-              ),
-            ],
+          CustomInputField(
+            hintText: _selectedemployeeText ?? "Select employee...",
+            readOnly: true,
+            onTap: _openAssignToDropdownWidget,
           ),
-          const Divider(height: 12, thickness: 0.5),
         ],
       ),
     );

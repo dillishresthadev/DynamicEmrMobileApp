@@ -11,6 +11,7 @@ import 'package:dynamic_emr/features/Leave/presentation/bloc/leave_bloc.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_categories_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/work_user_entity.dart';
 import 'package:dynamic_emr/features/work/presentation/bloc/work_bloc.dart';
+import 'package:dynamic_emr/features/work/presentation/widgets/assign_to_dropdown_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -409,12 +410,15 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
                         ),
 
                         buildSectionTitle("Assigned To"),
-                        CustomDropdown2(
-                          value: _selectedAssignToType,
-                          items: assignToItems,
-                          hintText: "Select Employee",
-                          onChanged: (value) =>
-                              setState(() => _selectedAssignToType = value),
+
+                        AssignToDropdownWidget(
+                          employee: assignToItems,
+                          onSelected: (label, value) {
+                            setState(() {
+                              _selectedAssignToType = value;
+                            });
+                            log("Selected Employee: $label ($value)");
+                          },
                         ),
                         const SizedBox(height: 8),
                         Text(

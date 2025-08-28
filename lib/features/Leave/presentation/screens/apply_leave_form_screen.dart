@@ -9,6 +9,7 @@ import 'package:dynamic_emr/core/widgets/form/custom_input_field.dart';
 import 'package:dynamic_emr/features/Leave/domain/entities/leave_application_request_entity.dart';
 import 'package:dynamic_emr/features/Leave/domain/entities/leave_type_entity.dart';
 import 'package:dynamic_emr/features/Leave/presentation/bloc/leave_bloc.dart';
+import 'package:dynamic_emr/features/Leave/presentation/widgets/substitute_employee_bottom_sheet_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:nepali_utils/nepali_utils.dart';
@@ -119,12 +120,13 @@ class _ApplyLeaveFormScreenState extends State<ApplyLeaveFormScreen> {
   }
 
   Future<void> _submitForm() async {
-    // if (!_formKey.currentState!.validate() || !_validateForm()) {
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(content: Text("Please fill all required fields")),
-    //   );
-    //   return;
-    // }
+    log("_selectedSubstituteEmployee $_selectedSubstituteEmployee");
+    if (!_formKey.currentState!.validate() || !_validateForm()) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please fill all required fields")),
+      );
+      return;
+    }
 
     try {
       if (_startPrimaryDateController.text.isNotEmpty) {
@@ -527,14 +529,25 @@ class _ApplyLeaveFormScreenState extends State<ApplyLeaveFormScreen> {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
-                    CustomDropdown2(
-                      value: _selectedSubstituteEmployee,
-                      items: substitutionEmployee,
-                      hintText: "Select Substitute",
-                      onChanged: (val) => setState(() {
-                        _selectedSubstituteEmployee = val;
-                      }),
+
+                    SubstituteEmployeeBottomSheetWidget(
+                      substituteEmployee: substitutionEmployee,
+                      onSelected: (label, value) {
+                        setState(() {
+                          _selectedSubstituteEmployee = value;
+                        });
+                        log("Selected Employee: $label ($value)");
+                      },
                     ),
+
+                    // CustomDropdown2(
+                    //   value: _selectedSubstituteEmployee,
+                    //   items: substitutionEmployee,
+                    //   hintText: "Select Substitute",
+                    //   onChanged: (val) => setState(() {
+                    //     _selectedSubstituteEmployee = val;
+                    //   }),
+                    // ),
                     const SizedBox(height: 24),
                     SizedBox(
                       width: double.infinity,
