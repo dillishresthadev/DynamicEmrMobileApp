@@ -121,9 +121,13 @@ class _ApplyLeaveFormScreenState extends State<ApplyLeaveFormScreen> {
 
   Future<void> _submitForm() async {
     log("_selectedSubstituteEmployee $_selectedSubstituteEmployee");
+    log("primary leave type : $_selectedPrimaryLeaveType");
+    log("Extended leave type : $_selectedExtendedLeaveType");
     if (!_formKey.currentState!.validate() || !_validateForm()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please fill all required fields")),
+      AppSnackBar.show(
+        context,
+        "Please fill all required fields",
+        SnackbarType.error,
       );
       return;
     }
@@ -339,79 +343,118 @@ class _ApplyLeaveFormScreenState extends State<ApplyLeaveFormScreen> {
         ),
       );
 
-  Widget _buildExtendedLeaveSection(List<Map<String, dynamic>> leaveTypes) =>
-      Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.blue),
-          borderRadius: BorderRadius.circular(12),
+  Widget _buildExtendedLeaveSection(List<Map<String, dynamic>> leaveTypes) {
+    // if both selected extended data will be same as primary automatically
+    final isBoth = _selectedLeaveOption == LeaveOption.both;
+
+    if (isBoth) {
+      _startExtendedDateController.text = _startPrimaryDateController.text;
+      _endExtendedDateController.text = _endPrimaryDateController.text;
+      _startDateExtended = _startDatePrimary;
+      _endDateExtended = _endDatePrimary;
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.blue),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Extended Shift Leave",
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Expanded(
+                  child: isBoth
+                      ? AbsorbPointer(
+                          child: CustomDateTimeField(
+                            controller: _startExtendedDateController,
+                            firstDate: DateTime.now(),
+                            lastDate: DateTime(2100),
+                            hintText: "Start Date *",
+                            onChanged: (date) {
+                              setState(() {
+                                _startDateExtended = DateTime.parse(date);
+                              });
+                            },
+                          ),
+                        )
+                      : CustomDateTimeField(
+                          controller: _startExtendedDateController,
+                          firstDate: DateTime.now(),
+                          lastDate: DateTime(2100),
+                          hintText: "Start Date *",
+                          onChanged: (date) {
+                            setState(() {
+                              _startDateExtended = DateTime.parse(date);
+                            });
+                          },
+                        ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: isBoth
+                      ? AbsorbPointer(
+                          child: CustomDateTimeField(
+                            controller: _endExtendedDateController,
+                            firstDate: DateTime.now(),
+                            lastDate: DateTime(2100),
+                            hintText: "End Date *",
+                            onChanged: (date) {
+                              setState(() {
+                                _endDateExtended = DateTime.parse(date);
+                              });
+                            },
+                          ),
+                        )
+                      : CustomDateTimeField(
+                          controller: _endExtendedDateController,
+                          firstDate: DateTime.now(),
+                          lastDate: DateTime(2100),
+                          hintText: "End Date *",
+                          onChanged: (date) {
+                            setState(() {
+                              _endDateExtended = DateTime.parse(date);
+                            });
+                          },
+                        ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            CustomDropdown2(
+              value: _selectedExtendedLeaveType,
+              items: leaveTypes,
+              hintText: "Select Leave Type *",
+              onChanged: (val) => setState(() {
+                _selectedExtendedLeaveType = val;
+              }),
+            ),
+            const SizedBox(height: 10),
+            Text("Total Leave Days"),
+            const SizedBox(height: 6),
+            Text(
+              (_startDateExtended != null && _endDateExtended != null)
+                  ? _calculateDaysExtended(
+                      _startDateExtended!,
+                      _endDateExtended!,
+                    ).toString()
+                  : "0",
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
-        margin: const EdgeInsets.symmetric(vertical: 8),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Extended Shift Leave",
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomDateTimeField(
-                      controller: _startExtendedDateController,
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime(2100),
-                      hintText: "Start Date *",
-                      onChanged: (date) {
-                        setState(() {
-                          _startDateExtended = DateTime.parse(date);
-                        });
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: CustomDateTimeField(
-                      controller: _endExtendedDateController,
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime(2100),
-                      hintText: "End Date *",
-                      onChanged: (date) {
-                        setState(() {
-                          _endDateExtended = DateTime.parse(date);
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              CustomDropdown2(
-                value: _selectedExtendedLeaveType,
-                items: leaveTypes,
-                hintText: "Select Leave Type *",
-                onChanged: (val) => setState(() {
-                  _selectedExtendedLeaveType = val;
-                }),
-              ),
-              const SizedBox(height: 10),
-              Text("Total Leave Days"),
-              const SizedBox(height: 6),
-              Text(
-                (_startDateExtended != null && _endDateExtended != null)
-                    ? _calculateDaysExtended(
-                        _startDateExtended!,
-                        _endDateExtended!,
-                      ).toString()
-                    : "0",
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-        ),
-      );
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -540,14 +583,6 @@ class _ApplyLeaveFormScreenState extends State<ApplyLeaveFormScreen> {
                       },
                     ),
 
-                    // CustomDropdown2(
-                    //   value: _selectedSubstituteEmployee,
-                    //   items: substitutionEmployee,
-                    //   hintText: "Select Substitute",
-                    //   onChanged: (val) => setState(() {
-                    //     _selectedSubstituteEmployee = val;
-                    //   }),
-                    // ),
                     const SizedBox(height: 24),
                     SizedBox(
                       width: double.infinity,

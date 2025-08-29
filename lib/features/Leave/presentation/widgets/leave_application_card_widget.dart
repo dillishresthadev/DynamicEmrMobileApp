@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 class LeaveApplicationCardWidget extends StatefulWidget {
   final LeaveApplicationEntity leave;
+
   const LeaveApplicationCardWidget({super.key, required this.leave});
 
   @override
@@ -13,11 +14,18 @@ class LeaveApplicationCardWidget extends StatefulWidget {
 
 class _LeaveApplicationCardWidgetState
     extends State<LeaveApplicationCardWidget> {
+  bool isValidPrimaryDate(String? date) {
+    if (date == null) return false;
+    final parsed = DateTime.tryParse(date);
+    return parsed != null && parsed.year != 1; // Treat 01/01/0001 as null
+  }
+
   @override
   Widget build(BuildContext context) {
     final leave = widget.leave;
 
-    final hasPrimary = leave.toDate != null;
+    final hasPrimary =
+        isValidPrimaryDate(leave.fromDate) && isValidPrimaryDate(leave.toDate);
     final hasExtended =
         leave.extendedFromDate != null && leave.extendedToDate != null;
 
@@ -122,8 +130,12 @@ class _LeaveApplicationCardWidgetState
           if (hasPrimary && hasExtended) ...[
             _buildDateRow(
               'Primary',
-              DateTime.parse(leave.fromDate).toDMMMYYYY(),
-              DateTime.parse(leave.toDate).toDMMMYYYY(),
+              isValidPrimaryDate(leave.fromDate)
+                  ? DateTime.parse(leave.fromDate).toDMMMYYYY()
+                  : '',
+              isValidPrimaryDate(leave.toDate)
+                  ? DateTime.parse(leave.toDate).toDMMMYYYY()
+                  : '',
             ),
             const SizedBox(height: 8),
             _buildDateRow(
@@ -150,8 +162,12 @@ class _LeaveApplicationCardWidgetState
           ] else if (hasPrimary) ...[
             _buildDateRow(
               'Primary',
-              DateTime.parse(leave.fromDate).toDMMMYYYY(),
-              DateTime.parse(leave.toDate).toDMMMYYYY(),
+              isValidPrimaryDate(leave.fromDate)
+                  ? DateTime.parse(leave.fromDate).toDMMMYYYY()
+                  : '',
+              isValidPrimaryDate(leave.toDate)
+                  ? DateTime.parse(leave.toDate).toDMMMYYYY()
+                  : '',
             ),
           ],
 
@@ -178,7 +194,7 @@ class _LeaveApplicationCardWidgetState
                 label: leave.status,
                 color: leave.status.toLowerCase() == 'open'
                     ? Colors.green.shade100
-                    : leave.substitutationStatus.toLowerCase() == 'close'
+                    : leave.status.toLowerCase() == 'close'
                     ? Colors.red.shade100
                     : Colors.orange.shade100,
                 textColor: leave.status.toLowerCase() == 'open'
@@ -194,14 +210,12 @@ class _LeaveApplicationCardWidgetState
                   color: Colors.green.shade100,
                   textColor: Colors.green.shade800,
                 ),
-
               if (leave.rejectedBy != null)
                 _StatusChip(
                   label: 'Rejected By: ${leave.rejectedBy}',
                   color: Colors.red.shade100,
                   textColor: Colors.red.shade800,
                 ),
-
               const SizedBox(width: 8),
               _StatusChip(
                 label: leaveType,

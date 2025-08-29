@@ -104,9 +104,16 @@ class LeaveDetailsBottomSheet extends StatelessWidget {
 
   const LeaveDetailsBottomSheet({super.key, required this.leave});
 
+  bool isValidPrimaryDate(String? date) {
+    if (date == null) return false;
+    final parsed = DateTime.tryParse(date);
+    return parsed != null && parsed.year != 1; // "0001-01-01" treated as null
+  }
+
   @override
   Widget build(BuildContext context) {
-    final hasPrimary = leave.toDate != null;
+    final hasPrimary =
+        isValidPrimaryDate(leave.fromDate) && isValidPrimaryDate(leave.toDate);
     final hasExtended =
         leave.extendedFromDate != null && leave.extendedToDate != null;
 
@@ -246,12 +253,16 @@ class LeaveDetailsBottomSheet extends StatelessWidget {
                         ),
                       _buildInfoRow(
                         'From Date',
-                        DateTime.parse(leave.fromDate).toDMMMYYYY(),
+                        isValidPrimaryDate(leave.fromDate)
+                            ? DateTime.parse(leave.fromDate).toDMMMYYYY()
+                            : '',
                         Icons.date_range,
                       ),
                       _buildInfoRow(
                         'To Date',
-                        DateTime.parse(leave.toDate).toDMMMYYYY(),
+                        isValidPrimaryDate(leave.toDate)
+                            ? DateTime.parse(leave.toDate).toDMMMYYYY()
+                            : '',
                         Icons.date_range,
                       ),
                       if (leave.fromDateNp.isNotEmpty == true)

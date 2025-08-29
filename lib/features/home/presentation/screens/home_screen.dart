@@ -61,7 +61,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildModernHeader(),
+
                   TodayAttendanceWidget(),
+                  const ShiftScreen(),
+
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 18.0),
                     child: Text(
@@ -222,10 +225,10 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
       decoration: const BoxDecoration(
         color: AppColors.primary,
-        borderRadius: BorderRadius.only(
-          bottomLeft: Radius.circular(20),
-          bottomRight: Radius.circular(20),
-        ),
+        // borderRadius: BorderRadius.only(
+        //   bottomLeft: Radius.circular(20),
+        //   bottomRight: Radius.circular(20),
+        // ),
       ),
       child: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, state) {
@@ -258,8 +261,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
               SizedBox(height: 10),
-
-              const ShiftScreen(),
             ],
           );
         },

@@ -293,7 +293,7 @@ class _PageIndicator extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(4),
               color: isActive
-                  ? Colors.white
+                  ? AppColors.primary
                   : Colors.grey.withValues(alpha: 0.3),
             ),
           ),
