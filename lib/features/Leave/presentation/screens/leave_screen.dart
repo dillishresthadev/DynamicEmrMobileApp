@@ -123,18 +123,18 @@ class _LeaveScreenState extends State<LeaveScreen>
           _buildTabViewSection(),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ApplyLeaveFormScreen()),
-        ),
-        label: Text('Apply Leave'),
-        icon: Icon(Icons.add),
+      // floatingActionButton: FloatingActionButton.extended(
+      //   onPressed: () => Navigator.push(
+      //     context,
+      //     MaterialPageRoute(builder: (context) => ApplyLeaveFormScreen()),
+      //   ),
+      //   label: Text('Apply Leave'),
+      //   icon: Icon(Icons.add),
 
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      ),
+      //   backgroundColor: AppColors.primary,
+      //   foregroundColor: Colors.white,
+      //   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      // ),
     );
   }
 

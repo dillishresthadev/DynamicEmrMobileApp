@@ -87,13 +87,22 @@ class _LeaveApplicationCardWidgetState
                         color: Color(0xFF1E293B),
                       ),
                     ),
+                    // Text(
+                    //   hasPrimary && hasExtended
+                    //       ? 'Primary: ${leave.totalLeaveDays} day${leave.totalLeaveDays > 1 ? "s" : ""} + '
+                    //             'Extended: ${leave.extendedTotalLeaveDays} day${leave.extendedTotalLeaveDays > 1 ? "s" : ""}'
+                    //       : hasExtended
+                    //       ? 'Duration: ${leave.extendedTotalLeaveDays} day${leave.extendedTotalLeaveDays > 1 ? "s" : ""}'
+                    //       : 'Duration: ${leave.totalLeaveDays} day${leave.totalLeaveDays > 1 ? "s" : ""}',
+                    //   style: TextStyle(
+                    //     fontSize: 14,
+                    //     color: Colors.grey.shade600,
+                    //   ),
+                    // ),
                     Text(
-                      hasPrimary && hasExtended
-                          ? 'Primary: ${leave.totalLeaveDays} day${leave.totalLeaveDays > 1 ? "s" : ""} + '
-                                'Extended: ${leave.extendedTotalLeaveDays} day${leave.extendedTotalLeaveDays > 1 ? "s" : ""}'
-                          : hasExtended
-                          ? 'Duration: ${leave.extendedTotalLeaveDays} day${leave.extendedTotalLeaveDays > 1 ? "s" : ""}'
-                          : 'Duration: ${leave.totalLeaveDays} day${leave.totalLeaveDays > 1 ? "s" : ""}',
+                      hasPrimary
+                          ? '${leave.totalLeaveDays} day${leave.totalLeaveDays > 1 ? "s" : ""}'
+                          : '${leave.extendedTotalLeaveDays} day${leave.extendedTotalLeaveDays > 1 ? "s" : ""}',
                       style: TextStyle(
                         fontSize: 14,
                         color: Colors.grey.shade600,

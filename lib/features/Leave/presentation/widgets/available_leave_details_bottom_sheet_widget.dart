@@ -20,80 +20,85 @@ class AvailableLeaveDetailsBottomSheetWidget extends StatelessWidget {
       minChildSize: 0.3,
       maxChildSize: 0.8,
       builder: (context, scrollController) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 2.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Handle bar
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  margin: const EdgeInsets.only(top: 5, bottom: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade400,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              // Header
-              Row(
-                children: [
-                  CircleAvatar(
-                    backgroundColor: (config['bgColor'] as Color),
-                    child: Icon(config['icon'], color: config['color']),
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    leave.leaveType,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1E293B),
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24.0,
+              vertical: 2.0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Handle bar
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(top: 5, bottom: 12),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade400,
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 12),
-
-              // Info Tiles
-              _LeaveInfoTile(
-                label: "Allocated",
-                value: leave.allocated.toString(),
-                icon: Icons.assignment,
-                color: AppColors.primary,
-              ),
-              _LeaveInfoTile(
-                label: "Taken",
-                value: leave.taken.toString(),
-                icon: Icons.event_busy,
-                color: Colors.red,
-              ),
-              _LeaveInfoTile(
-                label: "Remaining",
-                value: leave.balance.toString(),
-                icon: Icons.check_circle_outline,
-                color: Colors.green,
-              ),
-
-              const SizedBox(height: 12),
-
-              // Close Button
-              ElevatedButton.icon(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  minimumSize: const Size(double.infinity, 50),
                 ),
-                icon: const Icon(Icons.close),
-                label: const Text("Close"),
-              ),
-            ],
+                // Header
+                Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: (config['bgColor'] as Color),
+                      child: Icon(config['icon'], color: config['color']),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      leave.leaveType,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1E293B),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+
+                // Info Tiles
+                _LeaveInfoTile(
+                  label: "Allocated",
+                  value: leave.allocated.toString(),
+                  icon: Icons.assignment,
+                  color: AppColors.primary,
+                ),
+                _LeaveInfoTile(
+                  label: "Taken",
+                  value: leave.taken.toString(),
+                  icon: Icons.event_busy,
+                  color: Colors.red,
+                ),
+                _LeaveInfoTile(
+                  label: "Remaining",
+                  value: leave.balance.toString(),
+                  icon: Icons.check_circle_outline,
+                  color: Colors.green,
+                ),
+
+                const SizedBox(height: 12),
+
+                // Close Button
+                ElevatedButton.icon(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    minimumSize: const Size(double.infinity, 50),
+                  ),
+                  icon: const Icon(Icons.close),
+                  label: const Text("Close"),
+                ),
+              ],
+            ),
           ),
         );
       },
