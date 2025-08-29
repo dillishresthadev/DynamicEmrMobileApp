@@ -61,7 +61,7 @@ class _WorkScreenState extends State<WorkScreen>
           ],
         ),
         actions: [
-          GestureDetector(
+          InkWell(
             onTap: () {
               Navigator.push(
                 context,

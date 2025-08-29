@@ -95,26 +95,33 @@ class _LeaveScreenState extends State<LeaveScreen>
       appBar: DynamicEMRAppBar(
         title: "Leaves",
         actions: [
-          IconButton(
-            onPressed: () {
+          InkWell(
+            onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => LeaveHistoryScreen()),
+                MaterialPageRoute(builder: (context) => ApplyLeaveFormScreen()),
               );
             },
-            icon: Icon(Icons.history),
+            child: Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: Row(
+                children: [
+                  Icon(Icons.add_circle_outline),
+                  SizedBox(width: 5),
+                  Text("Apply Leave"),
+                  SizedBox(width: 10),
+                ],
+              ),
+            ),
           ),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: () async => _loadLeaveData,
-        child: Column(
-          children: [
-            _buildAvailableLeavesSection(),
-            _buildTabBarSection(),
-            _buildTabViewSection(),
-          ],
-        ),
+      body: Column(
+        children: [
+          _buildAvailableLeavesSection(),
+          _buildTabBarSection(),
+          _buildTabViewSection(),
+        ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Navigator.push(
@@ -139,13 +146,29 @@ class _LeaveScreenState extends State<LeaveScreen>
         child: ExpansionTile(
           initiallyExpanded: true,
           tilePadding: EdgeInsets.zero,
-          title: const Text(
-            'Available Leaves',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1E293B),
-            ),
+          title: Row(
+            children: [
+              const Text(
+                'Available Leaves',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1E293B),
+                ),
+              ),
+              Spacer(),
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => LeaveHistoryScreen(),
+                    ),
+                  );
+                },
+                icon: Icon(Icons.history, color: Colors.black),
+              ),
+            ],
           ),
           children: [
             BlocBuilder<LeaveBloc, LeaveState>(
@@ -177,48 +200,53 @@ class _LeaveScreenState extends State<LeaveScreen>
   }
 
   Widget _buildLeaveHistoryGrid(List<LeaveHistoryEntity> leaveHistory) {
-    return GridView.builder(
-      shrinkWrap: true,
-      // physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.only(bottom: 5),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 8,
-        mainAxisSpacing: 8,
-        childAspectRatio: 2.3,
-      ),
-      itemCount: leaveHistory.length,
-      itemBuilder: (context, index) {
-        final leave = leaveHistory[index];
-        final config = _getLeaveCardConfig(leave.leaveType);
-
-        return InkWell(
-          onTap: () {
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              backgroundColor: Colors.white,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-              ),
-              builder: (context) {
-                return AvailableLeaveDetailsBottomSheetWidget(
-                  leave: leave,
-                  config: config,
-                );
-              },
-            );
-          },
-          child: LeaveCardWidget(
-            icon: config['icon'] as IconData,
-            color: config['color'] as Color,
-            bgColor: config['bgColor'] as Color,
-            availableLeaaveCount: leave.balance.toString(),
-            // totalLeaveCount: leave.allocated.toString(),
-            label: leave.leaveType,
-          ),
-        );
+    return RefreshIndicator(
+      onRefresh: () async {
+        context.read<LeaveBloc>().add(LeaveHistoryEvent());
       },
+      child: GridView.builder(
+        shrinkWrap: true,
+        // physics: const NeverScrollableScrollPhysics(),
+        padding: EdgeInsets.only(bottom: 5),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 8,
+          mainAxisSpacing: 8,
+          childAspectRatio: 2.3,
+        ),
+        itemCount: leaveHistory.length,
+        itemBuilder: (context, index) {
+          final leave = leaveHistory[index];
+          final config = _getLeaveCardConfig(leave.leaveType);
+
+          return InkWell(
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.white,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                ),
+                builder: (context) {
+                  return AvailableLeaveDetailsBottomSheetWidget(
+                    leave: leave,
+                    config: config,
+                  );
+                },
+              );
+            },
+            child: LeaveCardWidget(
+              icon: config['icon'] as IconData,
+              color: config['color'] as Color,
+              bgColor: config['bgColor'] as Color,
+              availableLeaaveCount: leave.balance.toString(),
+              // totalLeaveCount: leave.allocated.toString(),
+              label: leave.leaveType,
+            ),
+          );
+        },
+      ),
     );
   }
 
