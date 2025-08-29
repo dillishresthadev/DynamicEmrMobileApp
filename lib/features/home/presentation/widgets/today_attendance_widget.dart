@@ -20,10 +20,21 @@ class _TodayAttendanceWidgetState extends State<TodayAttendanceWidget> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: BlocBuilder<AttendanceBloc, AttendanceState>(
         builder: (context, state) {
-          if (state.status == AttendanceStatus.loadSummarySuccess) {
+          if (state.status == AttendanceStatus.loading) {
+            return _buildAttendanceLoadingCard();
+          } else if (state.status == AttendanceStatus.loadSummarySuccess) {
             return _buildAttendanceCard(state);
+          } else if (state.status == AttendanceStatus.loadSummaryError) {
+            return Container(
+              height: 120,
+              decoration: BoxDecoration(
+                color: Colors.grey[200],
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Center(child: Text("Failed Error")),
+            );
           }
-          return _buildAttendanceLoadingCard();
+          return SizedBox.shrink();
         },
       ),
     );

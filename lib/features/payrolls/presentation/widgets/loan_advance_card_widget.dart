@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/payroll_bloc.dart';
@@ -92,7 +91,7 @@ class LoanAdvanceCardWidget extends StatelessWidget {
                   ),
                 );
               }
-              return Center(child: Text("Error :  Load data ${state.status}"));
+              return SizedBox.shrink();
             },
           ),
         ],

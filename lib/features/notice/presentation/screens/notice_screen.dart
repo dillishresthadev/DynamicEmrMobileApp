@@ -39,6 +39,24 @@ class _NoticeScreenState extends State<NoticeScreen> {
                   if (state.status == NoticeStatus.loading) {
                     return Center(child: CircularProgressIndicator());
                   } else if (state.status == NoticeStatus.success) {
+                    if (state.notices.isEmpty) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("No notices"),
+                            TextButton(
+                              onPressed: () {
+                                context.read<NoticeBloc>().add(
+                                  AllNoticesEvent(),
+                                );
+                              },
+                              child: Text("Re-try"),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
                     final notices =
                         state.notices
                             .where((e) => e.isPublished == true)
@@ -64,6 +82,8 @@ class _NoticeScreenState extends State<NoticeScreen> {
                         return _buildNoticeCard(context, notice, index);
                       },
                     );
+                  } else if (state.status == NoticeStatus.error) {
+                    return Center(child: Text("Failed getting notices"));
                   }
                   return SizedBox.shrink();
                 },

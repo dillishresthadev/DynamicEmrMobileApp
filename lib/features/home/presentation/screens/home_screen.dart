@@ -342,10 +342,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       if (state.status == PunchStatus.error) {
                         return Center(
-                          child: Text(
-                            state.message,
-                            style: const TextStyle(color: Colors.red),
-                          ),
+                          child: Text("Failed getting punch history"),
                         );
                       }
 

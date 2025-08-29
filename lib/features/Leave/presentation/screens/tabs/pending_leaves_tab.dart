@@ -80,7 +80,18 @@ class _PendingLeavesTabState extends State<PendingLeavesTab> {
                 );
               } else if (state.pendingLeaveStatus ==
                   LeaveStatus.pendingLeaveLoadError) {
-                return Center(child: Text(state.message));
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Failed getting pending leaves"),
+                      TextButton(
+                        onPressed: _refreshData,
+                        child: Text("Re-try"),
+                      ),
+                    ],
+                  ),
+                );
               }
               return Center(
                 child: Column(

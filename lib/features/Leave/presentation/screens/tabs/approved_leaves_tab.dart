@@ -81,7 +81,18 @@ class _ApprovedLeavesTabState extends State<ApprovedLeavesTab> {
                 );
               } else if (state.approvedLeaveStatus ==
                   LeaveStatus.approvedLeaveLoadError) {
-                return Center(child: Text(state.message));
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Failed getting pending leaves"),
+                      TextButton(
+                        onPressed: _refreshData,
+                        child: Text("Re-try"),
+                      ),
+                    ],
+                  ),
+                );
               }
               return const Center(child: Text("No approved leaves found"));
             },
