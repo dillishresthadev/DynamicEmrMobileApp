@@ -12,7 +12,9 @@ import 'package:dynamic_emr/features/punch/presentation/bloc/punch_bloc.dart';
 import 'package:dynamic_emr/features/work/presentation/bloc/work_bloc.dart';
 import 'package:dynamic_emr/firebase_options.dart';
 import 'package:dynamic_emr/injection.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -28,6 +30,13 @@ void main() async {
 
   // Bloc observer
   // Bloc.observer = MyBlocObserver();
+
+  //Analytics
+  if (kReleaseMode) {
+    FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
+  } else {
+    FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(false);
+  }
   runApp(const MyApp());
 }
 
