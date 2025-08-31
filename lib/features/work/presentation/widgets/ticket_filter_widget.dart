@@ -17,10 +17,10 @@ class TicketFilterWidget extends StatefulWidget {
 class _TicketFilterWidgetState extends State<TicketFilterWidget> {
   // Filter Controllers
   int _selectedCategory = 0;
-  String? _selectedStatus = "Open";
+  String? _selectedStatus;
   String? _selectedPriority;
   String? _selectedSeverity;
-  String? _selectedOrderBy = "Newest";
+  String? _selectedOrderBy;
 
   final TextEditingController _fromDateController = TextEditingController();
   final TextEditingController _toDateController = TextEditingController();
@@ -51,10 +51,10 @@ class _TicketFilterWidgetState extends State<TicketFilterWidget> {
     final oneMonthAgo = DateTime(now.year, now.month - 1, now.day);
     setState(() {
       _selectedCategory = 0;
-      _selectedStatus = "Open";
+      _selectedStatus = null;
       _selectedPriority = null;
       _selectedSeverity = null;
-      _selectedOrderBy = "Newest";
+      _selectedOrderBy = null;
       _fromDateController.text = DateFormat('yyyy-MM-dd').format(oneMonthAgo);
       _toDateController.text = DateFormat('yyyy-MM-dd').format(now);
     });

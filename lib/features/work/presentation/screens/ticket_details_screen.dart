@@ -262,12 +262,12 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                       onPressed: () async {
                                         final shouldProceed = await showDialog<bool>(
                                           context: context,
-                                          builder: (context) => AlertDialog(
+                                          builder: (context) => AlertDialog.adaptive(
                                             title: const Text("Confirm Action"),
                                             content: Text(
                                               ticket.ticket.status == "Open"
                                                   ? "Are you sure you want to close this ticket?"
-                                                  : "Are you sure you want to reopen this ticket?",
+                                                  : "Are you sure you want to re-open this ticket?",
                                             ),
                                             actions: [
                                               TextButton(
@@ -520,9 +520,15 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(color: Colors.grey[200]!),
                       ),
-                      child: Text(
-                        subtitle,
-                        style: TextStyle(fontSize: 13, color: Colors.grey[700]),
+                      child: Html(
+                        data: subtitle,
+                        style: {
+                          "*": Style(
+                            margin: Margins.all(0),
+                            fontSize: FontSize(13),
+                            color: Colors.grey[700],
+                          ),
+                        },
                       ),
                     ),
                   ],
