@@ -316,7 +316,7 @@ class EnhancedInsuranceCard extends StatelessWidget {
     final typeColor = getInsuranceTypeColor();
 
     return Card(
-      elevation: isActivePolicy ? 8 : 3,
+      elevation: isActivePolicy ? 8 : 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: isActivePolicy
@@ -327,18 +327,9 @@ class EnhancedInsuranceCard extends StatelessWidget {
           ? typeColor.withValues(alpha: 0.3)
           : Colors.black26,
       child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: isActivePolicy
-              ? LinearGradient(
-                  colors: [typeColor.withValues(alpha: 0.05), Colors.white],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                )
-              : null,
-        ),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
         child: Padding(
-          padding: const EdgeInsets.all(18),
+          padding: const EdgeInsets.all(12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -367,58 +358,6 @@ class EnhancedInsuranceCard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 12),
-
-              // Employee Information
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CircleAvatar(
-                    radius: 24,
-                    backgroundColor: typeColor.withValues(alpha: 0.1),
-                    child: Text(
-                      insurance.employeeName
-                          .split(' ')
-                          .map((e) => e.isNotEmpty ? e[0] : '')
-                          .take(2)
-                          .join()
-                          .toUpperCase(),
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: typeColor,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          insurance.employeeName,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: Colors.black87,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          insurance.employeeCode,
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
 
               // Insurance Type and Company
               Row(

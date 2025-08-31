@@ -20,7 +20,7 @@ class _TicketFilterWidgetState extends State<TicketFilterWidget> {
   String? _selectedStatus;
   String? _selectedPriority;
   String? _selectedSeverity;
-  String? _selectedOrderBy;
+  String? _selectedOrderBy = 'Newest';
 
   final TextEditingController _fromDateController = TextEditingController();
   final TextEditingController _toDateController = TextEditingController();

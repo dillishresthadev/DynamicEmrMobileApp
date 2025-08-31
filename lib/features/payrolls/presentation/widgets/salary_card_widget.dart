@@ -82,6 +82,18 @@ class SalaryCardWidget extends StatelessWidget {
                   if (additions.isNotEmpty) ...[
                     _buildSalarySection(context, additions, true),
                     const SizedBox(height: 8),
+                    // Padding(
+                    //   padding: const EdgeInsets.symmetric(
+                    //     horizontal: 20.0,
+                    //     vertical: 5,
+                    //   ),
+                    //   child: _buildTotalRow(
+                    //     context,
+                    //     'Gross Total',
+                    //     formatCurrencyNepali(salary.grossTotal),
+                    //     false,
+                    //   ),
+                    // ),
                   ],
 
                   if (deductions.isNotEmpty) ...[

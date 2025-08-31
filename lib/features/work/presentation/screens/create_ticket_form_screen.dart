@@ -27,6 +27,10 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _clientNameController = TextEditingController();
+  final TextEditingController _clientDepartmentController =
+      TextEditingController();
+  final TextEditingController _clientUserController = TextEditingController();
 
   int? _selectedCategoriesType;
   String? _selectedPriorityType;
@@ -51,6 +55,9 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
+    _clientNameController.dispose();
+    _clientDepartmentController.dispose();
+    _clientUserController.dispose();
     super.dispose();
   }
 
@@ -63,6 +70,9 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
       _selectedSeverityType = null;
       _titleController.clear();
       _descriptionController.clear();
+      _clientUserController.clear();
+      _clientDepartmentController.clear();
+      _clientNameController.clear();
     });
   }
 
@@ -390,7 +400,60 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
                           fontStyle: FontStyle.italic,
                         ),
                       ),
-
+                      buildSectionTitle("Client Name"),
+                      CustomInputField(
+                        controller: _clientNameController,
+                        hintText: "Enter name",
+                        maxLines: 1,
+                        // validator: (value) =>
+                        //     value == null || value.trim().isEmpty
+                        //     ? 'Client name is required'
+                        //     : null,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'issue by client',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey[600],
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                      buildSectionTitle("Client Department"),
+                      CustomInputField(
+                        controller: _clientDepartmentController,
+                        hintText: "Enter department",
+                        maxLines: 1,
+                        // validator: (value) =>
+                        //     value == null || value.trim().isEmpty
+                        //     ? 'Client name is required'
+                        //     : null,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'issue by client department',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey[600],
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                      buildSectionTitle("Client User"),
+                      CustomInputField(
+                        controller: _clientUserController,
+                        hintText: "Enter user...",
+                        maxLines: 1,
+                        // validator: (value) =>
+                        //     value == null || value.trim().isEmpty
+                        //     ? 'Description is required'
+                        //     : null,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'issue by client user',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey[600],
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
                       const SizedBox(height: 24),
                       SizedBox(
                         width: double.infinity,
