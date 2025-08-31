@@ -328,6 +328,7 @@ class _WorkAndShiftDetailsScreenState extends State<WorkAndShiftDetailsScreen> {
                 ],
               ),
             ),
+            SizedBox(height: 16),
           ],
         ),
       ),

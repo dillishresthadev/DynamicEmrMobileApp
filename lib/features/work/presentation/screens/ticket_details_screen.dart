@@ -128,31 +128,57 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                               ),
                               const SizedBox(height: 20),
                               // comment on ticket
-                              CustomInputField(
-                                hintText: "Comments message",
-                                controller: _commentController,
-                                suffixIcon: IconButton(
-                                  onPressed: () async {
-                                    final result =
-                                        await FilePickerUtils.pickImage(
-                                          fromCamera: true,
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: CustomInputField(
+                                      hintText: "Comments message",
+                                      controller: _commentController,
+                                      suffixIcon: IconButton(
+                                        onPressed: () async {
+                                          final result =
+                                              await FilePickerUtils.pickImage(
+                                                fromCamera: true,
+                                              );
+                                          if (result.file != null) {
+                                            setState(
+                                              () => commentAttachments.add(
+                                                result.file!,
+                                              ),
+                                            );
+                                          } else if (result.error != null) {
+                                            AppSnackBar.show(
+                                              context,
+                                              result.error!,
+                                              SnackbarType.error,
+                                            );
+                                          }
+                                        },
+                                        icon: Icon(Icons.camera_alt_outlined),
+                                      ),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () async {
+                                      final result =
+                                          await FilePickerUtils.pickFile();
+                                      if (result.file != null) {
+                                        setState(
+                                          () => commentAttachments.add(
+                                            result.file!,
+                                          ),
                                         );
-                                    if (result.file != null) {
-                                      setState(
-                                        () => commentAttachments.add(
-                                          result.file!,
-                                        ),
-                                      );
-                                    } else if (result.error != null) {
-                                      AppSnackBar.show(
-                                        context,
-                                        result.error!,
-                                        SnackbarType.error,
-                                      );
-                                    }
-                                  },
-                                  icon: Icon(Icons.camera_alt_outlined),
-                                ),
+                                      } else if (result.error != null) {
+                                        AppSnackBar.show(
+                                          context,
+                                          result.error!,
+                                          SnackbarType.error,
+                                        );
+                                      }
+                                    },
+                                    icon: Icon(Icons.file_copy_outlined),
+                                  ),
+                                ],
                               ),
 
                               Column(

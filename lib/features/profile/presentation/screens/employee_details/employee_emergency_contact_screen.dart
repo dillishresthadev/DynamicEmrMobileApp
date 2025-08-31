@@ -38,7 +38,7 @@ class EmployeeEmergencyContactScreen extends StatelessWidget {
   Widget _buildContactCard(EmployeeEmergencyContactEntity contact) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.red.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(16),
@@ -51,7 +51,6 @@ class EmployeeEmergencyContactScreen extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: Colors.red.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -62,7 +61,7 @@ class EmployeeEmergencyContactScreen extends StatelessWidget {
                   size: 20,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   contact.relation,
@@ -75,7 +74,6 @@ class EmployeeEmergencyContactScreen extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
 
           _buildInfoRow("Name", contact.contactPerson, Icons.person),
           _buildInfoRow("Phone", contact.phoneNumber, Icons.phone),
@@ -86,7 +84,7 @@ class EmployeeEmergencyContactScreen extends StatelessWidget {
 
   Widget _buildInfoRow(String label, String value, IconData icon) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         children: [
           Icon(icon, size: 16, color: Colors.grey[600]),
