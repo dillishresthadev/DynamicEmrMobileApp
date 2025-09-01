@@ -1,3 +1,4 @@
+import 'package:dynamic_emr/core/widgets/html_viewer_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:dynamic_emr/core/constants/app_colors.dart';
@@ -284,6 +285,38 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => EmployeeContractListScreen(),
+                      ),
+                    );
+                  },
+                ),
+                ProfileMenuCard(
+                  icon: Icons.privacy_tip,
+                  title: "Privacy Policy",
+                  subTitle: "View our privacy policy",
+                  press: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const HtmlViewerScreen(
+                          filePath: 'assets/files/privacy_policy.html',
+                          title: 'Privacy Policy',
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                ProfileMenuCard(
+                  icon: Icons.article_outlined,
+                  title: "Terms and Conditions",
+                  subTitle: "View our terms and condtions",
+                  press: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HtmlViewerScreen(
+                          filePath: 'assets/files/terms_and_conditions.html',
+                          title: 'Terms and Conditions',
+                        ),
                       ),
                     );
                   },
