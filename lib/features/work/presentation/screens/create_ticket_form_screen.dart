@@ -400,60 +400,60 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
                           fontStyle: FontStyle.italic,
                         ),
                       ),
-                      buildSectionTitle("Client Name"),
-                      CustomInputField(
-                        controller: _clientNameController,
-                        hintText: "Enter name",
-                        maxLines: 1,
-                        // validator: (value) =>
-                        //     value == null || value.trim().isEmpty
-                        //     ? 'Client name is required'
-                        //     : null,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'issue by client',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600],
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                      buildSectionTitle("Client Department"),
-                      CustomInputField(
-                        controller: _clientDepartmentController,
-                        hintText: "Enter department",
-                        maxLines: 1,
-                        // validator: (value) =>
-                        //     value == null || value.trim().isEmpty
-                        //     ? 'Client name is required'
-                        //     : null,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'issue by client department',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600],
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                      buildSectionTitle("Client User"),
-                      CustomInputField(
-                        controller: _clientUserController,
-                        hintText: "Enter user...",
-                        maxLines: 1,
-                        // validator: (value) =>
-                        //     value == null || value.trim().isEmpty
-                        //     ? 'Description is required'
-                        //     : null,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'issue by client user',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600],
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
+                      // buildSectionTitle("Client Name"),
+                      // CustomInputField(
+                      //   controller: _clientNameController,
+                      //   hintText: "Enter name",
+                      //   maxLines: 1,
+                      //   // validator: (value) =>
+                      //   //     value == null || value.trim().isEmpty
+                      //   //     ? 'Client name is required'
+                      //   //     : null,
+                      // ),
+                      // const SizedBox(height: 8),
+                      // Text(
+                      //   'issue by client',
+                      //   style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      //     color: Colors.grey[600],
+                      //     fontStyle: FontStyle.italic,
+                      //   ),
+                      // ),
+                      // buildSectionTitle("Client Department"),
+                      // CustomInputField(
+                      //   controller: _clientDepartmentController,
+                      //   hintText: "Enter department",
+                      //   maxLines: 1,
+                      //   // validator: (value) =>
+                      //   //     value == null || value.trim().isEmpty
+                      //   //     ? 'Client name is required'
+                      //   //     : null,
+                      // ),
+                      // const SizedBox(height: 8),
+                      // Text(
+                      //   'issue by client department',
+                      //   style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      //     color: Colors.grey[600],
+                      //     fontStyle: FontStyle.italic,
+                      //   ),
+                      // ),
+                      // buildSectionTitle("Client User"),
+                      // CustomInputField(
+                      //   controller: _clientUserController,
+                      //   hintText: "Enter user...",
+                      //   maxLines: 1,
+                      //   // validator: (value) =>
+                      //   //     value == null || value.trim().isEmpty
+                      //   //     ? 'Description is required'
+                      //   //     : null,
+                      // ),
+                      // const SizedBox(height: 8),
+                      // Text(
+                      //   'issue by client user',
+                      //   style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      //     color: Colors.grey[600],
+                      //     fontStyle: FontStyle.italic,
+                      //   ),
+                      // ),
                       const SizedBox(height: 24),
                       SizedBox(
                         width: double.infinity,

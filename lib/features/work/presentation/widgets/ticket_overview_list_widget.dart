@@ -107,33 +107,33 @@ class _TicketCard extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            _MetadataChip(
-              icon: Icons.local_hospital_outlined,
-              label: "Client Name",
-              color: Colors.pink.shade600,
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            _MetadataChip(
-              icon: Icons.house_outlined,
-              label: 'Department Name',
-              color: Colors.brown.shade600,
-            ),
-            const SizedBox(width: 8),
+        // const SizedBox(height: 8),
+        // Row(
+        //   children: [
+        //     _MetadataChip(
+        //       icon: Icons.local_hospital_outlined,
+        //       label: "Client Name",
+        //       color: Colors.pink.shade600,
+        //     ),
+        //   ],
+        // ),
+        // const SizedBox(height: 8),
+        // Row(
+        //   children: [
+        //     _MetadataChip(
+        //       icon: Icons.house_outlined,
+        //       label: 'Department Name',
+        //       color: Colors.brown.shade600,
+        //     ),
+        //     const SizedBox(width: 8),
 
-            _MetadataChip(
-              icon: Icons.person_outline,
-              label: "Client User",
-              color: Colors.blue.shade600,
-            ),
-          ],
-        ),
+        //     _MetadataChip(
+        //       icon: Icons.person_outline,
+        //       label: "Client User",
+        //       color: Colors.blue.shade600,
+        //     ),
+        //   ],
+        // ),
         const SizedBox(height: 8),
 
         Row(
