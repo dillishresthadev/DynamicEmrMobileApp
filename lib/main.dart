@@ -14,6 +14,7 @@ import 'package:dynamic_emr/firebase_options.dart';
 import 'package:dynamic_emr/injection.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,6 +38,16 @@ void main() async {
   } else {
     FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(false);
   }
+  // crashlytics
+  // flutter crashes
+  FlutterError.onError = (errorDetails) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+  };
+  // native crashes
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack);
+    return true;
+  };
   runApp(const MyApp());
 }
 
