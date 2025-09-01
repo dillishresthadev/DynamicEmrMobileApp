@@ -49,6 +49,7 @@ class SeverityChartWidget extends StatelessWidget {
                       titlesData: FlTitlesData(
                         show: true,
                         bottomTitles: AxisTitles(
+                          sideTitleAlignment: SideTitleAlignment.outside,
                           sideTitles: SideTitles(
                             showTitles: true,
                             getTitlesWidget: (value, meta) {
@@ -78,6 +79,7 @@ class SeverityChartWidget extends StatelessWidget {
                           ),
                         ),
                         leftTitles: AxisTitles(
+                          sideTitleAlignment: SideTitleAlignment.outside,
                           sideTitles: SideTitles(
                             showTitles: true,
                             reservedSize: 30,
@@ -94,9 +96,11 @@ class SeverityChartWidget extends StatelessWidget {
                           ),
                         ),
                         topTitles: AxisTitles(
+                          sideTitleAlignment: SideTitleAlignment.outside,
                           sideTitles: SideTitles(showTitles: false),
                         ),
                         rightTitles: AxisTitles(
+                          sideTitleAlignment: SideTitleAlignment.outside,
                           sideTitles: SideTitles(showTitles: false),
                         ),
                       ),
