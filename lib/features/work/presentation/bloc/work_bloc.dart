@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:dynamic_emr/features/work/domain/entities/business_client_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_categories_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_details_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_summary_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/work_user_entity.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/business_client_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/comment_on_ticket_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/create_new_ticket_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/edit_assignto_usecase.dart';
@@ -41,6 +43,7 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
   final EditPriorityUsecase editPriorityUsecase;
   final EditAssigntoUsecase editAssigntoUsecase;
   final EditSeverityUsecase editSeverityUsecase;
+  final BusinessClientUsecase businessClientUsecase;
   WorkBloc({
     required this.ticketSummaryUsecase,
     required this.ticketAssignedToMeSummaryUsecase,
@@ -56,6 +59,7 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
     required this.editPriorityUsecase,
     required this.editAssigntoUsecase,
     required this.editSeverityUsecase,
+    required this.businessClientUsecase,
   }) : super(WorkState()) {
     on<MyTicketSummaryEvent>(_onMyTicketSummary);
     on<TicketAssignedToMeSummaryEvent>(_onTicketAssignedToMeSummary);
@@ -71,6 +75,7 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
     on<EditPriorityEvent>(_onEditPriority);
     on<EditAssignToEvent>(_onEditAssignedTo);
     on<EditSeverityEvent>(_onEditSeverity);
+    on<BusinessClientEvent>(_onBusinessClientEvent);
   }
 
   Future<void> _onMyTicketSummary(
@@ -173,6 +178,10 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
         event.description,
         event.severity,
         event.priority,
+        event.client,
+        event.clientDesc,
+        event.clientDesc2,
+        event.dueDate,
         event.assignToEmployeeId,
         event.attachmentPaths,
       );
@@ -416,6 +425,27 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
     } catch (e) {
       log("Error Bloc _onEditSeverity $e");
       emit(state.copyWith(workStatus: WorkStatus.error, message: e.toString()));
+    }
+  }
+
+  Future<void> _onBusinessClientEvent(
+    BusinessClientEvent event,
+    Emitter<WorkState> emit,
+  ) async {
+    emit(state.copyWith(workStatus: WorkStatus.loading));
+    try {
+      final clientList = await businessClientUsecase.call();
+      emit(
+        state.copyWith(
+          businessClient: clientList,
+          workStatus: WorkStatus.success,
+        ),
+      );
+    } catch (e) {
+      log("Error getting business client list $e");
+      emit(
+        state.copyWith(workStatus: WorkStatus.success, message: e.toString()),
+      );
     }
   }
 }

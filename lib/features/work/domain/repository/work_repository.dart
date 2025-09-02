@@ -1,3 +1,4 @@
+import 'package:dynamic_emr/features/work/domain/entities/business_client_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_categories_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_details_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_entity.dart';
@@ -23,6 +24,10 @@ abstract class WorkRepository {
     String description,
     String severity,
     String priority,
+    String client,
+    String clientDesc,
+    String clientDesc2,
+    String dueDate,
     int assignToEmployeeId,
     List<String>? attachmentPaths,
   );
@@ -51,4 +56,6 @@ abstract class WorkRepository {
   Future<bool> editPriority(int ticketId, String status);
   Future<bool> editSeverity(int ticketId, String status);
   Future<bool> editAssignTo(int ticketId, int assignedUserId);
+
+  Future<List<BusinessClientEntity>> getBusinessClient();
 }

@@ -11,6 +11,10 @@ class CreateNewTicketUsecase {
     String description,
     String severity,
     String priority,
+    String client,
+    String clientDesc,
+    String clientDesc2,
+    String dueDate,
     int assignToEmployeeId,
     List<String>? attachmentPaths,
   ) async {
@@ -20,6 +24,10 @@ class CreateNewTicketUsecase {
       description,
       severity,
       priority,
+      client,
+      clientDesc,
+      clientDesc2,
+      dueDate,
       assignToEmployeeId,
       attachmentPaths,
     );

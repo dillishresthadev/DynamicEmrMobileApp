@@ -33,6 +33,8 @@ class ApiConstants {
   static const String createTicketPost = "/api/Ticket/CreateTicketPost";
   static const String commentPost = "/api/Ticket/CommentPost";
 
+  static const String businessClient = '/api/BusinessClient/GetActive';
+
   // Leave Info
 
   static const String getLeaveTypes = "/api/LeaveApplication/GetLeaveTypes";

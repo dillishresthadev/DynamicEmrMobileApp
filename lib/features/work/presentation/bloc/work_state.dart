@@ -22,6 +22,7 @@ final class WorkState extends Equatable {
   final TicketSummaryEntity? ticketAssignedToMeSummary;
   final List<TicketCategoriesEntity>? ticketCategories;
   final List<WorkUserEntity>? workUser;
+  final List<BusinessClientEntity>? businessClient;
 
   final WorkStatus myTicketStatus;
   final WorkStatus assignedTicketStatus;
@@ -55,6 +56,7 @@ final class WorkState extends Equatable {
     this.filterMyTicket,
     this.filterMyAssignedTicket,
     this.ticketDetails,
+    this.businessClient,
     this.createTicket = false,
     this.reOpenTicket = false,
     this.closeTicket = false,
@@ -89,6 +91,7 @@ final class WorkState extends Equatable {
     bool? commentOnTicket,
     List<TicketCategoriesEntity>? ticketCategories,
     List<WorkUserEntity>? workUser,
+    List<BusinessClientEntity>? businessClient,
     List<TicketEntity>? filterMyTicket,
     List<TicketEntity>? filterMyAssignedTicket,
     TicketDetailsEntity? ticketDetails,
@@ -114,6 +117,7 @@ final class WorkState extends Equatable {
       createTicket: createTicket ?? this.createTicket,
       ticketCategories: ticketCategories ?? this.ticketCategories,
       workUser: workUser ?? this.workUser,
+      businessClient: businessClient ?? this.businessClient,
       filterMyTicket: filterMyTicket ?? this.filterMyTicket,
       filterMyAssignedTicket:
           filterMyAssignedTicket ?? this.filterMyAssignedTicket,
@@ -141,6 +145,7 @@ final class WorkState extends Equatable {
     filterMyAssignedTicketMessage,
     ticketCategories,
     workUser,
+    businessClient,
     filterMyTicket,
     filterMyAssignedTicket,
     ticketDetails,

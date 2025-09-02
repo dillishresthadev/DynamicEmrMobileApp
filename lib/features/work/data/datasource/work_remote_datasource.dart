@@ -7,6 +7,7 @@ import 'package:dynamic_emr/core/local_storage/branch_storage.dart';
 import 'package:dynamic_emr/core/local_storage/hospital_code_storage.dart';
 import 'package:dynamic_emr/core/local_storage/token_storage.dart';
 import 'package:dynamic_emr/core/network/dio_http_client.dart';
+import 'package:dynamic_emr/features/work/data/models/business_client_model.dart';
 import 'package:dynamic_emr/features/work/data/models/ticket_categories_model.dart';
 import 'package:dynamic_emr/features/work/data/models/ticket_details_model.dart';
 import 'package:dynamic_emr/features/work/data/models/ticket_model.dart';
@@ -33,6 +34,10 @@ abstract class WorkRemoteDatasource {
     String description,
     String severity,
     String priority,
+    String client,
+    String clientDesc,
+    String clientDesc2,
+    String dueDate,
     int assignToEmployeeId,
     List<String>? attachmentPaths,
   );
@@ -60,6 +65,8 @@ abstract class WorkRemoteDatasource {
   Future<bool> editPriority(int ticketId, String status);
   Future<bool> editSeverity(int ticketId, String status);
   Future<bool> editAssignTo(int ticketId, int assignedUserId);
+
+  Future<List<BusinessClientModel>> getBusinessClient();
 }
 
 class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
@@ -228,6 +235,10 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
     String description,
     String severity,
     String priority,
+    String clientName,
+    String clientDesc,
+    String clientDesc2,
+    String dueDate,
     int assignToEmployeeId,
     List<String>? attachmentPaths,
   ) async {
@@ -261,6 +272,10 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
         "Description": description,
         "Severity": severity,
         "Priority": priority,
+        "clientName": clientName,
+        "clientDesc": clientDesc,
+        "clientDesc2": clientDesc2,
+        "dueDate": dueDate,
         "AssignToEmployeeId": assignToEmployeeId,
         "AttachmentFiles": files,
       });
@@ -601,6 +616,44 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
       throw Exception("Unexpected response format");
     } catch (e) {
       log("Error while editing severity : $e");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<List<BusinessClientModel>> getBusinessClient() async {
+    try {
+      final accessToken = await injection<TokenSecureStorage>()
+          .getAccessToken();
+      final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
+      final workingBranchId = await injection<BranchSecureStorage>()
+          .getWorkingBranchId();
+      final workingFinancialId = await injection<BranchSecureStorage>()
+          .getSelectedFiscalYearId();
+
+      final dynamic response = await client.get(
+        "$baseUrl/${ApiConstants.businessClient}",
+        token: accessToken,
+        headers: {
+          "workingBranchId": workingBranchId.toString(),
+          "workingFinancialId": workingFinancialId.toString(),
+        },
+      );
+
+      List<dynamic> jsonList;
+      if (response is List) {
+        jsonList = response;
+      } else if (response is Map<String, dynamic>) {
+        jsonList = response['data'];
+      } else {
+        jsonList = [];
+        log('Unexpected response format: $response');
+      }
+      return jsonList
+          .map((json) => BusinessClientModel.fromJson(json))
+          .toList();
+    } catch (e) {
+      log("Error getting businessClient: $e");
       rethrow;
     }
   }

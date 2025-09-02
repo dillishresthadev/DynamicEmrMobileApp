@@ -1,4 +1,5 @@
 import 'package:dynamic_emr/features/work/data/datasource/work_remote_datasource.dart';
+import 'package:dynamic_emr/features/work/domain/entities/business_client_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_categories_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_details_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_entity.dart';
@@ -44,6 +45,10 @@ class WorkRepositoryImpl extends WorkRepository {
     String description,
     String severity,
     String priority,
+    String client,
+    String clientDesc,
+    String clientDesc2,
+    String dueDate,
     int assignToEmployeeId,
     List<String>? attachmentPaths,
   ) async {
@@ -53,6 +58,10 @@ class WorkRepositoryImpl extends WorkRepository {
       description,
       severity,
       priority,
+      client,
+      clientDesc,
+      clientDesc2,
+      dueDate,
       assignToEmployeeId,
       attachmentPaths,
     );
@@ -140,5 +149,10 @@ class WorkRepositoryImpl extends WorkRepository {
   @override
   Future<bool> editSeverity(int ticketId, String status) async {
     return await remoteDatasource.editSeverity(ticketId, status);
+  }
+
+  @override
+  Future<List<BusinessClientEntity>> getBusinessClient() async {
+    return await remoteDatasource.getBusinessClient();
   }
 }

@@ -13,6 +13,8 @@ final class TicketAssignedToMeSummaryEvent extends WorkEvent {}
 
 final class WorkUserListEvent extends WorkEvent {}
 
+final class BusinessClientEvent extends WorkEvent {}
+
 final class TicketCategoriesEvent extends WorkEvent {}
 
 final class TicketReopenEvent extends WorkEvent {
@@ -36,7 +38,11 @@ final class CommentOnTicketEvent extends WorkEvent {
   final String message;
   final List<String>? attachmentPaths;
 
-  const CommentOnTicketEvent({required this.ticketId, required this.message,this.attachmentPaths});
+  const CommentOnTicketEvent({
+    required this.ticketId,
+    required this.message,
+    this.attachmentPaths,
+  });
   @override
   List<Object?> get props => [ticketId, message];
 }
@@ -55,6 +61,10 @@ final class CreateTicketEvent extends WorkEvent {
   final String description;
   final String severity;
   final String priority;
+  final String client;
+  final String clientDesc;
+  final String clientDesc2;
+  final String dueDate;
   final int assignToEmployeeId;
   final List<String>? attachmentPaths;
 
@@ -64,8 +74,12 @@ final class CreateTicketEvent extends WorkEvent {
     required this.description,
     required this.severity,
     required this.priority,
+    required this.client,
+    required this.clientDesc,
+    required this.clientDesc2,
+    required this.dueDate,
     required this.assignToEmployeeId,
-     this.attachmentPaths,
+    this.attachmentPaths,
   });
   @override
   List<Object?> get props => [
@@ -74,6 +88,9 @@ final class CreateTicketEvent extends WorkEvent {
     description,
     severity,
     priority,
+    client,
+    clientDesc,
+    clientDesc2,
     assignToEmployeeId,
     attachmentPaths,
   ];

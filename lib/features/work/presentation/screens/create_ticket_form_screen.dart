@@ -8,10 +8,12 @@ import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/core/widgets/dropdown/custom_dropdown.dart';
 import 'package:dynamic_emr/core/widgets/form/custom_input_field.dart';
 import 'package:dynamic_emr/features/Leave/presentation/bloc/leave_bloc.dart';
+import 'package:dynamic_emr/features/work/domain/entities/business_client_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_categories_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/work_user_entity.dart';
 import 'package:dynamic_emr/features/work/presentation/bloc/work_bloc.dart';
 import 'package:dynamic_emr/features/work/presentation/widgets/assign_to_dropdown_widget.dart';
+import 'package:dynamic_emr/features/work/presentation/widgets/business_client_dropdown_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -36,9 +38,11 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
   String? _selectedPriorityType;
   int? _selectedAssignToType;
   String? _selectedSeverityType;
+  String? _selectedClient;
 
   List<WorkUserEntity> workUserList = [];
   List<TicketCategoriesEntity> categoriesList = [];
+  List<BusinessClientEntity> clientList = [];
 
   List<File> attachments = [];
 
@@ -48,7 +52,8 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
     // Load initial data
     context.read<WorkBloc>()
       ..add(TicketCategoriesEvent())
-      ..add(WorkUserListEvent());
+      ..add(WorkUserListEvent())
+      ..add(BusinessClientEvent());
   }
 
   @override
@@ -111,6 +116,10 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
         priority: _selectedPriorityType!,
         assignToEmployeeId: _selectedAssignToType!,
         attachmentPaths: attachmentPaths,
+        client: _selectedClient!,
+        clientDesc: _clientDepartmentController.text.trim(),
+        clientDesc2: _clientUserController.text.trim(),
+        dueDate: "",
       ),
     );
     _resetForm();
@@ -218,6 +227,7 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
           setState(() {
             workUserList = state.workUser ?? [];
             categoriesList = state.ticketCategories ?? [];
+            clientList = state.businessClient ?? [];
           });
         }
         if (state.workStatus == WorkStatus.createTicketSuccess) {
@@ -400,60 +410,52 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
                           fontStyle: FontStyle.italic,
                         ),
                       ),
-                      // buildSectionTitle("Client Name"),
-                      // CustomInputField(
-                      //   controller: _clientNameController,
-                      //   hintText: "Enter name",
-                      //   maxLines: 1,
-                      //   // validator: (value) =>
-                      //   //     value == null || value.trim().isEmpty
-                      //   //     ? 'Client name is required'
-                      //   //     : null,
-                      // ),
-                      // const SizedBox(height: 8),
-                      // Text(
-                      //   'issue by client',
-                      //   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      //     color: Colors.grey[600],
-                      //     fontStyle: FontStyle.italic,
-                      //   ),
-                      // ),
-                      // buildSectionTitle("Client Department"),
-                      // CustomInputField(
-                      //   controller: _clientDepartmentController,
-                      //   hintText: "Enter department",
-                      //   maxLines: 1,
-                      //   // validator: (value) =>
-                      //   //     value == null || value.trim().isEmpty
-                      //   //     ? 'Client name is required'
-                      //   //     : null,
-                      // ),
-                      // const SizedBox(height: 8),
-                      // Text(
-                      //   'issue by client department',
-                      //   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      //     color: Colors.grey[600],
-                      //     fontStyle: FontStyle.italic,
-                      //   ),
-                      // ),
-                      // buildSectionTitle("Client User"),
-                      // CustomInputField(
-                      //   controller: _clientUserController,
-                      //   hintText: "Enter user...",
-                      //   maxLines: 1,
-                      //   // validator: (value) =>
-                      //   //     value == null || value.trim().isEmpty
-                      //   //     ? 'Description is required'
-                      //   //     : null,
-                      // ),
-                      // const SizedBox(height: 8),
-                      // Text(
-                      //   'issue by client user',
-                      //   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      //     color: Colors.grey[600],
-                      //     fontStyle: FontStyle.italic,
-                      //   ),
-                      // ),
+                      buildSectionTitle("Client"),
+                      BusinessClientDropdownWidget(
+                        clients: clientList,
+                        onSelected: (client) {
+                          setState(() {
+                            _selectedClient = client!.clientName;
+                          });
+                          log("Selected Client: $_selectedClient ");
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'issue by client',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey[600],
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                      buildSectionTitle("Client Department"),
+                      CustomInputField(
+                        controller: _clientDepartmentController,
+                        hintText: "Enter department",
+                        maxLines: 1,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'issue by client department',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey[600],
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                      buildSectionTitle("Client User"),
+                      CustomInputField(
+                        controller: _clientUserController,
+                        hintText: "Enter user...",
+                        maxLines: 1,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'issue by client user',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.grey[600],
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
                       const SizedBox(height: 24),
                       SizedBox(
                         width: double.infinity,

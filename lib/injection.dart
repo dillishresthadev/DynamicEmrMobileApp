@@ -83,6 +83,7 @@ import 'package:dynamic_emr/features/punch/presentation/bloc/punch_bloc.dart';
 import 'package:dynamic_emr/features/work/data/datasource/work_remote_datasource.dart';
 import 'package:dynamic_emr/features/work/data/repository/work_repository_impl.dart';
 import 'package:dynamic_emr/features/work/domain/repository/work_repository.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/business_client_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/comment_on_ticket_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/create_new_ticket_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/edit_assignto_usecase.dart';
@@ -315,9 +316,13 @@ Future<void> initDependencies() async {
       editAssigntoUsecase: injection<EditAssigntoUsecase>(),
       editPriorityUsecase: injection<EditPriorityUsecase>(),
       editSeverityUsecase: injection<EditSeverityUsecase>(),
+      businessClientUsecase: injection<BusinessClientUsecase>(),
     ),
   );
 
+  injection.registerLazySingleton<BusinessClientUsecase>(
+    () => BusinessClientUsecase(repository: injection<WorkRepository>()),
+  );
   injection.registerLazySingleton<EditPriorityUsecase>(
     () => EditPriorityUsecase(repository: injection<WorkRepository>()),
   );
