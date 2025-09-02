@@ -6,6 +6,9 @@
         <!-- location -->
         <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
         <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+        <!-- Notifications -->
+        <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+        <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
         <!-- Notification channel -->
         <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
     <application
