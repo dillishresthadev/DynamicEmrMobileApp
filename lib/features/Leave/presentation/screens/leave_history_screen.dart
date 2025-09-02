@@ -270,16 +270,32 @@ class _LeaveHistoryScreenState extends State<LeaveHistoryScreen> {
   }
 
   Map<String, dynamic> _getLeaveCardConfig(String leaveType) {
+    final normalizedInput = leaveType.trim().toLowerCase();
+    final canonicalTitle = _leaveTypeAliases[normalizedInput] ?? leaveType;
+
     return _statusCards.firstWhere(
-      (card) => card['title'] == leaveType,
+      (card) =>
+          card['title'].toString().toLowerCase() ==
+          canonicalTitle.toLowerCase(),
       orElse: () => {
         'title': leaveType,
-        'icon': Icons.help_outline,
-        'color': Colors.grey,
-        'bgColor': Colors.grey.shade200,
+        'icon': Icons.badge_outlined,
+        'color': Color(0xFF14B8A6),
+        'bgColor': Color(0xFFE0F7F4),
       },
     );
   }
+
+  static const Map<String, String> _leaveTypeAliases = {
+    'home leave': 'Home Leave',
+    'annual leave': 'Home Leave',
+    'sick leave': 'Sick Leave',
+    'medical leave': 'Sick Leave',
+    'unpaid leave': 'Leave Without Pay',
+    'leave without pay': 'Leave Without Pay',
+    'satta bida': 'Satta Bida',
+    'paternity leave': 'Paternity Leave',
+  };
 
   static const List<Map<String, dynamic>> _statusCards = [
     {
@@ -311,6 +327,12 @@ class _LeaveHistoryScreenState extends State<LeaveHistoryScreen> {
       'icon': Icons.child_care_outlined,
       'color': Colors.pink,
       'bgColor': Color(0xFFFFE6F8),
+    },
+    {
+      'title': 'Casual Leave',
+      'icon': Icons.event_note_outlined,
+      'color': Color(0xFF8B5CF6),
+      'bgColor': Color(0xFFF3F0FF),
     },
   ];
 }
