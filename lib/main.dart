@@ -35,19 +35,20 @@ void main() async {
   //Analytics
   if (kReleaseMode) {
     FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
+    // crashlytics
+    // flutter crashes
+    FlutterError.onError = (errorDetails) {
+      FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+    };
+    // native crashes
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack);
+      return true;
+    };
   } else {
     FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(false);
   }
-  // crashlytics
-  // flutter crashes
-  FlutterError.onError = (errorDetails) {
-    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-  };
-  // native crashes
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack);
-    return true;
-  };
+
   runApp(const MyApp());
 }
 

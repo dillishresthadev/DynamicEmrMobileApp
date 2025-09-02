@@ -6,6 +6,7 @@ import 'package:dynamic_emr/core/utils/app_snack_bar.dart';
 import 'package:dynamic_emr/core/utils/file_picker_utils.dart';
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/core/widgets/dropdown/custom_dropdown.dart';
+import 'package:dynamic_emr/core/widgets/form/custom_date_time_field.dart';
 import 'package:dynamic_emr/core/widgets/form/custom_input_field.dart';
 import 'package:dynamic_emr/features/Leave/presentation/bloc/leave_bloc.dart';
 import 'package:dynamic_emr/features/work/domain/entities/business_client_entity.dart';
@@ -33,12 +34,18 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
   final TextEditingController _clientDepartmentController =
       TextEditingController();
   final TextEditingController _clientUserController = TextEditingController();
+  final TextEditingController _ticketDate = TextEditingController(
+    text: DateTime.now().toIso8601String().split('T').first,
+  );
+  final TextEditingController _ticketDueDate = TextEditingController();
 
   int? _selectedCategoriesType;
   String? _selectedPriorityType;
   int? _selectedAssignToType;
   String? _selectedSeverityType;
   String? _selectedClient;
+
+  DateTime? _selectedTicketDate, _selectedTicketDueDate;
 
   List<WorkUserEntity> workUserList = [];
   List<TicketCategoriesEntity> categoriesList = [];
@@ -73,6 +80,7 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
       _selectedPriorityType = null;
       _selectedAssignToType = null;
       _selectedSeverityType = null;
+      _ticketDueDate.clear();
       _titleController.clear();
       _descriptionController.clear();
       _clientUserController.clear();
@@ -119,7 +127,7 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
         client: _selectedClient!,
         clientDesc: _clientDepartmentController.text.trim(),
         clientDesc2: _clientUserController.text.trim(),
-        dueDate: "",
+        dueDate: _selectedTicketDueDate.toString(),
       ),
     );
     _resetForm();
@@ -217,7 +225,7 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
         .toList();
 
     Widget buildSectionTitle(String text) => Padding(
-      padding: const EdgeInsets.only(top: 16.0, bottom: 10),
+      padding: const EdgeInsets.only(top: 16.0, bottom: 6),
       child: Text(text, style: const TextStyle(fontWeight: FontWeight.bold)),
     );
 
@@ -294,6 +302,16 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
                             ),
                           ],
                         ),
+                      ),
+                      buildSectionTitle("Ticket Date"),
+                      CustomDateTimeField(
+                        controller: _ticketDate,
+                        hintText: "Ticket Date *",
+                        onChanged: (date) {
+                          setState(() {
+                            _selectedTicketDate = DateTime.parse(date);
+                          });
+                        },
                       ),
 
                       buildSectionTitle("Categories"),
@@ -455,6 +473,20 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
                           color: Colors.grey[600],
                           fontStyle: FontStyle.italic,
                         ),
+                      ),
+                      const SizedBox(height: 8),
+
+                      buildSectionTitle("Ticket Date"),
+                      CustomDateTimeField(
+                        controller: _ticketDueDate,
+                        firstDate: DateTime.now(),
+                        lastDate: DateTime(2100),
+                        hintText: "Ticket Due Date",
+                        onChanged: (date) {
+                          setState(() {
+                            _selectedTicketDueDate = DateTime.parse(date);
+                          });
+                        },
                       ),
                       const SizedBox(height: 24),
                       SizedBox(
