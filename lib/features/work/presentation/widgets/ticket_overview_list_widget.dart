@@ -40,9 +40,9 @@ class _TicketCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withValues(alpha: 0.25),
             spreadRadius: 2,
-            blurRadius: 6,
+            blurRadius: 12,
             offset: Offset(0, 3),
           ),
         ],

@@ -51,10 +51,14 @@ class _WorkScreenState extends State<WorkScreen>
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: Colors.white,
-          indicatorWeight: 3,
+          indicatorWeight: 6,
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white70,
-          labelStyle: TextStyle(fontWeight: FontWeight.w600),
+          labelStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          unselectedLabelStyle: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.normal,
+          ),
           tabs: [
             Tab(text: 'My Tickets'),
             Tab(text: 'Assigned Tickets'),
@@ -93,7 +97,10 @@ class _WorkScreenState extends State<WorkScreen>
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => TicketScreen()),
+              MaterialPageRoute(
+                builder: (context) =>
+                    TicketScreen(initialTabIndex: _tabController.index),
+              ),
             );
           },
           style: ElevatedButton.styleFrom(
@@ -219,20 +226,46 @@ class _WorkScreenState extends State<WorkScreen>
         ),
         SizedBox(width: 8),
         Expanded(
-          child: WorkOverviewCardWidget(
-            title: 'Open',
-            value: data.open.toString(),
-            icon: Icons.hourglass_empty,
-            color: Color(0xFFEF4444),
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TicketScreen(
+                    initialTabIndex: _tabController.index,
+                    ticketStatus: 'Open',
+                  ),
+                ),
+              );
+            },
+            child: WorkOverviewCardWidget(
+              title: 'Open',
+              value: data.open.toString(),
+              icon: Icons.hourglass_empty,
+              color: Color(0xFFEF4444),
+            ),
           ),
         ),
         SizedBox(width: 8),
         Expanded(
-          child: WorkOverviewCardWidget(
-            title: 'Closed',
-            value: data.closed.toString(),
-            icon: Icons.done,
-            color: Colors.green,
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TicketScreen(
+                    initialTabIndex: _tabController.index,
+                    ticketStatus: 'Closed',
+                  ),
+                ),
+              );
+            },
+            child: WorkOverviewCardWidget(
+              title: 'Closed',
+              value: data.closed.toString(),
+              icon: Icons.done,
+              color: Colors.green,
+            ),
           ),
         ),
       ],

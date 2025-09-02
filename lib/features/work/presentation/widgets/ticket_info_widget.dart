@@ -14,7 +14,6 @@ class TicketInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dateFormat = DateFormat('dd/MM/yyyy');
     final dateTimeFormat = DateFormat('M/d/yyyy h:mm:ss a');
 
     final createdOnDate = DateFormat(

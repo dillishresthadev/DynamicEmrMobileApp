@@ -66,6 +66,8 @@ flutter {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
+    implementation("com.google.firebase:firebase-analytics")
+
 
     // ✅ Kotlin DSL syntax for desugaring
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")

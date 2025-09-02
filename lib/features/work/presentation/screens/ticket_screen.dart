@@ -9,7 +9,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 class TicketScreen extends StatefulWidget {
-  const TicketScreen({super.key});
+  final int initialTabIndex;
+  final String ticketStatus;
+
+  const TicketScreen({
+    super.key,
+    this.initialTabIndex = 0,
+    this.ticketStatus = "",
+  });
 
   @override
   State<TicketScreen> createState() => _TicketScreenState();
@@ -26,7 +33,11 @@ class _TicketScreenState extends State<TicketScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(
+      length: 2,
+      vsync: this,
+      initialIndex: widget.initialTabIndex.clamp(0, 1),
+    );
 
     final DateTime now = DateTime.now();
     final DateTime oneMonthAgo = DateTime(now.year, now.month - 1, now.day);
@@ -36,7 +47,7 @@ class _TicketScreenState extends State<TicketScreen>
     _applyFilter(
       TicketFilterData(
         ticketCategoryId: 0,
-        status: "",
+        status: widget.ticketStatus,
         priority: "",
         severity: "",
         orderBy: "Newest",
@@ -146,10 +157,14 @@ class _TicketScreenState extends State<TicketScreen>
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: Colors.white,
-          indicatorWeight: 3,
+          indicatorWeight: 6,
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white70,
-          labelStyle: TextStyle(fontWeight: FontWeight.w600),
+          labelStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          unselectedLabelStyle: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.normal,
+          ),
           tabs: [
             Tab(text: 'My Tickets'),
             Tab(text: 'Assigned Tickets'),
