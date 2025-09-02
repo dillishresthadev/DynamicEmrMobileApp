@@ -16,6 +16,10 @@ class TicketEntity {
   final String title;
   final String description;
   final DateTime ticketDate;
+  final String? client;
+  final String? clientDesc;
+  final String? clientDesc2;
+  final DateTime? dueDate;
   final String status;
   final String severity;
   final String priority;
@@ -66,11 +70,14 @@ class TicketEntity {
     required this.issueOn,
     this.sessionTag,
     this.attachmentFiles,
+    required this.client,
+    required this.clientDesc,
+    required this.clientDesc2,
+    required this.dueDate,
     required this.attachedDocuments,
     required this.insertUser,
     required this.insertTime,
     required this.updateUser,
     this.updateTime,
   });
-
 }

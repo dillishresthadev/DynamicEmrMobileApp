@@ -97,89 +97,91 @@ class _TicketCard extends StatelessWidget {
     ).format(ticket.ticketDate);
 
     return Column(
+      spacing: 8,
       children: [
-        Row(
-          children: [
-            _MetadataChip(
-              icon: Icons.schedule_outlined,
-              label: ticketDate,
-              color: Colors.grey.shade600,
-            ),
-          ],
-        ),
-        // const SizedBox(height: 8),
-        // Row(
-        //   children: [
-        //     _MetadataChip(
-        //       icon: Icons.local_hospital_outlined,
-        //       label: "Client Name",
-        //       color: Colors.pink.shade600,
-        //     ),
-        //   ],
-        // ),
-        // const SizedBox(height: 8),
-        // Row(
-        //   children: [
-        //     _MetadataChip(
-        //       icon: Icons.house_outlined,
-        //       label: 'Department Name',
-        //       color: Colors.brown.shade600,
-        //     ),
-        //     const SizedBox(width: 8),
+        if (ticketDate.isNotEmpty)
+          Row(
+            children: [
+              _MetadataChip(
+                icon: Icons.schedule_outlined,
+                label: ticketDate,
+                color: Colors.grey.shade600,
+              ),
+            ],
+          ),
 
-        //     _MetadataChip(
-        //       icon: Icons.person_outline,
-        //       label: "Client User",
-        //       color: Colors.blue.shade600,
-        //     ),
-        //   ],
-        // ),
-        const SizedBox(height: 8),
+        if (ticket.client != null && ticket.client!.isNotEmpty)
+          Row(
+            children: [
+              _MetadataChip(
+                icon: Icons.local_hospital_outlined,
+                label: ticket.client!,
+                color: Colors.pink.shade600,
+              ),
+            ],
+          ),
 
-        Row(
-          children: [
-            _MetadataChip(
-              icon: Icons.account_circle_outlined,
-              label: 'Created by: ${ticket.issueBy}',
-              color: Colors.purple.shade600,
-              // fullWidth: true,
-            ),
-            const SizedBox(width: 8),
+        if ((ticket.clientDesc ?? '').isNotEmpty ||
+            (ticket.clientDesc2 ?? '').isNotEmpty)
+          Row(
+            children: [
+              if ((ticket.clientDesc ?? '').isNotEmpty)
+                _MetadataChip(
+                  icon: Icons.house_outlined,
+                  label: ticket.clientDesc!,
+                  color: Colors.brown.shade600,
+                ),
+              if ((ticket.clientDesc ?? '').isNotEmpty &&
+                  (ticket.clientDesc2 ?? '').isNotEmpty)
+                const SizedBox(width: 8),
+              if ((ticket.clientDesc2 ?? '').isNotEmpty)
+                _MetadataChip(
+                  icon: Icons.person_outline,
+                  label: ticket.clientDesc2!,
+                  color: Colors.blue.shade600,
+                ),
+            ],
+          ),
 
-            _MetadataChip(
-              icon: Icons.person_outline,
-              label: "Assigned to: ${ticket.assignedTo}",
-              color: Colors.blue.shade600,
-            ),
-          ],
-        ),
+        if ((ticket.issueBy).isNotEmpty || (ticket.assignedTo).isNotEmpty)
+          Row(
+            children: [
+              if ((ticket.issueBy).isNotEmpty)
+                _MetadataChip(
+                  icon: Icons.account_circle_outlined,
+                  label: 'Created by: ${ticket.issueBy}',
+                  color: Colors.purple.shade600,
+                ),
+              if ((ticket.issueBy).isNotEmpty && (ticket.assignedTo).isNotEmpty)
+                const SizedBox(width: 8),
+              if ((ticket.assignedTo).isNotEmpty)
+                _MetadataChip(
+                  icon: Icons.person_outline,
+                  label: 'Assigned to: ${ticket.assignedTo}',
+                  color: Colors.blue.shade600,
+                ),
+            ],
+          ),
 
-        const SizedBox(height: 8),
-
-        Row(
-          children: [
-            _MetadataChip(
-              icon: Icons.flag_outlined,
-              label: "Priority: ${ticket.priority}",
-              color: _getPriorityColor(ticket.priority),
-            ),
-            const SizedBox(width: 8),
-            _MetadataChip(
-              icon: Icons.error_outline,
-              label: "Severity: ${ticket.severity}",
-              color: _getSeverityColor(ticket.severity),
-            ),
-          ],
-        ),
-        // if (ticket.issueBy.isNotEmpty) ...[
-        //   const SizedBox(height: 8),
-        //   _MetadataChip(
-        //     icon: Icons.account_circle_outlined,
-        //     label: 'Created by ${ticket.issueBy}',
-        //     color: Colors.purple.shade600,
-        //     fullWidth: true,
-        //   ),
-        // ],
+        if ((ticket.priority).isNotEmpty || (ticket.severity).isNotEmpty)
+          Row(
+            children: [
+              if ((ticket.priority).isNotEmpty)
+                _MetadataChip(
+                  icon: Icons.flag_outlined,
+                  label: 'Priority: ${ticket.priority}',
+                  color: _getPriorityColor(ticket.priority),
+                ),
+              if ((ticket.priority).isNotEmpty && (ticket.severity).isNotEmpty)
+                const SizedBox(width: 8),
+              if ((ticket.severity).isNotEmpty)
+                _MetadataChip(
+                  icon: Icons.error_outline,
+                  label: 'Severity: ${ticket.severity}',
+                  color: _getSeverityColor(ticket.severity),
+                ),
+            ],
+          ),
       ],
     );
   }
@@ -260,13 +262,11 @@ class _MetadataChip extends StatelessWidget {
   final IconData icon;
   final String label;
   final Color color;
-  final bool fullWidth;
 
   const _MetadataChip({
     required this.icon,
     required this.label,
     required this.color,
-    this.fullWidth = false,
   });
 
   @override
@@ -279,7 +279,6 @@ class _MetadataChip extends StatelessWidget {
         border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Row(
-        mainAxisSize: fullWidth ? MainAxisSize.max : MainAxisSize.min,
         children: [
           Icon(icon, size: 14, color: color),
           const SizedBox(width: 6),
@@ -297,7 +296,6 @@ class _MetadataChip extends StatelessWidget {
         ],
       ),
     );
-
-    return fullWidth ? widget : Flexible(child: widget);
+    return Flexible(child: widget);
   }
 }
