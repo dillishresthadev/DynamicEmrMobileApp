@@ -65,7 +65,30 @@ abstract class WorkRemoteDatasource {
   Future<bool> editPriority(int ticketId, String status);
   Future<bool> editSeverity(int ticketId, String status);
   Future<bool> editAssignTo(int ticketId, int assignedUserId);
-  Future<bool> editTicket(TicketModel ticket);
+  Future<bool> editTicket({
+    required int id,
+    required String title,
+    required String description,
+    required DateTime ticketDate,
+    required String severity,
+    required String priority,
+    required int ticketCategoryId,
+    // required String ticketCategoryName,
+    required int assignToEmployeeId,
+    // required String assignedTo,
+    required DateTime assignedOn,
+    required String issueByEmployeeId,
+    // required String issueBy,
+    required DateTime issueOn,
+    required String sessionTag,
+    required int clientId,
+    required String clients,
+    required String clientDesc,
+    required String clientDesc2,
+    required String? dueDate,
+    required List<dynamic> attachmentFiles,
+    required List<String> attachedDocuments,
+  });
 
   Future<List<BusinessClientModel>> getBusinessClient();
 }
@@ -277,6 +300,8 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
         "clientDesc": clientDesc,
         "clientDesc2": clientDesc2,
         "dueDate": dueDate,
+        // test TODO:
+        "issueByEmployeeId": 100,
         "AssignToEmployeeId": assignToEmployeeId,
         "AttachmentFiles": files,
       });
@@ -660,7 +685,30 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
   }
 
   @override
-  Future<bool> editTicket(TicketModel ticket) async {
+  Future<bool> editTicket({
+    required int id,
+    required String title,
+    required String description,
+    required DateTime ticketDate,
+    required String severity,
+    required String priority,
+    required int ticketCategoryId,
+    // required String ticketCategoryName,
+    required int assignToEmployeeId,
+    // required String assignedTo,
+    required DateTime assignedOn,
+    required String issueByEmployeeId,
+    // required String issueBy,
+    required DateTime issueOn,
+    required String sessionTag,
+    required int clientId,
+    required String clients,
+    required String clientDesc,
+    required String clientDesc2,
+    required String? dueDate,
+    required List attachmentFiles,
+    required List<String> attachedDocuments,
+  }) async {
     try {
       final accessToken = await injection<TokenSecureStorage>()
           .getAccessToken();
@@ -670,7 +718,44 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
       final workingFinancialId = await injection<BranchSecureStorage>()
           .getSelectedFiscalYearId();
 
-      final formData = FormData.fromMap(ticket.toJson());
+      // Convert file paths to MultipartFile
+      List<MultipartFile>? files;
+      if (attachedDocuments != null && attachedDocuments.isNotEmpty) {
+        files = attachedDocuments
+            .map(
+              (path) => MultipartFile.fromFileSync(
+                path,
+                filename: path.split('/').last,
+                contentType: DioMediaType('application', 'octet-stream'),
+              ),
+            )
+            .toList();
+      }
+
+      final formData = FormData.fromMap({
+        "Id": id,
+        "Title": title,
+        "Description": description,
+        "TicketDate": ticketDate.toIso8601String(),
+        "Severity": severity,
+        "Priority": priority,
+        "TicketCategoryId": ticketCategoryId,
+        // "TicketCategoryName": ticketCategoryName,
+        "AssignToEmployeeId": assignToEmployeeId,
+        // "AssignedTo": assignedTo,
+        "AssignedOn": assignedOn.toIso8601String(),
+        "IssueByEmployeeId": issueByEmployeeId,
+        // "IssueBy": issueBy,
+        "IssueOn": issueOn.toIso8601String(),
+        "SessionTag": sessionTag,
+        "ClientId": clientId,
+        "Client": clients,
+        "ClientDesc": clientDesc,
+        "ClientDesc2": clientDesc2,
+        "DueDate": dueDate,
+        "attachmentFiles": attachmentFiles,
+        "attachedDocuments": files,
+      });
 
       final rawResponse = await client.post(
         "$baseUrl/${ApiConstants.editTicket}",
@@ -681,7 +766,6 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
           "workingFinancialId": workingFinancialId.toString(),
         },
       );
-
       if (rawResponse['data'] is bool) {
         return rawResponse['data'];
       }

@@ -123,6 +123,8 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
         severity: _selectedSeverityType!,
         priority: _selectedPriorityType!,
         assignToEmployeeId: _selectedAssignToType!,
+        //TODO: testing purpose
+        issueByEmployeeId: 100,
         attachmentPaths: attachmentPaths,
         client: _selectedClient!,
         clientDesc: _clientDepartmentController.text.trim(),

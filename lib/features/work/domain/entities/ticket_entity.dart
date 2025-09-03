@@ -16,6 +16,7 @@ class TicketEntity {
   final String title;
   final String description;
   final DateTime ticketDate;
+  final int? clientId;
   final String? client;
   final String? clientDesc;
   final String? clientDesc2;
@@ -70,6 +71,7 @@ class TicketEntity {
     required this.issueOn,
     this.sessionTag,
     this.attachmentFiles,
+    required this.clientId,
     required this.client,
     required this.clientDesc,
     required this.clientDesc2,

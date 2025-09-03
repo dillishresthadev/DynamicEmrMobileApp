@@ -59,5 +59,28 @@ abstract class WorkRepository {
 
   Future<List<BusinessClientEntity>> getBusinessClient();
 
-  Future<bool> editTicket(TicketEntity ticket);
+  Future<bool> editTicket({
+    required int id,
+    required String title,
+    required String description,
+    required DateTime ticketDate,
+    required String severity,
+    required String priority,
+    required int ticketCategoryId,
+    // required String ticketCategoryName,
+    required int assignToEmployeeId,
+    // required String assignedTo,
+    required DateTime assignedOn,
+    required String issueByEmployeeId,
+    // required String issueBy,
+    required DateTime issueOn,
+    required String sessionTag,
+    required int clientId,
+    required String clients,
+    required String clientDesc,
+    required String clientDesc2,
+    required String? dueDate,
+    required List<dynamic> attachmentFiles,
+    required List<String> attachedDocuments,
+  });
 }

@@ -459,7 +459,30 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
   ) async {
     emit(state.copyWith(workStatus: WorkStatus.loading));
     try {
-      final ticket = await editTicketUsecase.call(event.ticket);
+      final ticket = await editTicketUsecase.call(
+        id: event.id,
+        title: event.title,
+        description: event.description,
+        ticketDate: event.ticketDate,
+        severity: event.severity,
+        priority: event.priority,
+        ticketCategoryId: event.ticketCategoryId,
+        // ticketCategoryName: event.ticketCategoryName,
+        assignToEmployeeId: event.assignToEmployeeId,
+        // assignedTo: event.assignedTo,
+        assignedOn: event.assignedOn,
+        issueByEmployeeId: event.issueByEmployeeId,
+        // issueBy: event.issueBy,
+        issueOn: event.issueOn,
+        sessionTag: event.sessionTag,
+        clientId: event.clientId,
+        client: event.client,
+        clientDesc: event.clientDesc,
+        clientDesc2: event.clientDesc2,
+        dueDate: event.dueDate,
+        attachmentFiles: event.attachmentFiles,
+        attachedDocuments: event.attachedDocuments,
+      );
       if (ticket) {
         emit(
           state.copyWith(

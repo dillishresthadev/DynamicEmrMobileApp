@@ -66,6 +66,7 @@ final class CreateTicketEvent extends WorkEvent {
   final String clientDesc2;
   final String dueDate;
   final int assignToEmployeeId;
+  final int issueByEmployeeId;
   final List<String>? attachmentPaths;
 
   const CreateTicketEvent({
@@ -79,6 +80,7 @@ final class CreateTicketEvent extends WorkEvent {
     required this.clientDesc2,
     required this.dueDate,
     required this.assignToEmployeeId,
+    required this.issueByEmployeeId,
     this.attachmentPaths,
   });
   @override
@@ -92,6 +94,7 @@ final class CreateTicketEvent extends WorkEvent {
     clientDesc,
     clientDesc2,
     assignToEmployeeId,
+    issueByEmployeeId,
     attachmentPaths,
   ];
 }
@@ -163,9 +166,79 @@ final class FilterTicketAssignedToMeEvent extends WorkEvent {
 }
 
 final class EditTicketEvent extends WorkEvent {
-  final TicketEntity ticket;
+  final int id;
+  final String title;
+  final String description;
+  final DateTime ticketDate;
+  final String severity;
+  final String priority;
+  final int ticketCategoryId;
+  // final String ticketCategoryName;
+  final int assignToEmployeeId;
+  // final String assignedTo;
+  final DateTime assignedOn;
+  final String issueByEmployeeId;
+  // final String issueBy;
+  final DateTime issueOn;
+  final String sessionTag;
+  final int clientId;
+  final String client;
+  final String clientDesc;
+  final String clientDesc2;
+  final String? dueDate;
+  final List<dynamic> attachmentFiles;
+  final List<String> attachedDocuments;
 
-  const EditTicketEvent({required this.ticket});
+  const EditTicketEvent({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.ticketDate,
+    required this.severity,
+    required this.priority,
+    required this.ticketCategoryId,
+    // required this.ticketCategoryName,
+    required this.assignToEmployeeId,
+    // required this.assignedTo,
+    required this.assignedOn,
+    required this.issueByEmployeeId,
+    // required this.issueBy,
+    required this.issueOn,
+    required this.sessionTag,
+    required this.clientId,
+    required this.client,
+    required this.clientDesc,
+    required this.clientDesc2,
+    required this.dueDate,
+    required this.attachmentFiles,
+    required this.attachedDocuments,
+  });
+
+  @override
+  List<Object?> get props => [
+    id,
+    title,
+    description,
+    ticketDate,
+    severity,
+    priority,
+    ticketCategoryId,
+    // ticketCategoryName,
+    assignToEmployeeId,
+    // assignedTo,
+    assignedOn,
+    issueByEmployeeId,
+    // issueBy,
+    issueOn,
+    sessionTag,
+    clientId,
+    client,
+    clientDesc,
+    clientDesc2,
+    dueDate,
+    attachmentFiles,
+    attachedDocuments,
+  ];
 }
 
 final class EditPriorityEvent extends WorkEvent {

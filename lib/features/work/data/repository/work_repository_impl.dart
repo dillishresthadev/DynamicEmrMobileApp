@@ -1,5 +1,4 @@
 import 'package:dynamic_emr/features/work/data/datasource/work_remote_datasource.dart';
-import 'package:dynamic_emr/features/work/data/models/ticket_model.dart';
 import 'package:dynamic_emr/features/work/domain/entities/business_client_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_categories_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_details_entity.dart';
@@ -158,41 +157,53 @@ class WorkRepositoryImpl extends WorkRepository {
   }
 
   @override
-  Future<bool> editTicket(TicketEntity ticket) async {
+  Future<bool> editTicket({
+    required int id,
+    required String title,
+    required String description,
+    required DateTime ticketDate,
+    required String severity,
+    required String priority,
+    required int ticketCategoryId,
+    // required String ticketCategoryName,
+    required int assignToEmployeeId,
+    // required String assignedTo,
+    required DateTime assignedOn,
+    required String issueByEmployeeId,
+    // required String issueBy,
+    required DateTime issueOn,
+    required String sessionTag,
+    required int clientId,
+    required String clients,
+    required String clientDesc,
+    required String clientDesc2,
+    required String? dueDate,
+    required List attachmentFiles,
+    required List<String> attachedDocuments,
+  }) async {
     return await remoteDatasource.editTicket(
-      TicketModel(
-        id: ticket.id,
-        ticketNo: ticket.ticketNo,
-        ticketNoSequence: ticket.ticketNoSequence,
-        ticketYearSequence: ticket.ticketYearSequence,
-        ticketMonthlySequence: ticket.ticketMonthlySequence,
-        ticketDailySequence: ticket.ticketDailySequence,
-        ticketMonthlyNpSequence: ticket.ticketMonthlyNpSequence,
-        ticketYearlyNpSequence: ticket.ticketYearlyNpSequence,
-        ticketFySequence: ticket.ticketFySequence,
-        ticketYearlySequenceByCategory: ticket.ticketYearlySequenceByCategory,
-        ticketMonthlySequenceByCategory: ticket.ticketMonthlySequenceByCategory,
-        ticketDailySequenceByCategory: ticket.ticketDailySequenceByCategory,
-        ticketNo2: ticket.ticketNo2,
-        applicationUserId: ticket.applicationUserId,
-        title: ticket.title,
-        description: ticket.description,
-        ticketDate: ticket.ticketDate,
-        status: ticket.status,
-        severity: ticket.severity,
-        priority: ticket.priority,
-        ticketCategoryId: ticket.ticketCategoryId,
-        ticketCategoryName: ticket.ticketCategoryName,
-        assignToEmployeeId: ticket.assignToEmployeeId,
-        assignedTo: ticket.assignedTo,
-        assignedOn: ticket.assignedOn,
-        issueBy: ticket.issueBy,
-        issueOn: ticket.issueOn,
-        attachedDocuments: ticket.attachedDocuments,
-        insertUser: ticket.insertUser,
-        insertTime: ticket.insertTime,
-        updateUser: ticket.updateUser,
-      ),
+      id: id,
+      title: title,
+      description: description,
+      ticketDate: ticketDate,
+      severity: severity,
+      priority: priority,
+      ticketCategoryId: ticketCategoryId,
+      // ticketCategoryName: ticketCategoryName,
+      assignToEmployeeId: assignToEmployeeId,
+      // assignedTo: assignedTo,
+      assignedOn: assignedOn,
+      issueByEmployeeId: issueByEmployeeId,
+      // issueBy: issueBy,
+      issueOn: issueOn,
+      sessionTag: sessionTag,
+      clientId: clientId,
+      clients: clients,
+      clientDesc: clientDesc,
+      clientDesc2: clientDesc2,
+      dueDate: dueDate,
+      attachmentFiles: attachmentFiles,
+      attachedDocuments: attachedDocuments,
     );
   }
 }

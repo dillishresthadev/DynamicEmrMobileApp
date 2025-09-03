@@ -22,9 +22,9 @@ class TicketInfoWidget extends StatelessWidget {
     final assignOnDate = DateFormat(
       'EE dd MMM, yyyy hh:mm a',
     ).format(ticket.assignedOn);
-    final dueDate = DateFormat(
-      'EE dd MMM, yyyy hh:mm a',
-    ).format(ticket.dueDate!);
+    // final dueDate = DateFormat(
+    //   'EE dd MMM, yyyy hh:mm a',
+    // ).format(ticket.dueDate!);
 
     return Card(
       elevation: 2,
@@ -93,7 +93,12 @@ class TicketInfoWidget extends StatelessWidget {
                   valueColor: Colors.blue,
                 ),
                 if ((ticket.dueDate != null))
-                  _buildInfoItem("Due Date", dueDate),
+                  _buildInfoItem(
+                    "Due Date",
+                    DateFormat(
+                      'EE dd MMM, yyyy hh:mm a',
+                    ).format(ticket.dueDate!),
+                  ),
                 _buildInfoItem(
                   "Last Modified On",
                   dateTimeFormat.format(ticket.updateTime ?? DateTime.now()),

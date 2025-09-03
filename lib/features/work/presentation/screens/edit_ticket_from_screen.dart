@@ -66,7 +66,6 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
 
     if (widget.ticketToEdit != null) {
       final ticket = widget.ticketToEdit!;
-      log("Due Date :" + ticket.dueDate.toString());
 
       _titleController.text = ticket.title;
       _descriptionController.text = ticket.description;
@@ -121,52 +120,32 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
         .toList();
 
     log(attachmentPaths.toList().toString());
+    log(widget.ticketToEdit?.issueByEmployeeId.toString() ?? '');
 
-    // EDIT MODE
     context.read<WorkBloc>().add(
       EditTicketEvent(
-        ticket: TicketEntity(
-          id: widget.ticketToEdit!.id,
-          ticketCategoryId: _selectedCategoriesType!,
-          title: _titleController.text.trim(),
-          description: _descriptionController.text.trim(),
-          severity: _selectedSeverityType!,
-          priority: _selectedPriorityType!,
-          assignToEmployeeId: _selectedAssignToType!,
-          attachedDocuments: attachmentPaths,
-          client: _selectedClient!,
-          clientDesc: _clientDepartmentController.text.trim(),
-          clientDesc2: _clientUserController.text.trim(),
-          dueDate: DateTime.tryParse(
-            _selectedTicketDueDate?.toIso8601String() ?? '',
-          ),
-          ticketNo: widget.ticketToEdit!.ticketNo,
-          ticketNoSequence: widget.ticketToEdit!.ticketNoSequence,
-          ticketYearSequence: widget.ticketToEdit!.ticketYearSequence,
-          ticketMonthlySequence: widget.ticketToEdit!.ticketMonthlySequence,
-          ticketDailySequence: widget.ticketToEdit!.ticketDailySequence,
-          ticketMonthlyNpSequence: widget.ticketToEdit!.ticketMonthlyNpSequence,
-          ticketYearlyNpSequence: widget.ticketToEdit!.ticketYearlyNpSequence,
-          ticketFySequence: widget.ticketToEdit!.ticketFySequence,
-          ticketYearlySequenceByCategory:
-              widget.ticketToEdit!.ticketYearlySequenceByCategory,
-          ticketMonthlySequenceByCategory:
-              widget.ticketToEdit!.ticketMonthlySequenceByCategory,
-          ticketDailySequenceByCategory:
-              widget.ticketToEdit!.ticketDailySequenceByCategory,
-          ticketNo2: widget.ticketToEdit!.ticketNo2,
-          applicationUserId: widget.ticketToEdit!.applicationUserId,
-          ticketDate: widget.ticketToEdit!.ticketDate,
-          status: widget.ticketToEdit!.status,
-          ticketCategoryName: widget.ticketToEdit!.ticketCategoryName,
-          assignedTo: widget.ticketToEdit!.assignedTo,
-          assignedOn: widget.ticketToEdit!.assignedOn,
-          issueBy: widget.ticketToEdit!.issueBy,
-          issueOn: widget.ticketToEdit!.issueOn,
-          insertUser: widget.ticketToEdit!.insertUser,
-          insertTime: widget.ticketToEdit!.insertTime,
-          updateUser: widget.ticketToEdit!.updateUser,
-        ),
+        id: widget.ticketToEdit!.id,
+        title: _titleController.text.trim(),
+        description: _descriptionController.text.trim(),
+        ticketDate: _selectedTicketDate!,
+        severity: _selectedSeverityType!,
+        priority: _selectedPriorityType!,
+        ticketCategoryId: _selectedCategoriesType ?? 1,
+        // ticketCategoryName: '',
+        assignToEmployeeId: _selectedAssignToType ?? 1,
+        // assignedTo: '',
+        assignedOn: widget.ticketToEdit!.assignedOn,
+        issueByEmployeeId: widget.ticketToEdit?.issueByEmployeeId ?? '',
+        // issueBy: '',
+        issueOn: widget.ticketToEdit!.issueOn,
+        sessionTag: widget.ticketToEdit!.sessionTag ?? '',
+        clientId: widget.ticketToEdit!.clientId ?? 0,
+        client: _selectedClient ?? '',
+        clientDesc: _clientDepartmentController.text.toString(),
+        clientDesc2: _clientUserController.text.trim(),
+        dueDate: _selectedTicketDueDate.toString(),
+        attachmentFiles: widget.ticketToEdit!.attachmentFiles ?? [],
+        attachedDocuments: attachmentPaths,
       ),
     );
   }
@@ -276,20 +255,16 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
             clientList = state.businessClient ?? [];
           });
         }
-        if (state.workStatus == WorkStatus.createTicketSuccess) {
+        if (state.workStatus == WorkStatus.editTicketSuccess) {
           AppSnackBar.show(
             context,
-            "Ticket Created Successfully",
+            "Ticket Updated Successfully",
             SnackbarType.success,
           );
           Navigator.pop(context);
         }
-        if (state.workStatus == WorkStatus.createTicketError) {
-          AppSnackBar.show(
-            context,
-            "Ticket Created failed",
-            SnackbarType.error,
-          );
+        if (state.workStatus == WorkStatus.editTicketError) {
+          AppSnackBar.show(context, "Ticket Update Failed", SnackbarType.error);
         }
       },
       child: Scaffold(
