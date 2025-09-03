@@ -104,7 +104,7 @@ class TicketModel extends TicketEntity {
     "AssignToEmployeeId": assignToEmployeeId,
     "AssignedTo": assignedTo,
     "AssignedOn": assignedOn.toIso8601String(),
-    "IssueByEmployeeId": "100",
+    "IssueByEmployeeId": issueByEmployeeId.toString(),
     "IssueBy": issueBy,
     "IssueOn": issueOn.toIso8601String(),
     "SessionTag": sessionTag,

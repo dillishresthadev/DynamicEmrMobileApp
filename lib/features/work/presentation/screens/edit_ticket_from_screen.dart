@@ -16,6 +16,7 @@ import 'package:dynamic_emr/features/work/domain/entities/work_user_entity.dart'
 import 'package:dynamic_emr/features/work/presentation/bloc/work_bloc.dart';
 import 'package:dynamic_emr/features/work/presentation/widgets/assign_to_dropdown_widget.dart';
 import 'package:dynamic_emr/features/work/presentation/widgets/business_client_dropdown_widget.dart';
+import 'package:dynamic_emr/features/work/presentation/widgets/issue_by_bottom_sheet_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -44,6 +45,8 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
   int? _selectedCategoriesType;
   String? _selectedPriorityType;
   int? _selectedAssignToType;
+  int? _selectedIssueByType;
+
   String? _selectedSeverityType;
   String? _selectedClient;
 
@@ -109,6 +112,7 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
     if (_selectedCategoriesType == null ||
         _selectedPriorityType == null ||
         _selectedAssignToType == null ||
+        _selectedIssueByType == null ||
         _selectedSeverityType == null) {
       log("Please select all dropdown values");
       return;
@@ -127,7 +131,7 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
         id: widget.ticketToEdit!.id,
         title: _titleController.text.trim(),
         description: _descriptionController.text.trim(),
-        ticketDate: _selectedTicketDate!,
+        ticketDate: DateTime.now().toString(),
         severity: _selectedSeverityType!,
         priority: _selectedPriorityType!,
         ticketCategoryId: _selectedCategoriesType ?? 1,
@@ -135,7 +139,8 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
         assignToEmployeeId: _selectedAssignToType ?? 1,
         // assignedTo: '',
         assignedOn: widget.ticketToEdit!.assignedOn,
-        issueByEmployeeId: widget.ticketToEdit?.issueByEmployeeId ?? '',
+        issueByEmployeeId:
+            widget.ticketToEdit?.issueByEmployeeId.toString() ?? '',
         // issueBy: '',
         issueOn: widget.ticketToEdit!.issueOn,
         sessionTag: widget.ticketToEdit!.sessionTag ?? '',
@@ -224,6 +229,14 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
   @override
   Widget build(BuildContext context) {
     final assignToItems = workUserList
+        .map(
+          (user) => {
+            'label': user.text,
+            'value': int.parse(user.value.toString()),
+          },
+        )
+        .toList();
+    final issueByItems = workUserList
         .map(
           (user) => {
             'label': user.text,
@@ -351,9 +364,9 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
                             : null,
                       ),
 
-                      buildSectionTitle("Files/Images"),
+                      // buildSectionTitle("Files/Images"),
 
-                      buildAttachmentButtons(),
+                      // buildAttachmentButtons(),
 
                       //  attachments list
                       Column(
@@ -414,6 +427,19 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
                         onChanged: (value) =>
                             setState(() => _selectedPriorityType = value),
                       ),
+
+                      buildSectionTitle("Issue By"),
+
+                      IssueByBottomSheetWidget(
+                        employee: issueByItems,
+                        onSelected: (label, value) {
+                          setState(() {
+                            _selectedIssueByType = value;
+                          });
+                          log("Selected Issue Employee: $label ($value)");
+                        },
+                      ),
+                      const SizedBox(height: 8),
 
                       buildSectionTitle("Assigned To"),
 

@@ -169,7 +169,7 @@ final class EditTicketEvent extends WorkEvent {
   final int id;
   final String title;
   final String description;
-  final DateTime ticketDate;
+  final String ticketDate;
   final String severity;
   final String priority;
   final int ticketCategoryId;

@@ -69,7 +69,7 @@ abstract class WorkRemoteDatasource {
     required int id,
     required String title,
     required String description,
-    required DateTime ticketDate,
+    required String ticketDate,
     required String severity,
     required String priority,
     required int ticketCategoryId,
@@ -689,16 +689,13 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
     required int id,
     required String title,
     required String description,
-    required DateTime ticketDate,
+    required String ticketDate,
     required String severity,
     required String priority,
     required int ticketCategoryId,
-    // required String ticketCategoryName,
     required int assignToEmployeeId,
-    // required String assignedTo,
     required DateTime assignedOn,
     required String issueByEmployeeId,
-    // required String issueBy,
     required DateTime issueOn,
     required String sessionTag,
     required int clientId,
@@ -718,9 +715,9 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
       final workingFinancialId = await injection<BranchSecureStorage>()
           .getSelectedFiscalYearId();
 
-      // Convert file paths to MultipartFile
+      // Convert attachedDocuments to MultipartFile list
       List<MultipartFile>? files;
-      if (attachedDocuments != null && attachedDocuments.isNotEmpty) {
+      if (attachedDocuments.isNotEmpty) {
         files = attachedDocuments
             .map(
               (path) => MultipartFile.fromFileSync(
@@ -732,30 +729,39 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
             .toList();
       }
 
-      final formData = FormData.fromMap({
-        "Id": id,
-        "Title": title,
-        "Description": description,
-        "TicketDate": ticketDate.toIso8601String(),
-        "Severity": severity,
-        "Priority": priority,
-        "TicketCategoryId": ticketCategoryId,
-        // "TicketCategoryName": ticketCategoryName,
-        "AssignToEmployeeId": assignToEmployeeId,
-        // "AssignedTo": assignedTo,
-        "AssignedOn": assignedOn.toIso8601String(),
-        "IssueByEmployeeId": issueByEmployeeId,
-        // "IssueBy": issueBy,
-        "IssueOn": issueOn.toIso8601String(),
-        "SessionTag": sessionTag,
-        "ClientId": clientId,
-        "Client": clients,
-        "ClientDesc": clientDesc,
-        "ClientDesc2": clientDesc2,
-        "DueDate": dueDate,
-        "attachmentFiles": attachmentFiles,
-        "attachedDocuments": files,
-      });
+      // Dynamically build the form data map
+      final Map<String, dynamic> dataMap = {};
+
+      void addIfNotEmpty(String key, dynamic value) {
+        if (value == null) return;
+        if (value is String && value.trim().isEmpty) return;
+        dataMap[key] = value;
+      }
+
+      // Required fields
+      dataMap["Id"] = id;
+      addIfNotEmpty("Title", title);
+      addIfNotEmpty("Description", description);
+      addIfNotEmpty("TicketDate", ticketDate);
+      addIfNotEmpty("Severity", severity);
+      addIfNotEmpty("Priority", priority);
+      dataMap["TicketCategoryId"] = ticketCategoryId;
+      dataMap["AssignToEmployeeId"] = assignToEmployeeId;
+      addIfNotEmpty("IssueByEmployeeId", issueByEmployeeId);
+      addIfNotEmpty("SessionTag", sessionTag);
+      // dataMap["ClientId"] = clientId;
+      addIfNotEmpty("Client", clients);
+      addIfNotEmpty("ClientDesc", clientDesc);
+      addIfNotEmpty("ClientDesc2", clientDesc2);
+      addIfNotEmpty("DueDate", dueDate);
+      if (attachmentFiles.isNotEmpty) {
+        dataMap["attachmentFiles"] = attachmentFiles;
+      }
+      if (files != null && files.isNotEmpty) {
+        dataMap["attachedDocuments"] = files;
+      }
+
+      final formData = FormData.fromMap(dataMap);
 
       final rawResponse = await client.post(
         "$baseUrl/${ApiConstants.editTicket}",
@@ -766,6 +772,7 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
           "workingFinancialId": workingFinancialId.toString(),
         },
       );
+
       if (rawResponse['data'] is bool) {
         return rawResponse['data'];
       }

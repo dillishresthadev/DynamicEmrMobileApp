@@ -9,7 +9,7 @@ class EditTicketUsecase {
     required int id,
     required String title,
     required String description,
-    required DateTime ticketDate,
+    required String ticketDate,
     required String severity,
     required String priority,
     required int ticketCategoryId,

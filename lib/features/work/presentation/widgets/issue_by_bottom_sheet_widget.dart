@@ -1,13 +1,13 @@
 import 'package:dynamic_emr/core/widgets/form/custom_input_field.dart';
 import 'package:flutter/material.dart';
 
-class AssignToDropdownWidget extends StatefulWidget {
+class IssueByBottomSheetWidget extends StatefulWidget {
   final String? employeeName;
   final List<Map<String, dynamic>> employee;
 
   final Function(String label, int value) onSelected;
 
-  const AssignToDropdownWidget({
+  const IssueByBottomSheetWidget({
     super.key,
     required this.employee,
     required this.onSelected,
@@ -15,14 +15,15 @@ class AssignToDropdownWidget extends StatefulWidget {
   });
 
   @override
-  State<AssignToDropdownWidget> createState() => _AssignToDropdownWidgetState();
+  State<IssueByBottomSheetWidget> createState() =>
+      _IssueByBottomSheetWidgetState();
 }
 
-class _AssignToDropdownWidgetState extends State<AssignToDropdownWidget> {
+class _IssueByBottomSheetWidgetState extends State<IssueByBottomSheetWidget> {
   String? _selectedemployeeText;
   int? selectedemployeeValue;
 
-  void _openAssignToDropdownWidget() {
+  void _openIssueByBottomSheetWidget() {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -153,7 +154,7 @@ class _AssignToDropdownWidgetState extends State<AssignToDropdownWidget> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: _openAssignToDropdownWidget,
+      onTap: _openIssueByBottomSheetWidget,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -162,7 +163,7 @@ class _AssignToDropdownWidgetState extends State<AssignToDropdownWidget> {
                 _selectedemployeeText ??
                 (widget.employeeName ?? "Select employee..."),
             readOnly: true,
-            onTap: _openAssignToDropdownWidget,
+            onTap: _openIssueByBottomSheetWidget,
           ),
         ],
       ),

@@ -15,6 +15,7 @@ import 'package:dynamic_emr/features/work/domain/entities/work_user_entity.dart'
 import 'package:dynamic_emr/features/work/presentation/bloc/work_bloc.dart';
 import 'package:dynamic_emr/features/work/presentation/widgets/assign_to_dropdown_widget.dart';
 import 'package:dynamic_emr/features/work/presentation/widgets/business_client_dropdown_widget.dart';
+import 'package:dynamic_emr/features/work/presentation/widgets/issue_by_bottom_sheet_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -42,6 +43,7 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
   int? _selectedCategoriesType;
   String? _selectedPriorityType;
   int? _selectedAssignToType;
+  int? _selectedIssueByType;
   String? _selectedSeverityType;
   String? _selectedClient;
 
@@ -79,6 +81,7 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
       _selectedCategoriesType = null;
       _selectedPriorityType = null;
       _selectedAssignToType = null;
+      _selectedIssueByType = null;
       _selectedSeverityType = null;
       _ticketDueDate.clear();
       _titleController.clear();
@@ -103,6 +106,7 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
     if (_selectedCategoriesType == null ||
         _selectedPriorityType == null ||
         _selectedAssignToType == null ||
+        _selectedIssueByType == null ||
         _selectedSeverityType == null) {
       log("Please select all dropdown values");
       return;
@@ -124,7 +128,7 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
         priority: _selectedPriorityType!,
         assignToEmployeeId: _selectedAssignToType!,
         //TODO: testing purpose
-        issueByEmployeeId: 100,
+        issueByEmployeeId: _selectedIssueByType!,
         attachmentPaths: attachmentPaths,
         client: _selectedClient!,
         clientDesc: _clientDepartmentController.text.trim(),
@@ -209,6 +213,14 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
   @override
   Widget build(BuildContext context) {
     final assignToItems = workUserList
+        .map(
+          (user) => {
+            'label': user.text,
+            'value': int.parse(user.value.toString()),
+          },
+        )
+        .toList();
+    final issueByItems = workUserList
         .map(
           (user) => {
             'label': user.text,
@@ -411,6 +423,18 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
                             setState(() => _selectedPriorityType = value),
                       ),
 
+                      buildSectionTitle("Issue By"),
+
+                      IssueByBottomSheetWidget(
+                        employee: issueByItems,
+                        onSelected: (label, value) {
+                          setState(() {
+                            _selectedIssueByType = value;
+                          });
+                          log("Selected Issue Employee: $label ($value)");
+                        },
+                      ),
+                      const SizedBox(height: 8),
                       buildSectionTitle("Assigned To"),
 
                       AssignToDropdownWidget(
@@ -419,7 +443,7 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
                           setState(() {
                             _selectedAssignToType = value;
                           });
-                          log("Selected Employee: $label ($value)");
+                          log("Selected Assign Employee: $label ($value)");
                         },
                       ),
                       const SizedBox(height: 8),
