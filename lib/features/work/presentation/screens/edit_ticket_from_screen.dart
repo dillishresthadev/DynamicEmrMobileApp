@@ -73,8 +73,7 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
       _titleController.text = ticket.title;
       _descriptionController.text = ticket.description;
       _ticketDate.text = ticket.ticketDate.toIso8601String().split('T').first;
-      _ticketDueDate.text =
-          ticket.dueDate?.toIso8601String().split('T').first ?? '';
+      _ticketDueDate.text = ticket.dueDate.toString();
 
       _clientNameController.text = ticket.client ?? '';
       _clientDepartmentController.text = ticket.clientDesc ?? '';
@@ -85,6 +84,7 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
       _selectedSeverityType = ticket.severity;
       _selectedPriorityType = ticket.priority;
       _selectedClient = ticket.client;
+      _selectedTicketDueDate = ticket.dueDate;
     }
   }
 
@@ -114,7 +114,11 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
         _selectedAssignToType == null ||
         _selectedIssueByType == null ||
         _selectedSeverityType == null) {
-      log("Please select all dropdown values");
+      AppSnackBar.show(
+        context,
+        "Please select all required fields from the dropdowns.",
+        SnackbarType.error,
+      );
       return;
     }
 
