@@ -13,6 +13,7 @@ import 'package:dynamic_emr/features/work/domain/usecases/create_new_ticket_usec
 import 'package:dynamic_emr/features/work/domain/usecases/edit_assignto_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/edit_priority_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/edit_severity_usecase.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/edit_ticket_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/filter_my_ticket_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/filter_ticket_assigned_to_me_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/ticket_assigned_to_me_summary_usecase.dart';
@@ -44,6 +45,7 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
   final EditAssigntoUsecase editAssigntoUsecase;
   final EditSeverityUsecase editSeverityUsecase;
   final BusinessClientUsecase businessClientUsecase;
+  final EditTicketUsecase editTicketUsecase;
   WorkBloc({
     required this.ticketSummaryUsecase,
     required this.ticketAssignedToMeSummaryUsecase,
@@ -60,6 +62,7 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
     required this.editAssigntoUsecase,
     required this.editSeverityUsecase,
     required this.businessClientUsecase,
+    required this.editTicketUsecase,
   }) : super(WorkState()) {
     on<MyTicketSummaryEvent>(_onMyTicketSummary);
     on<TicketAssignedToMeSummaryEvent>(_onTicketAssignedToMeSummary);
@@ -76,6 +79,7 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
     on<EditAssignToEvent>(_onEditAssignedTo);
     on<EditSeverityEvent>(_onEditSeverity);
     on<BusinessClientEvent>(_onBusinessClientEvent);
+    on<EditTicketEvent>(_onEditTicket);
   }
 
   Future<void> _onMyTicketSummary(
@@ -445,6 +449,39 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
       log("Error getting business client list $e");
       emit(
         state.copyWith(workStatus: WorkStatus.success, message: e.toString()),
+      );
+    }
+  }
+
+  Future<void> _onEditTicket(
+    EditTicketEvent event,
+    Emitter<WorkState> emit,
+  ) async {
+    emit(state.copyWith(workStatus: WorkStatus.loading));
+    try {
+      final ticket = await editTicketUsecase.call(event.ticket);
+      if (ticket) {
+        emit(
+          state.copyWith(
+            createTicket: ticket,
+            workStatus: WorkStatus.editTicketSuccess,
+          ),
+        );
+      } else {
+        emit(
+          state.copyWith(
+            createTicket: ticket,
+            workStatus: WorkStatus.editTicketError,
+          ),
+        );
+      }
+    } catch (e) {
+      log("Error getting while editing ticket $e");
+      emit(
+        state.copyWith(
+          workStatus: WorkStatus.editTicketError,
+          message: e.toString(),
+        ),
       );
     }
   }

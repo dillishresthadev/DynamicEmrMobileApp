@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 
 class BusinessClientDropdownWidget extends StatefulWidget {
   final List<BusinessClientEntity> clients;
+  final String? client;
   final Function(BusinessClientEntity? selectedClient) onSelected;
 
   const BusinessClientDropdownWidget({
     super.key,
     required this.clients,
     required this.onSelected,
+    this.client,
   });
 
   @override
@@ -133,7 +135,8 @@ class _BusinessClientDropdownWidgetState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CustomInputField(
-            hintText: _selectedClientName ?? "Select client...",
+            hintText:
+                _selectedClientName ?? (widget.client ?? 'Select Client..'),
             readOnly: true,
             onTap: _openClientDropdown,
           ),

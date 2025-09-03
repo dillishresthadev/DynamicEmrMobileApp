@@ -2,6 +2,7 @@ import 'package:dynamic_emr/core/widgets/form/custom_input_field.dart';
 import 'package:flutter/material.dart';
 
 class AssignToDropdownWidget extends StatefulWidget {
+  final String? employeeName;
   final List<Map<String, dynamic>> employee;
 
   final Function(String label, int value) onSelected;
@@ -10,6 +11,7 @@ class AssignToDropdownWidget extends StatefulWidget {
     super.key,
     required this.employee,
     required this.onSelected,
+    this.employeeName,
   });
 
   @override
@@ -36,7 +38,7 @@ class _AssignToDropdownWidgetState extends State<AssignToDropdownWidget> {
 
         return Padding(
           padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom +16,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 16,
           ),
           child: DraggableScrollableSheet(
             expand: false,
@@ -156,7 +158,9 @@ class _AssignToDropdownWidgetState extends State<AssignToDropdownWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CustomInputField(
-            hintText: _selectedemployeeText ?? "Select employee...",
+            hintText:
+                _selectedemployeeText ??
+                (widget.employeeName ?? "Select employee..."),
             readOnly: true,
             onTap: _openAssignToDropdownWidget,
           ),

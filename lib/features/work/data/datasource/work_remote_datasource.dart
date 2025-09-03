@@ -65,6 +65,7 @@ abstract class WorkRemoteDatasource {
   Future<bool> editPriority(int ticketId, String status);
   Future<bool> editSeverity(int ticketId, String status);
   Future<bool> editAssignTo(int ticketId, int assignedUserId);
+  Future<bool> editTicket(TicketModel ticket);
 
   Future<List<BusinessClientModel>> getBusinessClient();
 }
@@ -654,6 +655,39 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
           .toList();
     } catch (e) {
       log("Error getting businessClient: $e");
+      rethrow;
+    }
+  }
+
+  @override
+  Future<bool> editTicket(TicketModel ticket) async {
+    try {
+      final accessToken = await injection<TokenSecureStorage>()
+          .getAccessToken();
+      final baseUrl = await injection<ISecureStorage>().getHospitalBaseUrl();
+      final workingBranchId = await injection<BranchSecureStorage>()
+          .getWorkingBranchId();
+      final workingFinancialId = await injection<BranchSecureStorage>()
+          .getSelectedFiscalYearId();
+
+      final formData = FormData.fromMap(ticket.toJson());
+
+      final rawResponse = await client.post(
+        "$baseUrl/${ApiConstants.editTicket}",
+        token: accessToken,
+        body: formData,
+        headers: {
+          "workingBranchId": workingBranchId.toString(),
+          "workingFinancialId": workingFinancialId.toString(),
+        },
+      );
+
+      if (rawResponse['data'] is bool) {
+        return rawResponse['data'];
+      }
+      throw Exception("Unexpected response format");
+    } catch (e) {
+      log("Error editing ticket: $e");
       rethrow;
     }
   }

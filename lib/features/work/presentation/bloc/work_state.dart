@@ -6,6 +6,8 @@ enum WorkStatus {
   success,
   createTicketSuccess,
   createTicketError,
+  editTicketSuccess,
+  editTicketError,
   ticketDetailsLoadSuccess,
   ticketDetailsError,
   ticketReOpenSuccess,
@@ -34,6 +36,7 @@ final class WorkState extends Equatable {
   final String message;
 
   final bool createTicket;
+  final bool editTicket;
 
   final List<TicketEntity>? filterMyTicket;
   final List<TicketEntity>? filterMyAssignedTicket;
@@ -58,6 +61,7 @@ final class WorkState extends Equatable {
     this.ticketDetails,
     this.businessClient,
     this.createTicket = false,
+    this.editTicket = false,
     this.reOpenTicket = false,
     this.closeTicket = false,
     this.commentOnTicket = false,
@@ -86,6 +90,7 @@ final class WorkState extends Equatable {
     String? filterMyTicketMessage,
     String? filterMyAssignedTicketMessage,
     bool? createTicket,
+    bool? editTicket,
     bool? reOpenTicket,
     bool? closeTicket,
     bool? commentOnTicket,
@@ -115,6 +120,7 @@ final class WorkState extends Equatable {
       filterMyAssignedTicketMessage:
           filterMyAssignedTicketMessage ?? this.filterMyAssignedTicketMessage,
       createTicket: createTicket ?? this.createTicket,
+      editTicket: editTicket ?? this.editTicket,
       ticketCategories: ticketCategories ?? this.ticketCategories,
       workUser: workUser ?? this.workUser,
       businessClient: businessClient ?? this.businessClient,
@@ -138,6 +144,7 @@ final class WorkState extends Equatable {
     filterMyTicketStatus,
     filterAssignedTicketStatus,
     createTicket,
+    editTicket,
     workStatus,
     myTicketMessage,
     assignedTicketMessage,

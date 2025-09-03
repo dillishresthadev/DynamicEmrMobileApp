@@ -1,12 +1,12 @@
 class BusinessClientEntity {
-  final int id;
+  final int? id;
   final String clientName;
   final String address;
   final String? phoneNumber;
   final String? mobileNumber;
   final String? emailAddress;
   final String? clientType;
-  final bool isActive;
+  final bool? isActive;
 
   BusinessClientEntity({
     required this.id,

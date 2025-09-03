@@ -58,4 +58,6 @@ abstract class WorkRepository {
   Future<bool> editAssignTo(int ticketId, int assignedUserId);
 
   Future<List<BusinessClientEntity>> getBusinessClient();
+
+  Future<bool> editTicket(TicketEntity ticket);
 }

@@ -67,7 +67,7 @@ class TicketModel extends TicketEntity {
     client: json['client'] ?? "",
     clientDesc: json['clientDesc'] ?? "",
     clientDesc2: json['clientDesc2'] ?? "",
-    dueDate: _parseDate(json['dueDate']),
+    dueDate: _parseNullableDate(json['dueDate']),
     status: json["status"] ?? "Open",
     severity: json["severity"] ?? "Medium",
     priority: json["priority"] ?? "Medium",

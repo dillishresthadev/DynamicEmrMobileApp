@@ -89,6 +89,7 @@ import 'package:dynamic_emr/features/work/domain/usecases/create_new_ticket_usec
 import 'package:dynamic_emr/features/work/domain/usecases/edit_assignto_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/edit_priority_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/edit_severity_usecase.dart';
+import 'package:dynamic_emr/features/work/domain/usecases/edit_ticket_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/filter_my_ticket_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/filter_ticket_assigned_to_me_usecase.dart';
 import 'package:dynamic_emr/features/work/domain/usecases/ticket_assigned_to_me_summary_usecase.dart';
@@ -317,9 +318,13 @@ Future<void> initDependencies() async {
       editPriorityUsecase: injection<EditPriorityUsecase>(),
       editSeverityUsecase: injection<EditSeverityUsecase>(),
       businessClientUsecase: injection<BusinessClientUsecase>(),
+      editTicketUsecase: injection<EditTicketUsecase>(),
     ),
   );
 
+  injection.registerLazySingleton<EditTicketUsecase>(
+    () => EditTicketUsecase(repository: injection<WorkRepository>()),
+  );
   injection.registerLazySingleton<BusinessClientUsecase>(
     () => BusinessClientUsecase(repository: injection<WorkRepository>()),
   );

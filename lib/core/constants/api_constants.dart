@@ -34,6 +34,7 @@ class ApiConstants {
   static const String commentPost = "/api/Ticket/CommentPost";
 
   static const String businessClient = '/api/BusinessClient/GetActive';
+  static const String editTicket = "/api/Ticket/EditTicketPost";
 
   // Leave Info
 

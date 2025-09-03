@@ -162,6 +162,12 @@ final class FilterTicketAssignedToMeEvent extends WorkEvent {
   ];
 }
 
+final class EditTicketEvent extends WorkEvent {
+  final TicketEntity ticket;
+
+  const EditTicketEvent({required this.ticket});
+}
+
 final class EditPriorityEvent extends WorkEvent {
   final int ticketId;
   final String status;

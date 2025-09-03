@@ -1,4 +1,5 @@
 import 'package:dynamic_emr/features/work/domain/entities/ticket_entity.dart';
+import 'package:dynamic_emr/features/work/presentation/screens/edit_ticket_from_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -56,7 +57,7 @@ class _TicketCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(),
+              _buildHeader(context),
               const SizedBox(height: 12),
               _buildTitle(),
               const SizedBox(height: 16),
@@ -68,7 +69,7 @@ class _TicketCard extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader() {
+  Widget _buildHeader(BuildContext context) {
     return Row(
       children: [
         Expanded(
@@ -78,6 +79,18 @@ class _TicketCard extends StatelessWidget {
           ),
         ),
         _StatusBadge(status: ticket.status),
+        TextButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>
+                    EditTicketFromScreen(ticketToEdit: ticket),
+              ),
+            );
+          },
+          child: Text("Edit"),
+        ),
       ],
     );
   }

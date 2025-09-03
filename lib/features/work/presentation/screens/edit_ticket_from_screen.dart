@@ -11,6 +11,7 @@ import 'package:dynamic_emr/core/widgets/form/custom_input_field.dart';
 import 'package:dynamic_emr/features/Leave/presentation/bloc/leave_bloc.dart';
 import 'package:dynamic_emr/features/work/domain/entities/business_client_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_categories_entity.dart';
+import 'package:dynamic_emr/features/work/domain/entities/ticket_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/work_user_entity.dart';
 import 'package:dynamic_emr/features/work/presentation/bloc/work_bloc.dart';
 import 'package:dynamic_emr/features/work/presentation/widgets/assign_to_dropdown_widget.dart';
@@ -18,14 +19,15 @@ import 'package:dynamic_emr/features/work/presentation/widgets/business_client_d
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class CreateTicketFormScreen extends StatefulWidget {
-  const CreateTicketFormScreen({super.key});
+class EditTicketFromScreen extends StatefulWidget {
+  final TicketEntity? ticketToEdit;
+  const EditTicketFromScreen({super.key, this.ticketToEdit});
 
   @override
-  State<CreateTicketFormScreen> createState() => _CreateTicketFormScreenState();
+  State<EditTicketFromScreen> createState() => _EditTicketFromScreenState();
 }
 
-class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
+class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final TextEditingController _titleController = TextEditingController();
@@ -56,11 +58,32 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
   @override
   void initState() {
     super.initState();
-    // Load initial data
+
     context.read<WorkBloc>()
       ..add(TicketCategoriesEvent())
       ..add(WorkUserListEvent())
       ..add(BusinessClientEvent());
+
+    if (widget.ticketToEdit != null) {
+      final ticket = widget.ticketToEdit!;
+      log("Due Date :" + ticket.dueDate.toString());
+
+      _titleController.text = ticket.title;
+      _descriptionController.text = ticket.description;
+      _ticketDate.text = ticket.ticketDate.toIso8601String().split('T').first;
+      _ticketDueDate.text =
+          ticket.dueDate?.toIso8601String().split('T').first ?? '';
+
+      _clientNameController.text = ticket.client ?? '';
+      _clientDepartmentController.text = ticket.clientDesc ?? '';
+      _clientUserController.text = ticket.clientDesc2 ?? '';
+
+      _selectedCategoriesType = ticket.ticketCategoryId;
+      _selectedAssignToType = ticket.assignToEmployeeId;
+      _selectedSeverityType = ticket.severity;
+      _selectedPriorityType = ticket.priority;
+      _selectedClient = ticket.client;
+    }
   }
 
   @override
@@ -71,22 +94,6 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
     _clientDepartmentController.dispose();
     _clientUserController.dispose();
     super.dispose();
-  }
-
-  void _resetForm() {
-    _formKey.currentState?.reset();
-    setState(() {
-      _selectedCategoriesType = null;
-      _selectedPriorityType = null;
-      _selectedAssignToType = null;
-      _selectedSeverityType = null;
-      _ticketDueDate.clear();
-      _titleController.clear();
-      _descriptionController.clear();
-      _clientUserController.clear();
-      _clientDepartmentController.clear();
-      _clientNameController.clear();
-    });
   }
 
   Future<void> _submitForm() async {
@@ -115,22 +122,53 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
 
     log(attachmentPaths.toList().toString());
 
+    // EDIT MODE
     context.read<WorkBloc>().add(
-      CreateTicketEvent(
-        ticketCategoryId: _selectedCategoriesType!,
-        title: _titleController.text.trim(),
-        description: _descriptionController.text.trim(),
-        severity: _selectedSeverityType!,
-        priority: _selectedPriorityType!,
-        assignToEmployeeId: _selectedAssignToType!,
-        attachmentPaths: attachmentPaths,
-        client: _selectedClient!,
-        clientDesc: _clientDepartmentController.text.trim(),
-        clientDesc2: _clientUserController.text.trim(),
-        dueDate: _selectedTicketDueDate.toString(),
+      EditTicketEvent(
+        ticket: TicketEntity(
+          id: widget.ticketToEdit!.id,
+          ticketCategoryId: _selectedCategoriesType!,
+          title: _titleController.text.trim(),
+          description: _descriptionController.text.trim(),
+          severity: _selectedSeverityType!,
+          priority: _selectedPriorityType!,
+          assignToEmployeeId: _selectedAssignToType!,
+          attachedDocuments: attachmentPaths,
+          client: _selectedClient!,
+          clientDesc: _clientDepartmentController.text.trim(),
+          clientDesc2: _clientUserController.text.trim(),
+          dueDate: DateTime.tryParse(
+            _selectedTicketDueDate?.toIso8601String() ?? '',
+          ),
+          ticketNo: widget.ticketToEdit!.ticketNo,
+          ticketNoSequence: widget.ticketToEdit!.ticketNoSequence,
+          ticketYearSequence: widget.ticketToEdit!.ticketYearSequence,
+          ticketMonthlySequence: widget.ticketToEdit!.ticketMonthlySequence,
+          ticketDailySequence: widget.ticketToEdit!.ticketDailySequence,
+          ticketMonthlyNpSequence: widget.ticketToEdit!.ticketMonthlyNpSequence,
+          ticketYearlyNpSequence: widget.ticketToEdit!.ticketYearlyNpSequence,
+          ticketFySequence: widget.ticketToEdit!.ticketFySequence,
+          ticketYearlySequenceByCategory:
+              widget.ticketToEdit!.ticketYearlySequenceByCategory,
+          ticketMonthlySequenceByCategory:
+              widget.ticketToEdit!.ticketMonthlySequenceByCategory,
+          ticketDailySequenceByCategory:
+              widget.ticketToEdit!.ticketDailySequenceByCategory,
+          ticketNo2: widget.ticketToEdit!.ticketNo2,
+          applicationUserId: widget.ticketToEdit!.applicationUserId,
+          ticketDate: widget.ticketToEdit!.ticketDate,
+          status: widget.ticketToEdit!.status,
+          ticketCategoryName: widget.ticketToEdit!.ticketCategoryName,
+          assignedTo: widget.ticketToEdit!.assignedTo,
+          assignedOn: widget.ticketToEdit!.assignedOn,
+          issueBy: widget.ticketToEdit!.issueBy,
+          issueOn: widget.ticketToEdit!.issueOn,
+          insertUser: widget.ticketToEdit!.insertUser,
+          insertTime: widget.ticketToEdit!.insertTime,
+          updateUser: widget.ticketToEdit!.updateUser,
+        ),
       ),
     );
-    _resetForm();
   }
 
   Widget buildAttachmentButtons() {
@@ -256,15 +294,8 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
       },
       child: Scaffold(
         appBar: DynamicEMRAppBar(
-          title: 'Create New Ticket',
+          title: 'Edit Ticket',
           automaticallyImplyLeading: true,
-          actions: [
-            IconButton(
-              onPressed: _resetForm,
-              icon: const Icon(Icons.refresh),
-              tooltip: 'Reset Ticket Form',
-            ),
-          ],
         ),
         backgroundColor: Colors.white,
         body: SafeArea(
@@ -413,6 +444,12 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
 
                       AssignToDropdownWidget(
                         employee: assignToItems,
+                        employeeName: assignToItems
+                            .firstWhere(
+                              (e) => e['value'] == _selectedAssignToType,
+                              orElse: () => {'label': 'Unknown'},
+                            )['label']
+                            .toString(),
                         onSelected: (label, value) {
                           setState(() {
                             _selectedAssignToType = value;
@@ -431,6 +468,7 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
                       buildSectionTitle("Client"),
                       BusinessClientDropdownWidget(
                         clients: clientList,
+                        client: _selectedClient,
                         onSelected: (client) {
                           setState(() {
                             _selectedClient = client!.clientName;
@@ -494,9 +532,9 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
                         height: 50,
                         child: ElevatedButton.icon(
                           onPressed: _submitForm,
-                          icon: const Icon(Icons.send),
+                          icon: const Icon(Icons.edit),
                           label: const Text(
-                            'Create New Ticket',
+                            'Edit Ticket',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,

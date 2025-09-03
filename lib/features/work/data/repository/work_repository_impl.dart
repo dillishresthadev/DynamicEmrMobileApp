@@ -1,4 +1,5 @@
 import 'package:dynamic_emr/features/work/data/datasource/work_remote_datasource.dart';
+import 'package:dynamic_emr/features/work/data/models/ticket_model.dart';
 import 'package:dynamic_emr/features/work/domain/entities/business_client_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_categories_entity.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_details_entity.dart';
@@ -154,5 +155,44 @@ class WorkRepositoryImpl extends WorkRepository {
   @override
   Future<List<BusinessClientEntity>> getBusinessClient() async {
     return await remoteDatasource.getBusinessClient();
+  }
+
+  @override
+  Future<bool> editTicket(TicketEntity ticket) async {
+    return await remoteDatasource.editTicket(
+      TicketModel(
+        id: ticket.id,
+        ticketNo: ticket.ticketNo,
+        ticketNoSequence: ticket.ticketNoSequence,
+        ticketYearSequence: ticket.ticketYearSequence,
+        ticketMonthlySequence: ticket.ticketMonthlySequence,
+        ticketDailySequence: ticket.ticketDailySequence,
+        ticketMonthlyNpSequence: ticket.ticketMonthlyNpSequence,
+        ticketYearlyNpSequence: ticket.ticketYearlyNpSequence,
+        ticketFySequence: ticket.ticketFySequence,
+        ticketYearlySequenceByCategory: ticket.ticketYearlySequenceByCategory,
+        ticketMonthlySequenceByCategory: ticket.ticketMonthlySequenceByCategory,
+        ticketDailySequenceByCategory: ticket.ticketDailySequenceByCategory,
+        ticketNo2: ticket.ticketNo2,
+        applicationUserId: ticket.applicationUserId,
+        title: ticket.title,
+        description: ticket.description,
+        ticketDate: ticket.ticketDate,
+        status: ticket.status,
+        severity: ticket.severity,
+        priority: ticket.priority,
+        ticketCategoryId: ticket.ticketCategoryId,
+        ticketCategoryName: ticket.ticketCategoryName,
+        assignToEmployeeId: ticket.assignToEmployeeId,
+        assignedTo: ticket.assignedTo,
+        assignedOn: ticket.assignedOn,
+        issueBy: ticket.issueBy,
+        issueOn: ticket.issueOn,
+        attachedDocuments: ticket.attachedDocuments,
+        insertUser: ticket.insertUser,
+        insertTime: ticket.insertTime,
+        updateUser: ticket.updateUser,
+      ),
+    );
   }
 }
