@@ -16,15 +16,13 @@ class TicketInfoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final dateTimeFormat = DateFormat('M/d/yyyy h:mm:ss a');
 
-    final createdOnDate = DateFormat(
+    final issueOn = DateFormat(
       'EE dd MMM, yyyy hh:mm a',
     ).format(ticket.issueOn);
     final assignOnDate = DateFormat(
       'EE dd MMM, yyyy hh:mm a',
     ).format(ticket.assignedOn);
-    // final dueDate = DateFormat(
-    //   'EE dd MMM, yyyy hh:mm a',
-    // ).format(ticket.dueDate!);
+    final ticketDate = DateFormat('EE dd MMM, yyyy').format(ticket.ticketDate);
 
     return Card(
       elevation: 2,
@@ -52,15 +50,15 @@ class TicketInfoWidget extends StatelessWidget {
               runSpacing: 2,
               children: [
                 // _buildInfoItem("Ticket Number"),
+                _buildInfoItem("Ticket Date", ticketDate),
                 _buildInfoItem("Registration No", ticket.ticketNo2),
                 _buildInfoItem(
                   "Ticket Category",
                   ticket.ticketCategoryName,
                   fontWeight: FontWeight.bold,
                 ),
-
-                _buildInfoItem("Created On", createdOnDate),
-                _buildInfoItem("Created By", ticket.issueBy),
+                _buildInfoItem("Issue By", ticket.issueBy),
+                _buildInfoItem("Issue On", issueOn),
                 AssignToBottomSheetWidget(users: user, ticket: ticket),
                 _buildInfoItem("Assigned On", assignOnDate),
                 if ((ticket.client ?? '').isNotEmpty)

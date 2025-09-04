@@ -40,6 +40,7 @@ class WorkRepositoryImpl extends WorkRepository {
 
   @override
   Future<bool> createNewTicket(
+    String ticketDate,
     int ticketCategoryId,
     String title,
     String description,
@@ -50,9 +51,11 @@ class WorkRepositoryImpl extends WorkRepository {
     String clientDesc2,
     String dueDate,
     int assignToEmployeeId,
+    int issueByEmployeeId,
     List<String>? attachmentPaths,
   ) async {
     return await remoteDatasource.createNewTicket(
+      ticketDate,
       ticketCategoryId,
       title,
       description,
@@ -63,6 +66,7 @@ class WorkRepositoryImpl extends WorkRepository {
       clientDesc2,
       dueDate,
       assignToEmployeeId,
+      issueByEmployeeId,
       attachmentPaths,
     );
   }

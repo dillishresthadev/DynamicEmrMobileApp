@@ -84,6 +84,7 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
       _selectedSeverityType = ticket.severity;
       _selectedPriorityType = ticket.priority;
       _selectedClient = ticket.client;
+      _selectedTicketDate = ticket.ticketDate;
       _selectedTicketDueDate = ticket.dueDate;
     }
   }
@@ -95,6 +96,8 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
     _clientNameController.dispose();
     _clientDepartmentController.dispose();
     _clientUserController.dispose();
+    _ticketDate.dispose();
+    _ticketDueDate.dispose();
     super.dispose();
   }
 
@@ -135,17 +138,13 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
         id: widget.ticketToEdit!.id,
         title: _titleController.text.trim(),
         description: _descriptionController.text.trim(),
-        ticketDate: DateTime.now().toString(),
+        ticketDate: _selectedTicketDate.toString(),
         severity: _selectedSeverityType!,
         priority: _selectedPriorityType!,
         ticketCategoryId: _selectedCategoriesType ?? 1,
-        // ticketCategoryName: '',
         assignToEmployeeId: _selectedAssignToType ?? 1,
-        // assignedTo: '',
         assignedOn: widget.ticketToEdit!.assignedOn,
-        issueByEmployeeId:
-            widget.ticketToEdit?.issueByEmployeeId.toString() ?? '',
-        // issueBy: '',
+        issueByEmployeeId: _selectedIssueByType.toString(),
         issueOn: widget.ticketToEdit!.issueOn,
         sessionTag: widget.ticketToEdit!.sessionTag ?? '',
         clientId: widget.ticketToEdit!.clientId ?? 0,

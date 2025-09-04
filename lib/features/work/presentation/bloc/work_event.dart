@@ -56,6 +56,7 @@ final class TicketDetailsByIdEvent extends WorkEvent {
 }
 
 final class CreateTicketEvent extends WorkEvent {
+  final String ticketDate;
   final int ticketCategoryId;
   final String title;
   final String description;
@@ -70,6 +71,7 @@ final class CreateTicketEvent extends WorkEvent {
   final List<String>? attachmentPaths;
 
   const CreateTicketEvent({
+    required this.ticketDate,
     required this.ticketCategoryId,
     required this.title,
     required this.description,
@@ -85,6 +87,7 @@ final class CreateTicketEvent extends WorkEvent {
   });
   @override
   List<Object?> get props => [
+    ticketDate,
     ticketCategoryId,
     title,
     description,

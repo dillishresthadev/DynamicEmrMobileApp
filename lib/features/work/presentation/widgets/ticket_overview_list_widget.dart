@@ -105,9 +105,7 @@ class _TicketCard extends StatelessWidget {
   }
 
   Widget _buildMetadata() {
-    final ticketDate = DateFormat(
-      'EE dd MMM, yyyy hh:mm a',
-    ).format(ticket.ticketDate);
+    final ticketDate = DateFormat('EE dd MMM, yyyy').format(ticket.ticketDate);
 
     return Column(
       spacing: 8,

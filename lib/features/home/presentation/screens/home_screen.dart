@@ -239,8 +239,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ProfilePictureWidget(
                     profileUrl:
                         "${state.employee?.employeeImageBaseUrl}/${state.employee?.imagePath}",
-                    firstName: state.employee?.firstName ?? 'Dynamic',
-                    lastName: state.employee?.lastName ?? 'EMR',
+                    firstName: state.employee?.firstName ?? 'DynamicEMR',
+                    lastName: state.employee?.lastName ?? '',
                     avatarRadius: 20,
                   ),
                   const SizedBox(width: 16),
@@ -269,7 +269,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildUserInfo(ProfileState state) {
-    String name = 'Dynamic EMR';
+    String name = 'DynamicEMR';
     String position = '';
 
     if (state.employeeStatus == ProfileStatus.loaded) {

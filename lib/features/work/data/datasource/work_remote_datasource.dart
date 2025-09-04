@@ -29,6 +29,7 @@ abstract class WorkRemoteDatasource {
   );
   Future<List<TicketCategoriesModel>> getTicketCategories();
   Future<bool> createNewTicket(
+    String ticketDate,
     int ticketCategoryId,
     String title,
     String description,
@@ -39,6 +40,7 @@ abstract class WorkRemoteDatasource {
     String clientDesc2,
     String dueDate,
     int assignToEmployeeId,
+    int issueByEmployeeId,
     List<String>? attachmentPaths,
   );
 
@@ -254,6 +256,7 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
 
   @override
   Future<bool> createNewTicket(
+    String ticketDate,
     int ticketCategoryId,
     String title,
     String description,
@@ -264,6 +267,7 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
     String clientDesc2,
     String dueDate,
     int assignToEmployeeId,
+    int issueByEmployeeId,
     List<String>? attachmentPaths,
   ) async {
     try {
@@ -291,6 +295,7 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
 
       log("[Datasource] Files : ${files?.first.filename} ");
       final formData = FormData.fromMap({
+        "TicketDate": ticketDate,
         "TicketCategoryId": ticketCategoryId,
         "Title": title,
         "Description": description,
@@ -300,8 +305,7 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
         "clientDesc": clientDesc,
         "clientDesc2": clientDesc2,
         "dueDate": dueDate,
-        // test TODO:
-        "issueByEmployeeId": 100,
+        "issueByEmployeeId": issueByEmployeeId,
         "AssignToEmployeeId": assignToEmployeeId,
         "AttachmentFiles": files,
       });
@@ -748,7 +752,7 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
       dataMap["TicketCategoryId"] = ticketCategoryId;
       dataMap["AssignToEmployeeId"] = assignToEmployeeId;
       addIfNotEmpty("IssueByEmployeeId", issueByEmployeeId);
-      addIfNotEmpty("SessionTag", sessionTag);
+      // addIfNotEmpty("SessionTag", sessionTag);
       // dataMap["ClientId"] = clientId;
       addIfNotEmpty("Client", clients);
       addIfNotEmpty("ClientDesc", clientDesc);

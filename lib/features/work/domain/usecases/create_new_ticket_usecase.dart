@@ -6,6 +6,7 @@ class CreateNewTicketUsecase {
   CreateNewTicketUsecase({required this.repository});
 
   Future<bool> call(
+    String ticketDate,
     int ticketCategoryId,
     String title,
     String description,
@@ -16,9 +17,11 @@ class CreateNewTicketUsecase {
     String clientDesc2,
     String dueDate,
     int assignToEmployeeId,
+    int issueByEmployeeId,
     List<String>? attachmentPaths,
   ) async {
     return await repository.createNewTicket(
+      ticketDate,
       ticketCategoryId,
       title,
       description,
@@ -29,6 +32,7 @@ class CreateNewTicketUsecase {
       clientDesc2,
       dueDate,
       assignToEmployeeId,
+      issueByEmployeeId,
       attachmentPaths,
     );
   }

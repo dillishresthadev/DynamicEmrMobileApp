@@ -177,6 +177,7 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
     emit(state.copyWith(workStatus: WorkStatus.loading));
     try {
       final ticket = await createNewTicketUsecase.call(
+        event.ticketDate,
         event.ticketCategoryId,
         event.title,
         event.description,
@@ -187,6 +188,7 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
         event.clientDesc2,
         event.dueDate,
         event.assignToEmployeeId,
+        event.issueByEmployeeId,
         event.attachmentPaths,
       );
       if (ticket) {

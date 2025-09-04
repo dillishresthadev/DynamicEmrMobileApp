@@ -121,13 +121,13 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
 
     context.read<WorkBloc>().add(
       CreateTicketEvent(
+        ticketDate: _selectedTicketDate.toString(),
         ticketCategoryId: _selectedCategoriesType!,
         title: _titleController.text.trim(),
         description: _descriptionController.text.trim(),
         severity: _selectedSeverityType!,
         priority: _selectedPriorityType!,
         assignToEmployeeId: _selectedAssignToType!,
-        //TODO: testing purpose
         issueByEmployeeId: _selectedIssueByType!,
         attachmentPaths: attachmentPaths,
         client: _selectedClient!,

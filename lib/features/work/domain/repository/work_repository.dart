@@ -19,6 +19,7 @@ abstract class WorkRepository {
   );
   Future<List<TicketCategoriesEntity>> getTicketCategories();
   Future<bool> createNewTicket(
+    String ticketDate,
     int ticketCategoryId,
     String title,
     String description,
@@ -29,6 +30,7 @@ abstract class WorkRepository {
     String clientDesc2,
     String dueDate,
     int assignToEmployeeId,
+    int issueByEmployeeId,
     List<String>? attachmentPaths,
   );
 
