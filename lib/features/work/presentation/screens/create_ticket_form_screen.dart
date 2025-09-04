@@ -46,6 +46,7 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
   int? _selectedIssueByType;
   String? _selectedSeverityType;
   String? _selectedClient;
+  int? _selectedClientId;
 
   DateTime? _selectedTicketDate, _selectedTicketDueDate;
 
@@ -130,11 +131,7 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
         assignToEmployeeId: _selectedAssignToType!,
         issueByEmployeeId: _selectedIssueByType!,
         attachmentPaths: attachmentPaths,
-        clientId:
-            (clientList
-                .firstWhere((e) => e.clientName == _selectedClient)
-                .id) ??
-            0,
+        clientId: _selectedClientId ?? 0,
         client: _selectedClient!,
         clientDesc: _clientDepartmentController.text.trim(),
         clientDesc2: _clientUserController.text.trim(),
@@ -256,6 +253,12 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
             categoriesList = state.ticketCategories ?? [];
             clientList = state.businessClient ?? [];
           });
+          if (_selectedClientId == null && _selectedClient != null) {
+            final client = clientList.firstWhere(
+              (c) => c.clientName == _selectedClient,
+            );
+            _selectedClientId = client.id;
+          }
         }
         if (state.workStatus == WorkStatus.createTicketSuccess) {
           AppSnackBar.show(
@@ -464,11 +467,15 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
                         clients: clientList,
                         onSelected: (client) {
                           setState(() {
-                            _selectedClient = client!.clientName;
+                            _selectedClient = client?.clientName;
+                            _selectedClientId = client?.id;
                           });
-                          log("Selected Client: $_selectedClient ");
+                          log(
+                            "Selected Client: $_selectedClient ($_selectedClientId)",
+                          );
                         },
                       ),
+
                       const SizedBox(height: 8),
                       Text(
                         'issue by client',

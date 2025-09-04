@@ -85,7 +85,7 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
       _selectedSeverityType = ticket.severity;
       _selectedPriorityType = ticket.priority;
       _selectedClient = ticket.client;
-      _selectedClientId = ticket.clientId;
+      _selectedClientId = ticket.clientId ?? widget.ticketToEdit!.clientId;
       _selectedTicketDate = ticket.ticketDate;
       _selectedTicketDueDate = ticket.dueDate;
     }
@@ -271,24 +271,14 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
             workUserList = state.workUser ?? [];
             categoriesList = state.ticketCategories ?? [];
             clientList = state.businessClient ?? [];
-
-            if (widget.ticketToEdit != null && _selectedClientId == null) {
-              final client = clientList.firstWhere(
-                (c) => c.clientName == widget.ticketToEdit!.client,
-                orElse: () => BusinessClientEntity(
-                  id: 0,
-                  clientName: 'Unknown',
-                  address: '',
-                  phoneNumber: '',
-                  mobileNumber: '',
-                  emailAddress: '',
-                  clientType: '',
-                  isActive: null,
-                ),
-              );
-              _selectedClientId = client.id;
-            }
           });
+
+          if (widget.ticketToEdit != null && _selectedClientId == null) {
+            final client = clientList.firstWhere(
+              (c) => c.clientName == widget.ticketToEdit!.client,
+            );
+            _selectedClientId = client.id;
+          }
         }
         if (state.workStatus == WorkStatus.editTicketSuccess) {
           AppSnackBar.show(
@@ -386,9 +376,9 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
                             : null,
                       ),
 
-                      // buildSectionTitle("Files/Images"),
+                      buildSectionTitle("Files/Images"),
 
-                      // buildAttachmentButtons(),
+                      buildAttachmentButtons(),
 
                       //  attachments list
                       Column(
