@@ -1,6 +1,7 @@
 import 'package:dynamic_emr/core/widgets/dropdown/custom_dropdown.dart';
 import 'package:dynamic_emr/core/widgets/form/custom_date_time_field.dart';
 import 'package:dynamic_emr/core/widgets/form/custom_input_field.dart';
+import 'package:dynamic_emr/features/work/domain/entities/business_client_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -9,11 +10,13 @@ class TicketFilterWidget extends StatefulWidget {
 
   final void Function()? onClear;
   final TicketFilterData? initialFilter;
+  final List<BusinessClientEntity> businessClient;
 
   const TicketFilterWidget({
     this.onApply,
     this.onClear,
     this.initialFilter,
+    required this.businessClient,
     super.key,
   });
 
@@ -27,6 +30,7 @@ class _TicketFilterWidgetState extends State<TicketFilterWidget> {
   String? _selectedStatus;
   String? _selectedPriority;
   String? _selectedSeverity;
+  BusinessClientEntity? _selectedClient;
   String? _selectedOrderBy = 'Newest';
 
   final TextEditingController _fromDateController = TextEditingController();
@@ -79,6 +83,7 @@ class _TicketFilterWidgetState extends State<TicketFilterWidget> {
       _selectedPriority = null;
       _selectedSeverity = null;
       _selectedOrderBy = null;
+      _selectedClient = null;
       _clientDescController.clear();
       _clientDesc2Controller.clear();
       _fromDateController.text = DateFormat('yyyy-MM-dd').format(oneMonthAgo);
@@ -96,6 +101,7 @@ class _TicketFilterWidgetState extends State<TicketFilterWidget> {
           priority: _selectedPriority,
           severity: _selectedSeverity,
           orderBy: _selectedOrderBy,
+          clientId: _selectedClient?.id,
           clientDesc: _clientDescController.text.trim(),
           clientDesc2: _clientDesc2Controller.text.trim(),
           fromDate: _fromDateController.text,
@@ -110,145 +116,177 @@ class _TicketFilterWidgetState extends State<TicketFilterWidget> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Filter Ticket",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 10),
-              // Category & Status
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomDropdown(
-                      hintText: 'Order By',
-                      value: _selectedOrderBy,
-                      items: orderByList,
-                      onChanged: (value) =>
-                          setState(() => _selectedOrderBy = value),
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: CustomDropdown(
-                      hintText: 'Status',
-                      value: _selectedStatus,
-                      items: statuses,
-                      onChanged: (value) =>
-                          setState(() => _selectedStatus = value),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 16),
-              // Priority & Severity
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomDropdown(
-                      hintText: 'Priority',
-                      value: _selectedPriority,
-                      items: priorities,
-                      onChanged: (value) =>
-                          setState(() => _selectedPriority = value),
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: CustomDropdown(
-                      hintText: 'Severity',
-                      value: _selectedSeverity,
-                      items: severities,
-                      onChanged: (value) =>
-                          setState(() => _selectedSeverity = value),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 16),
-              // clientDesc/2
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomInputField(
-                      hintText: 'Client Desc',
-                      controller: _clientDescController,
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: CustomInputField(
-                      hintText: 'Client Desc2',
-                      controller: _clientDesc2Controller,
-                    ),
-                  ),
-                ],
-              ),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Filter Tickets",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 18),
 
-              SizedBox(height: 16),
-              // Date Range
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomDateTimeField(
-                      hintText: 'From Date',
-                      controller: _fromDateController,
-                    ),
+            /// Section: Sort & Status
+            const Text(
+              "Sort & Status",
+              style: TextStyle(fontWeight: FontWeight.w500),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: CustomDropdown(
+                    hintText: 'Order By',
+                    value: _selectedOrderBy,
+                    items: orderByList,
+                    onChanged: (value) =>
+                        setState(() => _selectedOrderBy = value),
                   ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: CustomDateTimeField(
-                      hintText: 'To Date',
-                      controller: _toDateController,
-                    ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: CustomDropdown(
+                    hintText: 'Status',
+                    value: _selectedStatus,
+                    items: statuses,
+                    onChanged: (value) =>
+                        setState(() => _selectedStatus = value),
                   ),
-                ],
-              ),
-              SizedBox(height: 24),
-              // Action Buttons
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: _clearFilters,
-                      icon: Icon(Icons.refresh, size: 20),
-                      label: Text('Clear All'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Color(0xFF1976D2),
-                        side: BorderSide(color: Color(0xFF1976D2), width: 1.5),
-                        padding: EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+
+            /// Section: Priority & Severity
+            const Text(
+              "Priority & Severity",
+              style: TextStyle(fontWeight: FontWeight.w500),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: CustomDropdown(
+                    hintText: 'Priority',
+                    value: _selectedPriority,
+                    items: priorities,
+                    onChanged: (value) =>
+                        setState(() => _selectedPriority = value),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: CustomDropdown(
+                    hintText: 'Severity',
+                    value: _selectedSeverity,
+                    items: severities,
+                    onChanged: (value) =>
+                        setState(() => _selectedSeverity = value),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+
+            /// Section: Client Details
+            const Text(
+              "Client Info",
+              style: TextStyle(fontWeight: FontWeight.w500),
+            ),
+            const SizedBox(height: 8),
+            Column(
+              children: [
+                CustomInputField(
+                  hintText: 'Client Desc',
+                  controller: _clientDescController,
+                ),
+                const SizedBox(height: 12),
+                CustomInputField(
+                  hintText: 'Client Desc 2',
+                  controller: _clientDesc2Controller,
+                ),
+                CustomDropdown(
+                  hintText: 'Client',
+                  value: _selectedClient?.clientName,
+                  items: widget.businessClient
+                      .map((e) => e.clientName)
+                      .toList(),
+                  onChanged: (value) {
+                    _selectedClient = (widget.businessClient.firstWhere(
+                      (e) => e.clientName == value,
+                    ));
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+
+            /// Section: Date Range
+            const Text(
+              "Date Range",
+              style: TextStyle(fontWeight: FontWeight.w500),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: CustomDateTimeField(
+                    hintText: 'From',
+                    controller: _fromDateController,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: CustomDateTimeField(
+                    hintText: 'To',
+                    controller: _toDateController,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 32),
+
+            /// Section: Action Buttons
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: _clearFilters,
+                    icon: const Icon(Icons.refresh, size: 20),
+                    label: const Text('Clear'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF1976D2),
+                      side: const BorderSide(
+                        color: Color(0xFF1976D2),
+                        width: 1.5,
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                   ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: _applyFilters,
-                      icon: Icon(Icons.search, size: 20),
-                      label: Text('Apply Filters'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xFF1976D2),
-                        foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 14),
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _applyFilters,
+                    icon: const Icon(Icons.search, size: 20),
+                    label: const Text('Apply'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF1976D2),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

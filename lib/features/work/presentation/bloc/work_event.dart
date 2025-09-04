@@ -108,6 +108,9 @@ final class FilterMyTicketEvent extends WorkEvent {
   final String priority;
   final String severity;
   final String assignTo;
+  final int clientId;
+  final String clientDesc;
+  final String clientDesc2;
   final String fromDate;
   final String toDate;
   final String orderBy;
@@ -118,6 +121,9 @@ final class FilterMyTicketEvent extends WorkEvent {
     required this.priority,
     required this.severity,
     required this.assignTo,
+    required this.clientId,
+    required this.clientDesc,
+    required this.clientDesc2,
     required this.fromDate,
     required this.toDate,
     required this.orderBy,
@@ -129,6 +135,9 @@ final class FilterMyTicketEvent extends WorkEvent {
     priority,
     severity,
     assignTo,
+    clientId,
+    clientDesc,
+    clientDesc2,
     fromDate,
     toDate,
     orderBy,
@@ -141,6 +150,9 @@ final class FilterTicketAssignedToMeEvent extends WorkEvent {
   final String priority;
   final String severity;
   final String assignTo;
+  final int clientId;
+  final String clientDesc;
+  final String clientDesc2;
   final String fromDate;
   final String toDate;
   final String orderBy;
@@ -151,6 +163,9 @@ final class FilterTicketAssignedToMeEvent extends WorkEvent {
     required this.priority,
     required this.severity,
     required this.assignTo,
+    required this.clientId,
+    required this.clientDesc,
+    required this.clientDesc2,
     required this.fromDate,
     required this.toDate,
     required this.orderBy,
@@ -162,6 +177,9 @@ final class FilterTicketAssignedToMeEvent extends WorkEvent {
     priority,
     severity,
     assignTo,
+    clientId,
+    clientDesc,
+    clientDesc2,
     fromDate,
     toDate,
     orderBy,

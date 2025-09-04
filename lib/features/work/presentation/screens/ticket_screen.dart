@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_entity.dart';
 import 'package:dynamic_emr/features/work/presentation/bloc/work_bloc.dart';
@@ -119,50 +121,72 @@ class _TicketScreenState extends State<TicketScreen>
         actions: [
           IconButton(
             onPressed: () {
+              context.read<WorkBloc>().add(BusinessClientEvent());
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
-                backgroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadiusGeometry.vertical(
-                    top: Radius.circular(16),
-                  ),
-                ),
+                backgroundColor: Colors.transparent,
                 builder: (context) {
-                  return SafeArea(
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                        top: 16,
-                        right: 16,
-                        left: 16,
-                        bottom: MediaQuery.of(context).viewInsets.bottom + 16,
-                      ),
-                      child: TicketFilterWidget(
-                        initialFilter: _activeFilter,
-                        onApply: (filter) {
-                          setState(() {
-                            _activeFilter = filter;
-                          });
-                          _applyFilter(filter);
-                        },
-                        onClear: () {
-                          _applyFilter(
-                            TicketFilterData(
-                              ticketCategoryId: 0,
-                              status: "",
-                              priority: "",
-                              severity: "",
-                              clientId: 0,
-                              clientDesc: "",
-                              clientDesc2: "",
-                              orderBy: "",
-                              fromDate: "",
-                              toDate: "",
+                  return DraggableScrollableSheet(
+                    initialChildSize: 0.75,
+                    minChildSize: 0.4,
+                    maxChildSize: 0.9,
+                    expand: false,
+
+                    builder: (context, scrollController) {
+                      return Container(
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(16),
+                          ),
+                        ),
+                        child: SafeArea(
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              top: 16,
+                              right: 16,
+                              left: 16,
+                              bottom:
+                                  MediaQuery.of(context).viewInsets.bottom + 16,
                             ),
-                          );
-                        },
-                      ),
-                    ),
+                            child: SingleChildScrollView(
+                              controller: scrollController,
+                              child: TicketFilterWidget(
+                                initialFilter: _activeFilter,
+                                businessClient:
+                                    context
+                                        .read<WorkBloc>()
+                                        .state
+                                        .businessClient ??
+                                    [],
+                                onApply: (filter) {
+                                  setState(() {
+                                    _activeFilter = filter;
+                                  });
+                                  _applyFilter(filter);
+                                },
+                                onClear: () {
+                                  _applyFilter(
+                                    TicketFilterData(
+                                      ticketCategoryId: 0,
+                                      status: "",
+                                      priority: "",
+                                      severity: "",
+                                      clientDesc: "",
+                                      clientDesc2: "",
+                                      orderBy: "",
+                                      fromDate: "",
+                                      toDate: "",
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   );
                 },
               );
