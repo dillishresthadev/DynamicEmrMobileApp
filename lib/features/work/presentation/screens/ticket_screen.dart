@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_entity.dart';
 import 'package:dynamic_emr/features/work/presentation/bloc/work_bloc.dart';

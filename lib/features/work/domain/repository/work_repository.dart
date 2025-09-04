@@ -25,6 +25,7 @@ abstract class WorkRepository {
     String description,
     String severity,
     String priority,
+    int clientId,
     String client,
     String clientDesc,
     String clientDesc2,

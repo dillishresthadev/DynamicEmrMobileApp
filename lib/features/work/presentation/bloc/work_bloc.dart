@@ -183,6 +183,7 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
         event.description,
         event.severity,
         event.priority,
+        event.clientId,
         event.client,
         event.clientDesc,
         event.clientDesc2,

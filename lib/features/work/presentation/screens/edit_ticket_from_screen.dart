@@ -46,6 +46,7 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
   String? _selectedPriorityType;
   int? _selectedAssignToType;
   int? _selectedIssueByType;
+  int? _selectedClientId;
 
   String? _selectedSeverityType;
   String? _selectedClient;
@@ -84,6 +85,7 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
       _selectedSeverityType = ticket.severity;
       _selectedPriorityType = ticket.priority;
       _selectedClient = ticket.client;
+      _selectedClientId = ticket.clientId;
       _selectedTicketDate = ticket.ticketDate;
       _selectedTicketDueDate = ticket.dueDate;
     }
@@ -147,7 +149,7 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
         issueByEmployeeId: _selectedIssueByType.toString(),
         issueOn: widget.ticketToEdit!.issueOn,
         sessionTag: widget.ticketToEdit!.sessionTag ?? '',
-        clientId: widget.ticketToEdit!.clientId ?? 0,
+        clientId: _selectedClientId ?? 0,
         client: _selectedClient ?? '',
         clientDesc: _clientDepartmentController.text.toString(),
         clientDesc2: _clientUserController.text.trim(),
@@ -269,6 +271,23 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
             workUserList = state.workUser ?? [];
             categoriesList = state.ticketCategories ?? [];
             clientList = state.businessClient ?? [];
+
+            if (widget.ticketToEdit != null && _selectedClientId == null) {
+              final client = clientList.firstWhere(
+                (c) => c.clientName == widget.ticketToEdit!.client,
+                orElse: () => BusinessClientEntity(
+                  id: 0,
+                  clientName: 'Unknown',
+                  address: '',
+                  phoneNumber: '',
+                  mobileNumber: '',
+                  emailAddress: '',
+                  clientType: '',
+                  isActive: null,
+                ),
+              );
+              _selectedClientId = client.id;
+            }
           });
         }
         if (state.workStatus == WorkStatus.editTicketSuccess) {
@@ -475,11 +494,15 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
                         client: _selectedClient,
                         onSelected: (client) {
                           setState(() {
-                            _selectedClient = client!.clientName;
+                            _selectedClient = client?.clientName;
+                            _selectedClientId = client?.id;
                           });
-                          log("Selected Client: $_selectedClient ");
+                          log(
+                            "Selected Client: $_selectedClient ($_selectedClientId)",
+                          );
                         },
                       ),
+
                       const SizedBox(height: 8),
                       Text(
                         'issue by client',

@@ -35,6 +35,7 @@ abstract class WorkRemoteDatasource {
     String description,
     String severity,
     String priority,
+    int clientId,
     String client,
     String clientDesc,
     String clientDesc2,
@@ -268,6 +269,7 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
     String description,
     String severity,
     String priority,
+    int clientId,
     String clientName,
     String clientDesc,
     String clientDesc2,
@@ -307,11 +309,12 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
         "Description": description,
         "Severity": severity,
         "Priority": priority,
-        "clientName": clientName,
-        "clientDesc": clientDesc,
-        "clientDesc2": clientDesc2,
-        "dueDate": dueDate,
-        "issueByEmployeeId": issueByEmployeeId,
+        "ClientId": clientId,
+        "Client": clientName,
+        "ClientDesc": clientDesc,
+        "ClientDesc2": clientDesc2,
+        "DueDate": dueDate,
+        "IssueByEmployeeId": issueByEmployeeId,
         "AssignToEmployeeId": assignToEmployeeId,
         "AttachmentFiles": files,
       });
@@ -771,16 +774,16 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
       dataMap["AssignToEmployeeId"] = assignToEmployeeId;
       addIfNotEmpty("IssueByEmployeeId", issueByEmployeeId);
       // addIfNotEmpty("SessionTag", sessionTag);
-      // dataMap["ClientId"] = clientId;
+      dataMap["ClientId"] = clientId;
       addIfNotEmpty("Client", clients);
       addIfNotEmpty("ClientDesc", clientDesc);
       addIfNotEmpty("ClientDesc2", clientDesc2);
       addIfNotEmpty("DueDate", dueDate);
       if (attachmentFiles.isNotEmpty) {
-        dataMap["attachmentFiles"] = attachmentFiles;
+        dataMap["AttachmentFiles"] = attachmentFiles;
       }
       if (files != null && files.isNotEmpty) {
-        dataMap["attachedDocuments"] = files;
+        dataMap["AttachedDocuments"] = files;
       }
 
       final formData = FormData.fromMap(dataMap);

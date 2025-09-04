@@ -62,6 +62,7 @@ final class CreateTicketEvent extends WorkEvent {
   final String description;
   final String severity;
   final String priority;
+  final int clientId;
   final String client;
   final String clientDesc;
   final String clientDesc2;
@@ -77,6 +78,7 @@ final class CreateTicketEvent extends WorkEvent {
     required this.description,
     required this.severity,
     required this.priority,
+    required this.clientId,
     required this.client,
     required this.clientDesc,
     required this.clientDesc2,

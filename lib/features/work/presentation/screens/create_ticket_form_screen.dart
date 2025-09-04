@@ -130,6 +130,11 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
         assignToEmployeeId: _selectedAssignToType!,
         issueByEmployeeId: _selectedIssueByType!,
         attachmentPaths: attachmentPaths,
+        clientId:
+            (clientList
+                .firstWhere((e) => e.clientName == _selectedClient)
+                .id) ??
+            0,
         client: _selectedClient!,
         clientDesc: _clientDepartmentController.text.trim(),
         clientDesc2: _clientUserController.text.trim(),
