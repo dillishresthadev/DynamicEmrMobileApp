@@ -24,6 +24,7 @@ class TicketScreen extends StatefulWidget {
 
 class _TicketScreenState extends State<TicketScreen>
     with SingleTickerProviderStateMixin {
+  TicketFilterData? _activeFilter;
   late TabController _tabController;
   TicketFilterData? _currentFilter;
 
@@ -76,6 +77,9 @@ class _TicketScreenState extends State<TicketScreen>
         priority: filter.priority ?? "",
         severity: filter.severity ?? "",
         assignTo: "",
+        clientId: filter.clientId ?? 0,
+        clientDesc: filter.clientDesc ?? "",
+        clientDesc2: filter.clientDesc2 ?? "",
         fromDate: filter.fromDate,
         toDate: filter.toDate,
         orderBy: filter.orderBy ?? "",
@@ -89,6 +93,9 @@ class _TicketScreenState extends State<TicketScreen>
         priority: filter.priority ?? "",
         severity: filter.severity ?? "",
         assignTo: "",
+        clientId: filter.clientId ?? 0,
+        clientDesc: filter.clientDesc ?? "",
+        clientDesc2: filter.clientDesc2 ?? "",
         fromDate: filter.fromDate,
         toDate: filter.toDate,
         orderBy: filter.orderBy ?? "",
@@ -131,7 +138,13 @@ class _TicketScreenState extends State<TicketScreen>
                         bottom: MediaQuery.of(context).viewInsets.bottom + 16,
                       ),
                       child: TicketFilterWidget(
-                        onApply: (filter) => _applyFilter(filter),
+                        initialFilter: _activeFilter,
+                        onApply: (filter) {
+                          setState(() {
+                            _activeFilter = filter;
+                          });
+                          _applyFilter(filter);
+                        },
                         onClear: () {
                           _applyFilter(
                             TicketFilterData(
@@ -139,6 +152,9 @@ class _TicketScreenState extends State<TicketScreen>
                               status: "",
                               priority: "",
                               severity: "",
+                              clientId: 0,
+                              clientDesc: "",
+                              clientDesc2: "",
                               orderBy: "",
                               fromDate: "",
                               toDate: "",

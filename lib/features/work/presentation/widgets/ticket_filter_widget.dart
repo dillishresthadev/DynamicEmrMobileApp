@@ -1,5 +1,6 @@
 import 'package:dynamic_emr/core/widgets/dropdown/custom_dropdown.dart';
 import 'package:dynamic_emr/core/widgets/form/custom_date_time_field.dart';
+import 'package:dynamic_emr/core/widgets/form/custom_input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -7,8 +8,14 @@ class TicketFilterWidget extends StatefulWidget {
   final void Function(TicketFilterData)? onApply;
 
   final void Function()? onClear;
+  final TicketFilterData? initialFilter;
 
-  const TicketFilterWidget({this.onApply, this.onClear, super.key});
+  const TicketFilterWidget({
+    this.onApply,
+    this.onClear,
+    this.initialFilter,
+    super.key,
+  });
 
   @override
   State<TicketFilterWidget> createState() => _TicketFilterWidgetState();
@@ -24,6 +31,8 @@ class _TicketFilterWidgetState extends State<TicketFilterWidget> {
 
   final TextEditingController _fromDateController = TextEditingController();
   final TextEditingController _toDateController = TextEditingController();
+  final TextEditingController _clientDescController = TextEditingController();
+  final TextEditingController _clientDesc2Controller = TextEditingController();
 
   final List<String> statuses = ['Open', 'Closed'];
   final List<String> priorities = ['Low', 'Medium', 'High'];
@@ -35,14 +44,29 @@ class _TicketFilterWidgetState extends State<TicketFilterWidget> {
     super.initState();
     final now = DateTime.now();
     final oneMonthAgo = DateTime(now.year, now.month - 1, now.day);
-    _fromDateController.text = DateFormat('yyyy-MM-dd').format(oneMonthAgo);
-    _toDateController.text = DateFormat('yyyy-MM-dd').format(now);
+
+    final initial = widget.initialFilter;
+
+    _selectedCategory = initial?.ticketCategoryId ?? 0;
+    _selectedStatus = initial?.status;
+    _selectedPriority = initial?.priority;
+    _selectedSeverity = initial?.severity;
+    _selectedOrderBy = initial?.orderBy ?? 'Newest';
+
+    _clientDescController.text = initial?.clientDesc ?? '';
+    _clientDesc2Controller.text = initial?.clientDesc2 ?? '';
+    _fromDateController.text =
+        initial?.fromDate ?? DateFormat('yyyy-MM-dd').format(oneMonthAgo);
+    _toDateController.text =
+        initial?.toDate ?? DateFormat('yyyy-MM-dd').format(now);
   }
 
   @override
   void dispose() {
     _fromDateController.dispose();
     _toDateController.dispose();
+    _clientDescController.dispose();
+    _clientDesc2Controller.dispose();
     super.dispose();
   }
 
@@ -55,6 +79,8 @@ class _TicketFilterWidgetState extends State<TicketFilterWidget> {
       _selectedPriority = null;
       _selectedSeverity = null;
       _selectedOrderBy = null;
+      _clientDescController.clear();
+      _clientDesc2Controller.clear();
       _fromDateController.text = DateFormat('yyyy-MM-dd').format(oneMonthAgo);
       _toDateController.text = DateFormat('yyyy-MM-dd').format(now);
     });
@@ -70,6 +96,8 @@ class _TicketFilterWidgetState extends State<TicketFilterWidget> {
           priority: _selectedPriority,
           severity: _selectedSeverity,
           orderBy: _selectedOrderBy,
+          clientDesc: _clientDescController.text.trim(),
+          clientDesc2: _clientDesc2Controller.text.trim(),
           fromDate: _fromDateController.text,
           toDate: _toDateController.text,
         ),
@@ -138,6 +166,25 @@ class _TicketFilterWidgetState extends State<TicketFilterWidget> {
                       items: severities,
                       onChanged: (value) =>
                           setState(() => _selectedSeverity = value),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16),
+              // clientDesc/2
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomInputField(
+                      hintText: 'Client Desc',
+                      controller: _clientDescController,
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: CustomInputField(
+                      hintText: 'Client Desc2',
+                      controller: _clientDesc2Controller,
                     ),
                   ),
                 ],
@@ -214,6 +261,9 @@ class TicketFilterData {
   final String? priority;
   final String? severity;
   final String? orderBy;
+  final int? clientId;
+  final String? clientDesc;
+  final String? clientDesc2;
   final String fromDate;
   final String toDate;
 
@@ -223,6 +273,9 @@ class TicketFilterData {
     this.priority,
     this.severity,
     this.orderBy,
+    this.clientId,
+    this.clientDesc,
+    this.clientDesc2,
     required this.fromDate,
     required this.toDate,
   });
