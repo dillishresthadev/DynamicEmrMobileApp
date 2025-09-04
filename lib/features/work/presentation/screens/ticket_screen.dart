@@ -126,11 +126,10 @@ class _TicketScreenState extends State<TicketScreen>
                 backgroundColor: Colors.transparent,
                 builder: (context) {
                   return DraggableScrollableSheet(
-                    initialChildSize: 0.75,
+                    initialChildSize: 0.85,
                     minChildSize: 0.4,
                     maxChildSize: 0.9,
                     expand: false,
-
                     builder: (context, scrollController) {
                       return Container(
                         decoration: const BoxDecoration(

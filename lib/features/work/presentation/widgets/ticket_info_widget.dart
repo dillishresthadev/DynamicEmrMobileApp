@@ -58,8 +58,11 @@ class TicketInfoWidget extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
                 _buildInfoItem("Issue By", ticket.issueBy),
+
                 _buildInfoItem("Issue On", issueOn),
+
                 AssignToBottomSheetWidget(users: user, ticket: ticket),
+
                 _buildInfoItem("Assigned On", assignOnDate),
                 if ((ticket.client ?? '').isNotEmpty)
                   _buildInfoItem("Client", ticket.client!),

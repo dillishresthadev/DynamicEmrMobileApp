@@ -197,14 +197,15 @@ class _TicketFilterWidgetState extends State<TicketFilterWidget> {
             Column(
               children: [
                 CustomInputField(
-                  hintText: 'Client Desc',
+                  hintText: 'Client Department',
                   controller: _clientDescController,
                 ),
                 const SizedBox(height: 12),
                 CustomInputField(
-                  hintText: 'Client Desc 2',
+                  hintText: 'Client User',
                   controller: _clientDesc2Controller,
                 ),
+                const SizedBox(height: 12),
                 CustomDropdown(
                   hintText: 'Client',
                   value: _selectedClient?.clientName,
