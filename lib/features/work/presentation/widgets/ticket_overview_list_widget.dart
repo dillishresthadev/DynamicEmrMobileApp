@@ -1,5 +1,4 @@
 import 'package:dynamic_emr/features/work/domain/entities/ticket_entity.dart';
-import 'package:dynamic_emr/features/work/presentation/screens/edit_ticket_from_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -79,18 +78,6 @@ class _TicketCard extends StatelessWidget {
           ),
         ),
         _StatusBadge(status: ticket.status),
-        TextButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    EditTicketFromScreen(ticketToEdit: ticket),
-              ),
-            );
-          },
-          child: Text("Edit"),
-        ),
       ],
     );
   }

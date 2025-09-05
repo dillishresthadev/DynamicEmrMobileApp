@@ -132,7 +132,7 @@ class _CreateTicketFormScreenState extends State<CreateTicketFormScreen> {
         issueByEmployeeId: _selectedIssueByType!,
         attachmentPaths: attachmentPaths,
         clientId: _selectedClientId ?? 0,
-        client: _selectedClient!,
+        client: _selectedClient ?? '',
         clientDesc: _clientDepartmentController.text.trim(),
         clientDesc2: _clientUserController.text.trim(),
         dueDate: _selectedTicketDueDate.toString(),

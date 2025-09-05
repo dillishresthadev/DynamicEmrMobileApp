@@ -492,6 +492,8 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
         attachmentFiles: event.attachmentFiles,
         attachedDocuments: event.attachedDocuments,
       );
+      final ticketDetails = await ticketDetailsByIdUsecase.call(event.id);
+
       if (ticket) {
         emit(
           state.copyWith(
@@ -499,11 +501,23 @@ class WorkBloc extends Bloc<WorkEvent, WorkState> {
             workStatus: WorkStatus.editTicketSuccess,
           ),
         );
+        emit(
+          state.copyWith(
+            workStatus: WorkStatus.success,
+            ticketDetails: ticketDetails,
+          ),
+        );
       } else {
         emit(
           state.copyWith(
             createTicket: ticket,
             workStatus: WorkStatus.editTicketError,
+          ),
+        );
+        emit(
+          state.copyWith(
+            workStatus: WorkStatus.success,
+            ticketDetails: ticketDetails,
           ),
         );
       }

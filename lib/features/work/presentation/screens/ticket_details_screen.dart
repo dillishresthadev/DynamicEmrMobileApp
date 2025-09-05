@@ -5,10 +5,13 @@ import 'package:dynamic_emr/core/utils/app_snack_bar.dart';
 import 'package:dynamic_emr/core/utils/file_picker_utils.dart';
 import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:dynamic_emr/core/widgets/form/custom_input_field.dart';
+import 'package:dynamic_emr/features/profile/presentation/bloc/profile_bloc.dart';
 import 'package:dynamic_emr/features/work/domain/entities/ticket_activity_entity.dart';
 import 'package:dynamic_emr/features/work/presentation/bloc/work_bloc.dart';
+import 'package:dynamic_emr/features/work/presentation/screens/edit_ticket_from_screen.dart';
 import 'package:dynamic_emr/features/work/presentation/widgets/ticket_file_widget.dart';
 import 'package:dynamic_emr/features/work/presentation/widgets/ticket_info_widget.dart';
+import 'package:dynamic_emr/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
@@ -94,13 +97,44 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    ticket.ticket.title,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black87,
-                                    ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        ticket.ticket.title,
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      (ticket.ticket.status == "Open" &&
+                                              injection<ProfileBloc>()
+                                                      .state
+                                                      .employee
+                                                      ?.firstName
+                                                      .toLowerCase()
+                                                      .trim() ==
+                                                  ticket.ticket.insertUser
+                                                      .toLowerCase()
+                                                      .trim())
+                                          ? TextButton(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        EditTicketFromScreen(
+                                                          ticketToEdit:
+                                                              ticket.ticket,
+                                                        ),
+                                                  ),
+                                                );
+                                              },
+                                              child: Text("Edit"),
+                                            )
+                                          : SizedBox.shrink(),
+                                    ],
                                   ),
                                   // Rending HTML tags as ticket may comes from web too
                                   Html(

@@ -300,24 +300,35 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
             )
             .toList();
       }
+      final Map<String, dynamic> dataMap = {};
+
+      void addIfNotEmpty(String key, dynamic value) {
+        if (value == null) return;
+        if (value is String && value.trim().isEmpty) return;
+        dataMap[key] = value;
+      }
 
       log("[Datasource] Files : ${files?.first.filename} ");
-      final formData = FormData.fromMap({
-        "TicketDate": ticketDate,
-        "TicketCategoryId": ticketCategoryId,
-        "Title": title,
-        "Description": description,
-        "Severity": severity,
-        "Priority": priority,
-        "ClientId": clientId,
-        "Client": clientName,
-        "ClientDesc": clientDesc,
-        "ClientDesc2": clientDesc2,
-        "DueDate": dueDate,
-        "IssueByEmployeeId": issueByEmployeeId,
-        "AssignToEmployeeId": assignToEmployeeId,
-        "AttachmentFiles": files,
-      });
+
+      // required fields
+      addIfNotEmpty("TicketDate", ticketDate);
+      dataMap["TicketCategoryId"] = ticketCategoryId;
+      addIfNotEmpty("Title", title);
+      addIfNotEmpty("Description", description);
+      addIfNotEmpty("Severity", severity);
+      addIfNotEmpty("Priority", priority);
+      if (clientId != 0) {
+        dataMap["ClientId"] = clientId;
+        addIfNotEmpty("Client", clientName);
+      }
+      addIfNotEmpty("ClientDesc", clientDesc);
+      addIfNotEmpty("ClientDesc2", clientDesc2);
+      addIfNotEmpty("DueDate", dueDate);
+      dataMap["AssignToEmployeeId"] = assignToEmployeeId;
+      addIfNotEmpty("IssueByEmployeeId", issueByEmployeeId);
+      addIfNotEmpty("AttachmentFiles", files);
+
+      final formData = FormData.fromMap(dataMap);
 
       final rawResponse = await client.post(
         "$baseUrl/${ApiConstants.createTicketPost}",
@@ -774,8 +785,10 @@ class WorkRemoteDatasourceImpl implements WorkRemoteDatasource {
       dataMap["AssignToEmployeeId"] = assignToEmployeeId;
       addIfNotEmpty("IssueByEmployeeId", issueByEmployeeId);
       // addIfNotEmpty("SessionTag", sessionTag);
-      dataMap["ClientId"] = clientId;
-      addIfNotEmpty("Client", clients);
+      if (clientId != 0) {
+        dataMap["ClientId"] = clientId;
+        addIfNotEmpty("Client", clients);
+      }
       addIfNotEmpty("ClientDesc", clientDesc);
       addIfNotEmpty("ClientDesc2", clientDesc2);
       addIfNotEmpty("DueDate", dueDate);

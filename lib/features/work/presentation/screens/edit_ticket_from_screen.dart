@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'dart:io';
-
 import 'package:dynamic_emr/core/constants/app_colors.dart';
 import 'package:dynamic_emr/core/utils/app_snack_bar.dart';
 import 'package:dynamic_emr/core/utils/file_picker_utils.dart';
@@ -18,6 +17,8 @@ import 'package:dynamic_emr/features/work/presentation/widgets/assign_to_dropdow
 import 'package:dynamic_emr/features/work/presentation/widgets/business_client_dropdown_widget.dart';
 import 'package:dynamic_emr/features/work/presentation/widgets/issue_by_bottom_sheet_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:html/parser.dart' show parse;
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class EditTicketFromScreen extends StatefulWidget {
@@ -72,7 +73,7 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
       final ticket = widget.ticketToEdit!;
 
       _titleController.text = ticket.title;
-      _descriptionController.text = ticket.description;
+      _descriptionController.text = stripHtmlTags(ticket.description);
       _ticketDate.text = ticket.ticketDate.toIso8601String().split('T').first;
       _ticketDueDate.text = ticket.dueDate.toString();
 
@@ -576,5 +577,10 @@ class _EditTicketFromScreenState extends State<EditTicketFromScreen> {
         ),
       ),
     );
+  }
+
+  String stripHtmlTags(String htmlText) {
+    final document = parse(htmlText);
+    return parse(document.body?.text).documentElement?.text ?? '';
   }
 }
