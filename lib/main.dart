@@ -1,5 +1,6 @@
 import 'package:dynamic_emr/core/routes/app_routes.dart';
 import 'package:dynamic_emr/core/routes/route_names.dart';
+import 'package:dynamic_emr/edge_to_edge.dart';
 import 'package:dynamic_emr/features/Leave/presentation/bloc/leave_bloc.dart';
 import 'package:dynamic_emr/features/attendance/presentation/bloc/attendance_bloc.dart';
 import 'package:dynamic_emr/features/auth/presentation/bloc/auth_bloc.dart';
@@ -23,6 +24,15 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Edge-to-edge design on Android
+  EdgeToEdge.configure(
+    statusBarColor: Colors.transparent,
+    navigationBarColor: Colors.black,
+    statusBarIconBrightness: Brightness.dark,
+    navigationBarIconBrightness: Brightness.dark,
+    enableTop: true,
+    enableBottom: false,
+  );
   // Initializing firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
