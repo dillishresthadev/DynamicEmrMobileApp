@@ -1,3 +1,4 @@
+import 'package:dynamic_emr/core/widgets/appbar/dynamic_emr_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_html/flutter_html.dart';
@@ -19,7 +20,7 @@ class HtmlViewerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: DynamicEMRAppBar(title: title, automaticallyImplyLeading: true),
       body: FutureBuilder<String>(
         future: loadHtmlFromAssets(),
         builder: (context, snapshot) {

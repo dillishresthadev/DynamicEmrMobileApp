@@ -118,7 +118,11 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                                   ticket.ticket.insertUser
                                                       .toLowerCase()
                                                       .trim())
-                                          ? TextButton(
+                                          ? ElevatedButton.icon(
+                                              icon: Icon(
+                                                Icons.edit,
+                                                color: Colors.white,
+                                              ),
                                               onPressed: () {
                                                 Navigator.push(
                                                   context,
@@ -131,7 +135,25 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                                                   ),
                                                 );
                                               },
-                                              child: Text("Edit"),
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    AppColors.primary,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 6,
+                                                    ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(4),
+                                                ),
+                                              ),
+                                              label: Text(
+                                                "Edit",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                ),
+                                              ),
                                             )
                                           : SizedBox.shrink(),
                                     ],

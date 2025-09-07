@@ -20,7 +20,7 @@ class EdgeToEdge {
     ];
 
     await SystemChrome.setEnabledSystemUIMode(
-      SystemUiMode.manual,
+      SystemUiMode.edgeToEdge,
       overlays: overlays,
     );
 

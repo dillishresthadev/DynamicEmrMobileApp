@@ -1,3 +1,4 @@
+import 'package:dynamic_emr/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -93,11 +94,11 @@ class _CustomDateTimeFieldState extends State<CustomDateTimeField> {
           horizontal: 24,
           vertical: 16,
         ),
-        // border: customOutlineInputBorder,
-        // enabledBorder: customOutlineInputBorder,
-        // focusedBorder: customOutlineInputBorder.copyWith(
-        //   borderSide: const BorderSide(color: Color(0xFF17a2b8)),
-        // ),
+        border: customOutlineInputBorder,
+        enabledBorder: customOutlineInputBorder,
+        focusedBorder: customOutlineInputBorder.copyWith(
+          borderSide: const BorderSide(color: AppColors.primary),
+        ),
       ),
       validator: widget.validator,
       forceErrorText: widget.errorText,
@@ -106,6 +107,6 @@ class _CustomDateTimeFieldState extends State<CustomDateTimeField> {
 }
 
 const customOutlineInputBorder = OutlineInputBorder(
-  borderSide: BorderSide(color: Color(0xFF17a2b8)),
+  borderSide: BorderSide(color: AppColors.primary),
   borderRadius: BorderRadius.all(Radius.circular(10)),
 );
