@@ -15,14 +15,24 @@ class SplashScreen extends StatefulWidget {
 }
 
 class SplashScreenState extends State<SplashScreen> {
+  String _appVersion = "";
+
   @override
   void initState() {
     super.initState();
+    _loadAppVersion();
     NotificationRemoteDatasourceImpl.initialize();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Future.delayed(Duration(seconds: 3), () async {
+      Future.delayed(Duration(seconds: 1), () async {
         context.read<AuthBloc>().add(CheckAuthStatusEvent());
       });
+    });
+  }
+
+  Future<void> _loadAppVersion() async {
+    // final info = await PackageInfo.fromPlatform();
+    setState(() {
+      _appVersion = "v1.0.1 (23)";
     });
   }
 
@@ -33,13 +43,10 @@ class SplashScreenState extends State<SplashScreen> {
     return BlocListener<AuthBloc, AuthState>(
       listenWhen: (prev, curr) =>
           curr is AuthLoginSuccessState || curr is AuthUnauthenticated,
-
       listener: (context, state) async {
         if (state is AuthLoginSuccessState) {
-          // sending FCM token when user press login
           final code = await injection<ISecureStorage>().getHospitalCode();
           await notificationInitializer.initFCM(applicationId: code);
-
           Navigator.pushReplacementNamed(context, RouteNames.appMainNav);
         } else if (state is AuthUnauthenticated) {
           Navigator.pushReplacementNamed(
@@ -51,11 +58,25 @@ class SplashScreenState extends State<SplashScreen> {
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Image.asset('assets/logo/logo.jpeg'),
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                    child: Image.asset('assets/logo/logo.jpeg'),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: Text(
+                  _appVersion,
+                  style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                ),
+              ),
+            ],
           ),
         ),
       ),

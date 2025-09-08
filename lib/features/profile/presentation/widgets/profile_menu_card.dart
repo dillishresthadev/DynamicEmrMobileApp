@@ -4,6 +4,8 @@ class ProfileMenuCard extends StatelessWidget {
   final String? title, subTitle;
   final VoidCallback? press;
   final IconData? icon;
+  final Color iconColor;
+  final Color bgColor;
 
   const ProfileMenuCard({
     super.key,
@@ -11,6 +13,8 @@ class ProfileMenuCard extends StatelessWidget {
     this.subTitle,
     this.icon,
     this.press,
+    required this.iconColor,
+    required this.bgColor,
   });
 
   @override
@@ -22,7 +26,15 @@ class ProfileMenuCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(icon),       
+            Container(
+              padding: EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: bgColor,
+
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Icon(icon, color: iconColor),
+            ),
             const SizedBox(width: 17),
             Expanded(
               child: Column(
@@ -48,7 +60,11 @@ class ProfileMenuCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            const Icon(Icons.arrow_forward_ios_outlined, size: 20),
+            const Icon(
+              Icons.arrow_forward_ios_outlined,
+              color: Colors.grey,
+              size: 14,
+            ),
           ],
         ),
       ),

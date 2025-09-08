@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:dynamic_emr/core/utils/url_launcher_utils.dart';
 import 'package:dynamic_emr/core/widgets/html_viewer_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,6 +19,7 @@ import 'package:dynamic_emr/features/profile/presentation/screens/employee_detai
 import 'package:dynamic_emr/features/profile/presentation/screens/employee_details/work_and_shift_details_screen.dart';
 import 'package:dynamic_emr/features/profile/presentation/widgets/profile_menu_card.dart';
 import 'package:dynamic_emr/features/profile/presentation/widgets/profile_picture_widget.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -35,6 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: DynamicEMRAppBar(
         title: "Profile",
         actions: [
@@ -87,28 +92,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
             );
           }
         },
-        child: BlocBuilder<ProfileBloc, ProfileState>(
-          builder: (context, state) {
-            if (state.employeeStatus == ProfileStatus.loading) {
-              return _buildLoadingState();
-            }
+        child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: Column(
+            children: [
+              BlocBuilder<ProfileBloc, ProfileState>(
+                builder: (context, state) {
+                  if (state.employeeStatus == ProfileStatus.loading) {
+                    return _buildLoadingState();
+                  }
 
-            if (state.employeeStatus == ProfileStatus.error) {
-              return _buildErrorState();
-            }
+                  if (state.employeeStatus == ProfileStatus.error) {
+                    return _buildErrorState();
+                  }
 
-            if (state.employeeStatus == ProfileStatus.loaded) {
-              final employee = state.employee;
-              if (employee != null) {
-                return _buildProfileView(employee);
-              } else {
-                return _buildNoProfileDataState();
-              }
-            }
+                  if (state.employeeStatus == ProfileStatus.loaded) {
+                    final employee = state.employee;
+                    if (employee != null) {
+                      return _buildProfileView(employee);
+                    } else {
+                      return _buildNoProfileDataState();
+                    }
+                  }
 
-            // Fallback for any other state
-            return _buildNoProfileDataState();
-          },
+                  // Fallback for any other state
+                  return _buildNoProfileDataState();
+                },
+              ),
+              _buildStaticSection(context),
+            ],
+          ),
         ),
       ),
     );
@@ -124,7 +137,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            "Oops! Something went wrong.[No Data]",
+            "Oops! Something went wrong [No Profile]",
             style: TextStyle(fontSize: 18),
           ),
           SizedBox(height: 10),
@@ -164,205 +177,312 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildProfileView(employee) {
-    return SingleChildScrollView(
-      physics: AlwaysScrollableScrollPhysics(),
+  Widget _buildStaticSection(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: double.infinity,
-            color: AppColors.primary,
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              children: [
-                ProfilePictureWidget(
-                  profileUrl:
-                      "${employee.employeeImageBaseUrl}/${employee.imagePath}",
-                  firstName: employee.firstName,
-                  lastName: employee.lastName,
-                  avatarRadius: 70,
-                ),
-                SizedBox(height: 10),
-                Text(
-                  '${employee.firstName} ${employee.lastName}',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-                Text(
-                  employee.employeeCode,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
+          const SizedBox(height: 10),
+          Text(
+            "Connect With Us",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey.shade800,
             ),
           ),
-          CustomPaint(
-            painter: CurvedDividerPainter(color: AppColors.primary),
-            child: SizedBox(height: 25, width: double.infinity),
+          const SizedBox(height: 10),
+          ProfileMenuCard(
+            icon: FontAwesomeIcons.facebook,
+            title: "Facebook Page",
+            subTitle: "Follow our official page",
+            iconColor: Colors.blue,
+            bgColor: Colors.blue.shade50,
+            press: () {
+              UrlLauncherUtils.openFacebook();
+            },
           ),
-          SizedBox(height: 5),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              children: [
-                ProfileMenuCard(
-                  icon: Icons.person,
-                  title: "Profile Information",
-                  subTitle: "View your account information",
-                  press: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          PersonalDetailsScreen(employee: employee),
-                    ),
-                  ),
-                ),
-                ProfileMenuCard(
-                  icon: Icons.contact_emergency,
-                  title: "Emergency Contact",
-                  subTitle: "View your emergency contact details",
-                  press: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EmployeeEmergencyContactScreen(
-                          contacts: employee.employeeEmergencyContacts,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                ProfileMenuCard(
-                  icon: Icons.business_center,
-                  title: "Work and Shift Information",
-                  subTitle: "View your work and shift information",
-                  press: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          WorkAndShiftDetailsScreen(employee: employee),
-                    ),
-                  ),
-                ),
-                ProfileMenuCard(
-                  icon: Icons.file_copy_sharp,
-                  title: "Documents",
-                  subTitle: "View your attached documents",
-                  press: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EmployeeDocumentScreen(),
-                      ),
-                    );
-                  },
-                ),
-                ProfileMenuCard(
-                  icon: Icons.verified_user,
-                  title: "Insurance Details",
-                  subTitle: "View your insurance details",
-                  press: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EmployeeInsuranceDetailsScreen(),
-                      ),
-                    );
-                  },
-                ),
-                ProfileMenuCard(
-                  icon: Icons.handshake,
-                  title: "Employment Contracts",
-                  subTitle: "View your contracts details",
-                  press: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EmployeeContractListScreen(),
-                      ),
-                    );
-                  },
-                ),
-                ProfileMenuCard(
-                  icon: Icons.privacy_tip,
-                  title: "Privacy Policy",
-                  subTitle: "View our privacy policy",
-                  press: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const HtmlViewerScreen(
-                          filePath: 'assets/files/privacy_policy.html',
-                          title: 'Privacy Policy',
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                ProfileMenuCard(
-                  icon: Icons.article_outlined,
-                  title: "Terms and Conditions",
-                  subTitle: "View our terms and condtions",
-                  press: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => HtmlViewerScreen(
-                          filePath: 'assets/files/terms_and_conditions.html',
-                          title: 'Terms and Conditions',
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                ProfileMenuCard(
-                  icon: Icons.logout_rounded,
-                  title: "Logout",
-                  subTitle: "Logging out from Dynamic ERM",
-                  press: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog.adaptive(
-                          title: Text("Are you sure?"),
-                          content: Text(
-                            "This action will log you out from Dynamic EMR.",
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.of(context).pop(),
-                              child: Text("Cancel"),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                context.read<AuthBloc>().add(LogoutEvent());
-                                Navigator.pushReplacementNamed(
-                                  context,
-                                  RouteNames.hospitalCodeScreen,
-                                );
-                              },
-                              child: Text(
-                                "Logout",
-                                style: TextStyle(color: Colors.red),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                ),
-              ],
-            ),
+          // ProfileMenuCard(
+          //   icon: FontAwesomeIcons.facebookF,
+          //   title: "Facebook Group",
+          //   subTitle: "Join our community",
+          //   iconColor: Colors.blue,
+          //   bgColor: Colors.blue.shade50,
+          //   press: () {
+          //     UrlLauncherUtils.openFacebook();
+          //   },
+          // ),
+          // ProfileMenuCard(
+          //   icon: FontAwesomeIcons.youtube,
+          //   title: "YouTube",
+          //   subTitle: "Subscribe to our channel",
+          //   iconColor: Colors.red,
+          //   bgColor: Colors.red.shade50,
+          //   press: () {
+          //     // open youtube link
+          //   },
+          // ),
+          // ProfileMenuCard(
+          //   icon: FontAwesomeIcons.tiktok,
+          //   title: "TikTok",
+          //   subTitle: "Watch our TikTok videos",
+          //   iconColor: Colors.pink,
+          //   bgColor: Colors.pink.shade50,
+          //   press: () {
+          //     // open TikTok link
+          //   },
+          // ),
+          ProfileMenuCard(
+            icon: FontAwesomeIcons.instagram,
+            title: "Instagram",
+            subTitle: "Follow us on Instagram",
+            iconColor: Colors.purple,
+            bgColor: Colors.purple.shade50,
+            press: () {
+              UrlLauncherUtils.openInstagram();
+            },
+          ),
+          ProfileMenuCard(
+            icon: Platform.isIOS
+                ? FontAwesomeIcons.appStoreIos
+                : FontAwesomeIcons.play,
+            title: "Rate Us",
+            subTitle: "Give us your feedback",
+            iconColor: Colors.blue,
+            bgColor: Colors.blue.shade50,
+            press: () => UrlLauncherUtils.openAppRating(),
+          ),
+          ProfileMenuCard(
+            icon: Icons.info_outline,
+            title: "About Us",
+            subTitle: "Know more about our app",
+            iconColor: Colors.green,
+            bgColor: Colors.green.shade50,
+            press: () {
+              UrlLauncherUtils.launchUrlExternal("https://dynamicemr.net");
+            },
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildProfileView(employee) {
+    return Column(
+      children: [
+        Container(
+          width: double.infinity,
+          color: AppColors.primary,
+          padding: EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            children: [
+              ProfilePictureWidget(
+                profileUrl:
+                    "${employee.employeeImageBaseUrl}/${employee.imagePath}",
+                firstName: employee.firstName,
+                lastName: employee.lastName,
+                avatarRadius: 70,
+              ),
+              SizedBox(height: 10),
+              Text(
+                '${employee.firstName} ${employee.lastName}',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+              Text(
+                employee.employeeCode,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+        CustomPaint(
+          painter: CurvedDividerPainter(color: AppColors.primary),
+          child: SizedBox(height: 25, width: double.infinity),
+        ),
+        SizedBox(height: 5),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+            children: [
+              ProfileMenuCard(
+                icon: Icons.person,
+                title: "Profile Information",
+                subTitle: "View your account information",
+                iconColor: Colors.blue,
+
+                bgColor: Colors.blue.shade50,
+                press: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        PersonalDetailsScreen(employee: employee),
+                  ),
+                ),
+              ),
+              ProfileMenuCard(
+                icon: Icons.contact_emergency,
+                title: "Emergency Contact",
+                subTitle: "View your emergency contact details",
+                iconColor: Colors.red,
+                bgColor: Colors.red.shade50,
+                press: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EmployeeEmergencyContactScreen(
+                        contacts: employee.employeeEmergencyContacts,
+                      ),
+                    ),
+                  );
+                },
+              ),
+              ProfileMenuCard(
+                icon: Icons.business_center,
+                title: "Work and Shift Information",
+                subTitle: "View your work and shift information",
+                iconColor: Colors.blueGrey,
+                bgColor: Colors.blueGrey.shade50,
+                press: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        WorkAndShiftDetailsScreen(employee: employee),
+                  ),
+                ),
+              ),
+              ProfileMenuCard(
+                icon: Icons.file_copy_sharp,
+                title: "Documents",
+                subTitle: "View your attached documents",
+                iconColor: Colors.indigo,
+                bgColor: Colors.indigo.shade50,
+                press: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EmployeeDocumentScreen(),
+                    ),
+                  );
+                },
+              ),
+              ProfileMenuCard(
+                icon: Icons.verified_user,
+                title: "Insurance Details",
+                subTitle: "View your insurance details",
+                iconColor: Colors.teal,
+                bgColor: Colors.teal.shade50,
+                press: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EmployeeInsuranceDetailsScreen(),
+                    ),
+                  );
+                },
+              ),
+              ProfileMenuCard(
+                icon: Icons.handshake,
+                title: "Employment Contracts",
+                subTitle: "View your contracts details",
+                iconColor: Colors.deepPurple,
+                bgColor: Colors.deepPurple.shade50,
+                press: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EmployeeContractListScreen(),
+                    ),
+                  );
+                },
+              ),
+              ProfileMenuCard(
+                icon: Icons.privacy_tip,
+                title: "Privacy Policy",
+                subTitle: "View our privacy policy",
+                iconColor: Colors.orange,
+                bgColor: Colors.orange.shade50,
+                press: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const HtmlViewerScreen(
+                        filePath: 'assets/files/privacy_policy.html',
+                        title: 'Privacy Policy',
+                      ),
+                    ),
+                  );
+                },
+              ),
+              ProfileMenuCard(
+                icon: Icons.article_outlined,
+                title: "Terms and Conditions",
+                subTitle: "View our terms and condtions",
+                iconColor: Colors.cyan,
+                bgColor: Colors.cyan.shade50,
+                press: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => HtmlViewerScreen(
+                        filePath: 'assets/files/terms_and_conditions.html',
+                        title: 'Terms and Conditions',
+                      ),
+                    ),
+                  );
+                },
+              ),
+              ProfileMenuCard(
+                icon: Icons.logout_rounded,
+                title: "Logout",
+                subTitle: "Logging out from Dynamic ERM",
+                iconColor: Colors.redAccent,
+                bgColor: Colors.red.shade50,
+                press: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog.adaptive(
+                        title: Text("Are you sure?"),
+                        content: Text(
+                          "This action will log you out from Dynamic EMR.",
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: Text("Cancel"),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              context.read<AuthBloc>().add(LogoutEvent());
+                              Navigator.pushReplacementNamed(
+                                context,
+                                RouteNames.hospitalCodeScreen,
+                              );
+                            },
+                            child: Text(
+                              "Logout",
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

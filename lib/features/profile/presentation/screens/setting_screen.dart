@@ -23,6 +23,8 @@ class SettingScreen extends StatelessWidget {
                 icon: Icons.dark_mode,
                 title: "App theme",
                 subTitle: "Change your application theme",
+                iconColor: Colors.green,
+                bgColor: Colors.greenAccent,
                 press: () {},
               ),
             ],
