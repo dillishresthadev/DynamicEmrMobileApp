@@ -241,8 +241,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await injection<TokenSecureStorage>().removeExpirationTime();
       await injection<BranchSecureStorage>().removeSelectedFiscalYearId();
       await injection<BranchSecureStorage>().removeWorkingBranchId();
-      await injection<ISecureStorage>().removeHospitalCode();
-      await injection<ISecureStorage>().removeHospitalBaseUrl();
+      // await injection<ISecureStorage>().removeHospitalCode();
+      // await injection<ISecureStorage>().removeHospitalBaseUrl();
       emit(AuthLogoutSuccessState());
     } catch (e) {
       log("Error Logging out :$e");

@@ -50,10 +50,7 @@ class SplashScreenState extends State<SplashScreen> {
           await notificationInitializer.initFCM(applicationId: code);
           Navigator.pushReplacementNamed(context, RouteNames.appMainNav);
         } else if (state is AuthUnauthenticated) {
-          Navigator.pushReplacementNamed(
-            context,
-            RouteNames.hospitalCodeScreen,
-          );
+          Navigator.pushReplacementNamed(context, RouteNames.loginScreen);
         }
       },
       child: Scaffold(
