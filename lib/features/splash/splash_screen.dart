@@ -6,6 +6,7 @@ import 'package:dynamic_emr/features/notification/data/datasource/notification_r
 import 'package:dynamic_emr/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -30,9 +31,9 @@ class SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _loadAppVersion() async {
-    // final info = await PackageInfo.fromPlatform();
+    final info = await PackageInfo.fromPlatform();
     setState(() {
-      _appVersion = "v1.0.1 (23)";
+      _appVersion = "v${info.version}";
     });
   }
 

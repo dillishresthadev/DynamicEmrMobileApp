@@ -16,7 +16,7 @@ class UrlLauncherUtils {
   static Future<void> openAppRating() async {
     final url = Platform.isAndroid
         ? "https://play.google.com/store/apps/details?id=com.paailatechnologies.dynamicemr"
-        : "https://apps.apple.com/app/id";
+        : "https://apps.apple.com/us/app/dynamicemr-hr/id6752019325";
 
     await launchUrlExternal(url);
   }

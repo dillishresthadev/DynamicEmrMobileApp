@@ -20,6 +20,7 @@ import 'package:dynamic_emr/features/profile/presentation/screens/employee_detai
 import 'package:dynamic_emr/features/profile/presentation/widgets/profile_menu_card.dart';
 import 'package:dynamic_emr/features/profile/presentation/widgets/profile_picture_widget.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -32,9 +33,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
+    _loadAppVersion();
+
     // Trigger the profile fetch when screen loads
     context.read<ProfileBloc>().add(GetEmployeeDetailsEvent());
   }
+
+  String _appVersion = "";
 
   @override
   Widget build(BuildContext context) {
@@ -263,9 +268,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
               UrlLauncherUtils.launchUrlExternal("https://dynamicemr.net");
             },
           ),
+
+          // AppVersion
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Text(
+                _appVersion,
+                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+              ),
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  Future<void> _loadAppVersion() async {
+    final info = await PackageInfo.fromPlatform();
+    setState(() {
+      _appVersion = "version: ${info.version}";
+    });
   }
 
   Widget _buildProfileView(employee) {

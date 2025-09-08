@@ -31,7 +31,7 @@ class _TodayAttendanceWidgetState extends State<TodayAttendanceWidget> {
                 color: Colors.grey[200],
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: Center(child: Text("Failed Error")),
+              child: Center(child: Text("No Data")),
             );
           }
           return SizedBox.shrink();

@@ -289,7 +289,7 @@ class _LeaveScreenState extends State<LeaveScreen>
             Icon(Icons.error_outline, color: Colors.red.shade600),
             const SizedBox(height: 8),
             Text(
-              "Error: $message",
+              "No Data",
               style: TextStyle(color: Colors.red.shade700),
               textAlign: TextAlign.center,
             ),

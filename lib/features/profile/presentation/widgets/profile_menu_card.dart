@@ -27,11 +27,11 @@ class ProfileMenuCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(8),
+              padding: EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: bgColor,
 
-                borderRadius: BorderRadius.circular(5),
+                borderRadius: BorderRadius.circular(50),
               ),
               child: Icon(icon, color: iconColor),
             ),
