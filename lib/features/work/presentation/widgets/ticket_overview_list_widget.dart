@@ -69,16 +69,102 @@ class _TicketCard extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            ticket.ticketNo.toUpperCase(),
-            style: const TextStyle(fontSize: 16, letterSpacing: 0.5),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Row(
+              spacing: 16,
+              children: [
+                _buildDateContainer(),
+                Expanded(
+                  child: Text(
+                    ticket.ticketNo.toUpperCase(),
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF1F2937),
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
+          _StatusBadge(status: ticket.status),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateContainer() {
+    final day = DateFormat('dd').format(ticket.ticketDate);
+    final month = DateFormat('MMM').format(ticket.ticketDate);
+    final year = DateFormat('yyyy').format(ticket.ticketDate);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF3B82F6), Color(0xFF2563EB)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
-        _StatusBadge(status: ticket.status),
-      ],
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF3B82F6).withValues(alpha: 0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            day,
+            style: const TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+              height: 1.0,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                month.toUpperCase(),
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                  letterSpacing: 0.5,
+                  height: 1.0,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                year,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.white.withValues(alpha: 0.9),
+                  letterSpacing: 0.3,
+                  height: 1.0,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -92,18 +178,20 @@ class _TicketCard extends StatelessWidget {
   }
 
   Widget _buildMetadata() {
-    final ticketDate = DateFormat('EE dd MMM, yyyy').format(ticket.ticketDate);
+    final ticketDueDate = ticket.dueDate != null
+        ? DateFormat('dd MMM, yyyy').format(ticket.dueDate!)
+        : null;
 
     return Column(
       spacing: 8,
       children: [
-        if (ticketDate.isNotEmpty)
+        if (ticketDueDate != null)
           Row(
             children: [
               _MetadataChip(
                 icon: Icons.schedule_outlined,
-                label: ticketDate,
-                color: Colors.grey.shade600,
+                label: "Due date: $ticketDueDate",
+                color: Colors.red.shade600,
               ),
             ],
           ),
