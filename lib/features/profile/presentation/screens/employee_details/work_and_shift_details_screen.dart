@@ -267,8 +267,8 @@ class _WorkAndShiftDetailsScreenState extends State<WorkAndShiftDetailsScreen> {
                     Icons.person,
                   ),
                   _buildEnhancedInfoRow(
-                    "Shift Approver",
-                    employee.shiftRequestApproverTitle.split('-').last,
+                    "Expense Approver",
+                    employee.expenseApproverTitle.split('-').last,
                     Icons.approval_rounded,
                   ),
                   _buildEnhancedInfoRow(

@@ -20,6 +20,7 @@ class EmployeeEntity {
   final String coachTitle;
   final String timeOffApproverTitle;
   final String shiftRequestApproverTitle;
+  final String expenseApproverTitle;
   final String employeeCode;
   final String designationTitle;
   final String mobileNumber;
@@ -74,6 +75,7 @@ class EmployeeEntity {
     required this.coachTitle,
     required this.timeOffApproverTitle,
     required this.shiftRequestApproverTitle,
+    required this.expenseApproverTitle,
     required this.mobileNumber,
     required this.workBranchTitle,
     required this.workAddress,
