@@ -1,11 +1,14 @@
 import 'package:dynamic_emr/core/constants/app_colors.dart';
+import 'package:dynamic_emr/core/local_storage/hospital_code_storage.dart';
 import 'package:dynamic_emr/core/routes/route_names.dart';
 import 'package:dynamic_emr/core/utils/app_snack_bar.dart';
 import 'package:dynamic_emr/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HospitalCodeScreen extends StatefulWidget {
   const HospitalCodeScreen({super.key});
@@ -38,7 +41,7 @@ class _HospitalCodeScreenState extends State<HospitalCodeScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         if (state is AuthLoadingState) {
           setState(() => isLoading = true);
         } else {
@@ -46,7 +49,18 @@ class _HospitalCodeScreenState extends State<HospitalCodeScreen> {
         }
 
         if (state is HospitalBaseUrlSuccessState) {
-          Navigator.pushNamed(context, RouteNames.loginScreen);
+          // Save hospital code in secure storage
+          final secureStorage = HospitalCodeStorage(
+            const FlutterSecureStorage(),
+          );
+          await secureStorage.saveHospitalCode(enteredCode);
+
+          // Mark onboarding as completed using SharedPreferences
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('hospital_code_set', true);
+
+          // Navigate to login screen
+          Navigator.pushReplacementNamed(context, RouteNames.loginScreen);
         } else if (state is AuthErrorState) {
           AppSnackBar.show(context, state.errorMessage, SnackbarType.error);
         }
