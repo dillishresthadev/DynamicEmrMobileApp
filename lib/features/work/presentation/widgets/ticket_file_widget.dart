@@ -1,9 +1,9 @@
+import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:dynamic_emr/core/utils/app_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:path_provider/path_provider.dart';
-import 'dart:io';
+import 'package:open_file/open_file.dart';
 
 class TicketFilesWidget extends StatelessWidget {
   final List<String> attachedDocuments;
@@ -23,8 +23,53 @@ class TicketFilesWidget extends StatelessWidget {
         lower.endsWith('.gif');
   }
 
-  bool _isPdf(String fileName) {
-    return fileName.toLowerCase().endsWith('.pdf');
+  bool _isPdf(String fileName) => fileName.toLowerCase().endsWith('.pdf');
+
+  bool _isVideo(String fileName) {
+    final lower = fileName.toLowerCase();
+    return lower.endsWith('.mp4') ||
+        lower.endsWith('.mov') ||
+        lower.endsWith('.avi') ||
+        lower.endsWith('.mkv');
+  }
+
+  bool _isExcel(String fileName) {
+    final lower = fileName.toLowerCase();
+    return lower.endsWith('.xls') ||
+        lower.endsWith('.xlsx') ||
+        lower.endsWith('.csv');
+  }
+
+  bool _isWord(String fileName) {
+    final lower = fileName.toLowerCase();
+    return lower.endsWith('.doc') || lower.endsWith('.docx');
+  }
+
+  bool _isAudio(String fileName) {
+    final lower = fileName.toLowerCase();
+    return lower.endsWith('.mp3') ||
+        lower.endsWith('.wav') ||
+        lower.endsWith('.aac');
+  }
+
+  IconData _getFileIcon(String fileName) {
+    if (_isImage(fileName)) return Icons.image;
+    if (_isPdf(fileName)) return Icons.picture_as_pdf;
+    if (_isVideo(fileName)) return Icons.videocam;
+    if (_isExcel(fileName)) return Icons.grid_on;
+    if (_isWord(fileName)) return Icons.description;
+    if (_isAudio(fileName)) return Icons.audiotrack;
+    return Icons.insert_drive_file; // generic file
+  }
+
+  Color _getFileColor(String fileName) {
+    if (_isImage(fileName)) return Colors.blue;
+    if (_isPdf(fileName)) return Colors.red;
+    if (_isVideo(fileName)) return Colors.purple;
+    if (_isExcel(fileName)) return Colors.green;
+    if (_isWord(fileName)) return Colors.blueGrey;
+    if (_isAudio(fileName)) return Colors.orange;
+    return Colors.grey;
   }
 
   @override
@@ -42,104 +87,82 @@ class TicketFilesWidget extends StatelessWidget {
           final fileUrl = "$baseUrl/$fileName";
 
           if (_isImage(fileName)) {
-            // Show image preview
             return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => FullScreenImageViewer(imageUrl: fileUrl),
-                  ),
-                );
-              },
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  fileUrl,
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.cover,
-                  loadingBuilder: (context, child, progress) {
-                    if (progress == null) return child;
-                    return Center(
-                      child: CircularProgressIndicator(
-                        value: progress.expectedTotalBytes != null
-                            ? progress.cumulativeBytesLoaded /
-                                  progress.expectedTotalBytes!
-                            : null,
-                      ),
-                    );
-                  },
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    width: 100,
-                    height: 100,
-                    color: Colors.grey[300],
-                    child: Icon(Icons.broken_image, color: Colors.grey[700]),
-                  ),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => FullScreenImageViewer(imageUrl: fileUrl),
                 ),
               ),
+              child: _filePreviewIcon(fileName),
             );
           } else if (_isPdf(fileName)) {
-            // Show PDF card
             return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) =>
-                        PdfViewerPage(pdfUrl: fileUrl, fileName: fileName),
-                  ),
-                );
-              },
-              child: Container(
-                width: 100,
-                height: 100,
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade300),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.picture_as_pdf, size: 40, color: Colors.red),
-                    SizedBox(height: 8),
-                    Text(
-                      fileName,
-                      maxLines: 2,
-                      textAlign: TextAlign.center,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(fontSize: 11),
-                    ),
-                  ],
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      PdfViewerPage(pdfUrl: fileUrl, fileName: fileName),
                 ),
               ),
+              child: _filePreviewIcon(fileName),
             );
           } else {
-            // Unsupported file type (optional case)
-            return Container(
-              width: 100,
-              height: 100,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey),
-              ),
-              child: Text("Unsupported"),
+            // All other files open with system default app
+            return GestureDetector(
+              onTap: () async {
+                final path = await _downloadFile(fileUrl, fileName);
+                if (path != null) await OpenFile.open(path);
+              },
+              child: _filePreviewIcon(fileName),
             );
           }
         },
       ),
     );
+  }
+
+  Widget _filePreviewIcon(String fileName) {
+    return Container(
+      width: 100,
+      height: 100,
+      padding: EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            _getFileIcon(fileName),
+            size: 40,
+            color: _getFileColor(fileName),
+          ),
+          SizedBox(height: 8),
+          Text(
+            fileName,
+            maxLines: 2,
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontSize: 11),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<String?> _downloadFile(String url, String fileName) async {
+    try {
+      final dir = await getTemporaryDirectory();
+      final file = File('${dir.path}/$fileName');
+      final dio = Dio();
+      await dio.download(url, file.path);
+      return file.path;
+    } catch (_) {
+      return null;
+    }
   }
 }
 
@@ -225,8 +248,8 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
     try {
       final dir = await getTemporaryDirectory();
       final file = File('${dir.path}/${widget.fileName}');
-
       final dio = Dio();
+
       await dio.download(
         widget.pdfUrl,
         file.path,
@@ -247,7 +270,6 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
       setState(() {
         loading = false;
       });
-      AppSnackBar.show(context, 'Failed to load PDF', SnackbarType.error);
     }
   }
 

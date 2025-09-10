@@ -589,14 +589,6 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
                         ],
                       ),
                       Text(time, style: TextStyle(fontSize: 12)),
-                      // ElevatedButton(
-                      //   onPressed: () {
-                      //     openVideoExternally(
-                      //       "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-                      //     );
-                      //   },
-                      //   child: Text("Open Video"),
-                      // ),
                     ],
                   ),
                   const SizedBox(height: 4),
@@ -639,14 +631,4 @@ class _TicketDetailsScreenState extends State<TicketDetailsScreen> {
       ),
     );
   }
-
-  // Future<void> openVideoExternally(String videoUrl) async {
-  //   final Uri uri = Uri.parse(videoUrl);
-
-  //   if (await canLaunchUrl(uri)) {
-  //     await launchUrl(uri, mode: LaunchMode.externalApplication);
-  //   } else {
-  //     throw 'Could not launch $videoUrl';
-  //   }
-  // }
 }

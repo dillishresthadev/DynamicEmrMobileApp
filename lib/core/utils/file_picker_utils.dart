@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:file_picker/file_picker.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -24,7 +23,7 @@ class FilePickerUtils {
 
       final file = File(pickedFile.path);
 
-      final error = _validateFile(file, ['jpg', 'jpeg', 'png'], maxSizeInMB);
+      final error = _validateFile(file, maxSizeInMB);
       if (error != null) return FileResult(error: error);
 
       return FileResult(file: file);
@@ -33,15 +32,10 @@ class FilePickerUtils {
     }
   }
 
-  static Future<FileResult> pickFile({
-    List<String> allowedExtensions = const ['jpg', 'jpeg', 'png', 'pdf'],
-    double maxSizeInMB = 2,
-  }) async {
+  /// Pick any file (except .exe)
+  static Future<FileResult> pickFile({double maxSizeInMB = 5}) async {
     try {
-      final result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: allowedExtensions,
-      );
+      final result = await FilePicker.platform.pickFiles(type: FileType.any);
 
       if (result == null || result.files.isEmpty) {
         return FileResult(error: "No file selected");
@@ -49,7 +43,7 @@ class FilePickerUtils {
 
       final file = File(result.files.first.path!);
 
-      final error = _validateFile(file, allowedExtensions, maxSizeInMB);
+      final error = _validateFile(file, maxSizeInMB);
       if (error != null) return FileResult(error: error);
 
       return FileResult(file: file);
@@ -58,16 +52,12 @@ class FilePickerUtils {
     }
   }
 
-  /// return `null` if valid, else error message
-  static String? _validateFile(
-    File file,
-    List<String> allowedExtensions,
-    double maxSizeInMB,
-  ) {
+  /// Returns null if valid, else error message
+  static String? _validateFile(File file, double maxSizeInMB) {
     final fileSize = file.lengthSync();
     final fileExtension = file.path.split('.').last.toLowerCase();
 
-    if (!allowedExtensions.contains(fileExtension)) {
+    if (fileExtension == 'exe') {
       return 'Unsupported file type: $fileExtension';
     }
 
