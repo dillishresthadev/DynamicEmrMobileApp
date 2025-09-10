@@ -26,19 +26,18 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app needs access to your photo library to upload and save images.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>This app needs access to your microphone for audio recording.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>This app needs access to your camera for uploading documents and capture photos related to works(ticket).</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app requires your location to allow attendance check-in and check-out at your workplace.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs access to your microphone for audio recording.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs access to your photo library to upload and save images.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
 	<array>
-		<string>location</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
