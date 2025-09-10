@@ -31,11 +31,9 @@
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app needs access to your microphone for audio recording.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>This app needs access to your camera for photo click</string>
+	<string>This app needs access to your camera for uploading documents and capture photos related to works(ticket).</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs access to location when open.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This app needs access to your location both while using the app and in the background to provide location-based features and notifications.</string>
+	<string>This app requires your location to allow attendance check-in and check-out at your workplace.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
